@@ -37,20 +37,20 @@
     </select>
 
     <insert id="insert" parameterType="com.urms.entity.SalaryRecord" useGeneratedKeys="true" keyProperty="salaryId">
-        INSERT INTO salary_record (staff_id, year_month, base_salary, subsidy, condolence_fee, change_reason, status)
+        INSERT INTO salary_record (`staff_id`, `year_month`, `base_salary`, `subsidy`, `condolence_fee`, `change_reason`, `status`)
         VALUES (#{staffId}, #{yearMonth}, #{baseSalary}, #{subsidy}, #{condolenceFee}, #{changeReason}, #{status})
     </insert>
 
     <update id="update" parameterType="com.urms.entity.SalaryRecord">
         UPDATE salary_record
         <set>
-            <if test="baseSalary != null">base_salary = #{baseSalary},</if>
-            <if test="subsidy != null">subsidy = #{subsidy},</if>
-            <if test="condolenceFee != null">condolence_fee = #{condolenceFee},</if>
-            <if test="changeReason != null">change_reason = #{changeReason},</if>
-            <if test="status != null">status = #{status},</if>
+            <if test="baseSalary != null">`base_salary` = #{baseSalary},</if>
+            <if test="subsidy != null">`subsidy` = #{subsidy},</if>
+            <if test="condolenceFee != null">`condolence_fee` = #{condolenceFee},</if>
+            <if test="changeReason != null">`change_reason` = #{changeReason},</if>
+            <if test="status != null">`status` = #{status},</if>
         </set>
-        WHERE salary_id = #{salaryId}
+        WHERE `salary_id` = #{salaryId}
     </update>
 
     <delete id="delete" parameterType="int">

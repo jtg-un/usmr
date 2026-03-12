@@ -37,7 +37,7 @@
     </select>
 
     <insert id="insert" parameterType="com.urms.entity.SalaryRecord" useGeneratedKeys="true" keyProperty="salaryId">
-        INSERT INTO salary_record (staff_id, year_month, base_salary, subsidy, condolence_fee, change_reason, status)
+        INSERT INTO salary_record (`staff_id`, `year_month`, `base_salary`, `subsidy`, `condolence_fee`, `change_reason`, `status`)
         VALUES (#{staffId}, #{yearMonth}, #{baseSalary}, #{subsidy}, #{condolenceFee}, #{changeReason}, #{status})
     </insert>
 
