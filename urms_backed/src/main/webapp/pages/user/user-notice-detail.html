@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告详情 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">大学退休教职工管理系统</div>
+        <div class="nav-links">
+            <a href="user-index.html">首页</a>
+            <a href="user-profile.html">个人信息</a>
+            <a href="user-notice.html" class="active">校园公告</a>
+            <a href="user-activity.html">活动报名</a>
+            <a href="user-salary.html">工资查询</a>
+            <a href="user-relative.html">亲属管理</a>
+        </div>
+        <div class="user-info" id="userInfo"></div>
+    </nav>
+
+    <div class="container" style="padding-top: 30px;">
+        <div class="card">
+            <div class="card-header">
+                <h3 id="noticeTitle">公告详情</h3>
+                <a href="user-notice.html">返回列表</a>
+            </div>
+            <div id="noticeContent" style="padding: 20px; line-height: 1.8;"></div>
+            <div style="color: #909399; font-size: 14px; padding: 0 20px;">
+                发布时间: <span id="publishTime"></span> | 发布者: <span id="adminName"></span>
+            </div>
+        </div>
+
+        <!-- 评论区域 -->
+        <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+                <h3>评论</h3>
+            </div>
+            <div style="padding: 15px;">
+                <textarea id="commentContent" placeholder="发表评论..." style="width: 100%; height: 80px; resize: none; padding: 10px; border: 1px solid #dcdfe6; border-radius: 4px;"></textarea>
+                <button class="btn btn-primary btn-small" style="margin-top: 10px;" onclick="submitComment()">发表评论</button>
+            </div>
+            <div id="commentList" class="comment-list"></div>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        if (!checkLogin()) window.location.href = '../../login.html';
+
+        const userInfo = getUserInfo();
+        if (userInfo) {
+            document.getElementById('userInfo').innerHTML = `
+                <span>欢迎, ${userInfo.realName || userInfo.username}</span>
+                <span class="logout" onclick="logout()">退出</span>
+            `;
+        }
+
+        const noticeId = getUrlParam('id');
+
+        async function loadNotice() {
+            const result = await get('/api/notice/' + noticeId);
+            if (result.code === 200 && result.data) {
+                document.getElementById('noticeTitle').textContent = result.data.title;
+                document.getElementById('noticeContent').innerHTML = result.data.content.replace(/\n/g, '<br>');
+                document.getElementById('publishTime').textContent = formatDateTime(result.data.publishTime);
+                document.getElementById('adminName').textContent = result.data.adminName || '管理员';
+            }
+        }
+
+        async function loadComments() {
+            const result = await get('/api/notice/' + noticeId + '/comments');
+            if (result.code === 200 && result.data) {
+                const list = document.getElementById('commentList');
+                if (result.data.length === 0) {
+                    list.innerHTML = '<p style="color: #909399; text-align: center; padding: 20px;">暂无评论</p>';
+                    return;
+                }
+                list.innerHTML = result.data.map(item => `
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">${item.userName || '用户'}</span>
+                            <span class="comment-time">${formatDateTime(item.createTime)}</span>
+                        </div>
+                        <div class="comment-content">${item.content}</div>
+                        ${item.userId === userInfo.userId ? `
+                            <div class="comment-actions">
+                                <button class="btn btn-danger btn-small" onclick="deleteComment(${item.cmId})">删除</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function submitComment() {
+            const content = document.getElementById('commentContent').value.trim();
+            if (!content) {
+                showMessage('请输入评论内容', 'error');
+                return;
+            }
+
+            const result = await post('/api/notice/' + noticeId + '/comment', { content: content });
+            if (result.code === 200) {
+                showMessage('评论成功');
+                document.getElementById('commentContent').value = '';
+                loadComments();
+            } else {
+                showMessage(result.message || '评论失败', 'error');
+            }
+        }
+
+        async function deleteComment(cmId) {
+            if (!confirm('确定要删除此评论吗？')) return;
+
+            const result = await del('/api/notice/comment/' + cmId);
+            if (result.code === 200) {
+                showMessage('删除成功');
+                loadComments();
+            } else {
+                showMessage(result.message || '删除失败', 'error');
+            }
+        }
+
+        loadNotice();
+        loadComments();
+    </script>
+</body>
+</html>

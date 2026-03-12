@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.SalaryRecordDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.SalaryRecord">
+        <id column="salary_id" property="salaryId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="year_month" property="yearMonth"/>
+        <result column="base_salary" property="baseSalary"/>
+        <result column="subsidy" property="subsidy"/>
+        <result column="condolence_fee" property="condolenceFee"/>
+        <result column="change_reason" property="changeReason"/>
+        <result column="status" property="status"/>
+        <result column="staff_name" property="staffName"/>
+    </resultMap>
+
+    <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
+        SELECT s.*, r.real_name as staff_name
+        FROM salary_record s
+        LEFT JOIN retired_staff r ON s.staff_id = r.staff_id
+        WHERE s.staff_id = #{staffId}
+        ORDER BY s.year_month DESC
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT s.*, r.real_name as staff_name
+        FROM salary_record s
+        LEFT JOIN retired_staff r ON s.staff_id = r.staff_id
+        ORDER BY s.year_month DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT s.*, r.real_name as staff_name
+        FROM salary_record s
+        LEFT JOIN retired_staff r ON s.staff_id = r.staff_id
+        WHERE s.salary_id = #{salaryId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.SalaryRecord" useGeneratedKeys="true" keyProperty="salaryId">
+        INSERT INTO salary_record (staff_id, year_month, base_salary, subsidy, condolence_fee, change_reason, status)
+        VALUES (#{staffId}, #{yearMonth}, #{baseSalary}, #{subsidy}, #{condolenceFee}, #{changeReason}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.urms.entity.SalaryRecord">
+        UPDATE salary_record
+        <set>
+            <if test="baseSalary != null">base_salary = #{baseSalary},</if>
+            <if test="subsidy != null">subsidy = #{subsidy},</if>
+            <if test="condolenceFee != null">condolence_fee = #{condolenceFee},</if>
+            <if test="changeReason != null">change_reason = #{changeReason},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE salary_id = #{salaryId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM salary_record WHERE salary_id = #{salaryId}
+    </delete>
+
+</mapper>

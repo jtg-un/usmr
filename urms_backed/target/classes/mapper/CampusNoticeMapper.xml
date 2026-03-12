@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.CampusNoticeDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.CampusNotice">
+        <id column="notice_id" property="noticeId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="publish_time" property="publishTime"/>
+        <result column="admin_id" property="adminId"/>
+        <result column="admin_name" property="adminName"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT n.*, u.username as admin_name
+        FROM campus_notice n
+        LEFT JOIN sys_user u ON n.admin_id = u.user_id
+        ORDER BY n.publish_time DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT n.*, u.username as admin_name
+        FROM campus_notice n
+        LEFT JOIN sys_user u ON n.admin_id = u.user_id
+        WHERE n.notice_id = #{noticeId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.CampusNotice" useGeneratedKeys="true" keyProperty="noticeId">
+        INSERT INTO campus_notice (title, content, publish_time, admin_id)
+        VALUES (#{title}, #{content}, NOW(), #{adminId})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM campus_notice WHERE notice_id = #{noticeId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.StaffRelativeDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.StaffRelative">
+        <id column="relative_id" property="relativeId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="relation_type" property="relationType"/>
+        <result column="name" property="name"/>
+        <result column="address" property="address"/>
+        <result column="living_area" property="livingArea"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="workplace" property="workplace"/>
+        <result column="qq_wechat" property="qqWechat"/>
+        <result column="staff_name" property="staffName"/>
+    </resultMap>
+
+    <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
+        SELECT r.*, s.real_name as staff_name
+        FROM staff_relative r
+        LEFT JOIN retired_staff s ON r.staff_id = s.staff_id
+        WHERE r.staff_id = #{staffId}
+        ORDER BY r.relative_id
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT r.*, s.real_name as staff_name
+        FROM staff_relative r
+        LEFT JOIN retired_staff s ON r.staff_id = s.staff_id
+        ORDER BY r.staff_id, r.relative_id
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT r.*, s.real_name as staff_name
+        FROM staff_relative r
+        LEFT JOIN retired_staff s ON r.staff_id = s.staff_id
+        WHERE r.relative_id = #{relativeId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.StaffRelative" useGeneratedKeys="true" keyProperty="relativeId">
+        INSERT INTO staff_relative (staff_id, relation_type, name, address, living_area, phone, email, workplace, qq_wechat)
+        VALUES (#{staffId}, #{relationType}, #{name}, #{address}, #{livingArea}, #{phone}, #{email}, #{workplace}, #{qqWechat})
+    </insert>
+
+    <update id="update" parameterType="com.urms.entity.StaffRelative">
+        UPDATE staff_relative
+        <set>
+            <if test="relationType != null">relation_type = #{relationType},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="livingArea != null">living_area = #{livingArea},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="workplace != null">workplace = #{workplace},</if>
+            <if test="qqWechat != null">qq_wechat = #{qqWechat},</if>
+        </set>
+        WHERE relative_id = #{relativeId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM staff_relative WHERE relative_id = #{relativeId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人员管理 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">大学退休教职工管理系统 - 管理端</div>
+        <div class="nav-links">
+            <a href="admin-index.html">首页</a>
+            <a href="admin-notice.html">公告管理</a>
+            <a href="admin-activity.html">活动管理</a>
+            <a href="admin-salary.html">工资管理</a>
+            <a href="admin-staff.html" class="active">人员管理</a>
+        </div>
+        <div class="user-info" id="userInfo"></div>
+    </nav>
+
+    <div class="container" style="padding-top: 30px;">
+        <div class="card">
+            <div class="card-header">
+                <h3>退休人员管理</h3>
+            </div>
+
+            <!-- 搜索区域 -->
+            <div style="margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>姓名</label>
+                    <input type="text" id="searchName" placeholder="输入姓名">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>原单位</label>
+                    <input type="text" id="searchDept" placeholder="输入原单位">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>职务</label>
+                    <input type="text" id="searchTitle" placeholder="输入职务">
+                </div>
+                <button class="btn btn-primary" onclick="searchStaff()">搜索</button>
+                <button class="btn" onclick="resetSearch()">重置</button>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>年龄</th>
+                        <th>原单位</th>
+                        <th>职务/职称</th>
+                        <th>退休时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="staffList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 查看详情模态框 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>人员详情</h3>
+                <span class="modal-close" onclick="closeDetailModal()">&times;</span>
+            </div>
+            <div id="staffDetail"></div>
+        </div>
+    </div>
+
+    <!-- 亲属信息模态框 -->
+    <div class="modal" id="relativeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>亲属信息</h3>
+                <span class="modal-close" onclick="closeRelativeModal()">&times;</span>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>关系</th>
+                        <th>姓名</th>
+                        <th>住址</th>
+                        <th>电话</th>
+                        <th>工作单位</th>
+                    </tr>
+                </thead>
+                <tbody id="relativeList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        if (!checkLogin() || !isAdmin()) window.location.href = '../../login.html';
+
+        const userInfo = getUserInfo();
+        if (userInfo) {
+            document.getElementById('userInfo').innerHTML = `
+                <span>管理员: ${userInfo.username}</span>
+                <span class="logout" onclick="logout()">退出</span>
+            `;
+        }
+
+        async function loadStaff(params = {}) {
+            let url = '/api/staff/list';
+            if (params.name || params.dept || params.title) {
+                url = '/api/staff/search?';
+                if (params.name) url += 'realName=' + encodeURIComponent(params.name) + '&';
+                if (params.dept) url += 'formerDept=' + encodeURIComponent(params.dept) + '&';
+                if (params.title) url += 'jobTitle=' + encodeURIComponent(params.title);
+            }
+
+            const result = await get(url);
+            if (result.code === 200 && result.data) {
+                const tbody = document.getElementById('staffList');
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #909399;">暂无数据</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = result.data.map(item => `
+                    <tr>
+                        <td>${item.realName || '-'}</td>
+                        <td>${item.gender || '-'}</td>
+                        <td>${item.age || '-'}</td>
+                        <td>${item.formerDept || '-'}</td>
+                        <td>${item.jobTitle || '-'}</td>
+                        <td>${item.retireDate || '-'}</td>
+                        <td>
+                            <button class="btn btn-primary btn-small" onclick="showDetail(${item.staffId})">查看</button>
+                            <button class="btn btn-success btn-small" onclick="showRelatives(${item.staffId})">亲属</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function searchStaff() {
+            const params = {
+                name: document.getElementById('searchName').value.trim(),
+                dept: document.getElementById('searchDept').value.trim(),
+                title: document.getElementById('searchTitle').value.trim()
+            };
+            loadStaff(params);
+        }
+
+        function resetSearch() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchDept').value = '';
+            document.getElementById('searchTitle').value = '';
+            loadStaff();
+        }
+
+        async function showDetail(id) {
+            const result = await get('/api/staff/' + id);
+            if (result.code === 200 && result.data) {
+                const d = result.data;
+                document.getElementById('staffDetail').innerHTML = `
+                    <div class="profile-section">
+                        <div class="form-group">
+                            <label>姓名</label>
+                            <p>${d.realName || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>性别</label>
+                            <p>${d.gender || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>身份证号</label>
+                            <p>${d.idCard || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>年龄</label>
+                            <p>${d.age || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>民族</label>
+                            <p>${d.nation || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>学历</label>
+                            <p>${d.education || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>籍贯</label>
+                            <p>${d.nativePlace || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>参加工作时间</label>
+                            <p>${d.workStartDate || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>退休时间</label>
+                            <p>${d.retireDate || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>退休前单位</label>
+                            <p>${d.formerDept || '-'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label>职务/职称</label>
+                            <p>${d.jobTitle || '-'}</p>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('detailModal').classList.add('show');
+            }
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('show');
+        }
+
+        async function showRelatives(staffId) {
+            const result = await get('/api/relative/staff/' + staffId);
+            if (result.code === 200) {
+                const tbody = document.getElementById('relativeList');
+                if (!result.data || result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #909399;">暂无亲属信息</td></tr>';
+                } else {
+                    tbody.innerHTML = result.data.map(item => `
+                        <tr>
+                            <td>${item.relationType}</td>
+                            <td>${item.name}</td>
+                            <td>${item.address || '-'}</td>
+                            <td>${item.phone || '-'}</td>
+                            <td>${item.workplace || '-'}</td>
+                        </tr>
+                    `).join('');
+                }
+                document.getElementById('relativeModal').classList.add('show');
+            }
+        }
+
+        function closeRelativeModal() {
+            document.getElementById('relativeModal').classList.remove('show');
+        }
+
+        loadStaff();
+    </script>
+</body>
+</html>

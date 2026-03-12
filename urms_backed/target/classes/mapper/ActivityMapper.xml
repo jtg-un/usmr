@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.ActivityDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.Activity">
+        <id column="activity_id" property="activityId"/>
+        <result column="title" property="title"/>
+        <result column="description" property="description"/>
+        <result column="type" property="type"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="vote_count" property="voteCount"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT * FROM activity ORDER BY start_time DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM activity WHERE activity_id = #{activityId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.Activity" useGeneratedKeys="true" keyProperty="activityId">
+        INSERT INTO activity (title, description, type, start_time, end_time, vote_count)
+        VALUES (#{title}, #{description}, #{type}, #{startTime}, #{endTime}, #{voteCount})
+    </insert>
+
+    <update id="updateVoteCount" parameterType="int">
+        UPDATE activity SET vote_count = vote_count + 1 WHERE activity_id = #{activityId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM activity WHERE activity_id = #{activityId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工资查询 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">大学退休教职工管理系统</div>
+        <div class="nav-links">
+            <a href="user-index.html">首页</a>
+            <a href="user-profile.html">个人信息</a>
+            <a href="user-notice.html">校园公告</a>
+            <a href="user-activity.html">活动报名</a>
+            <a href="user-salary.html" class="active">工资查询</a>
+            <a href="user-relative.html">亲属管理</a>
+        </div>
+        <div class="user-info" id="userInfo"></div>
+    </nav>
+
+    <div class="container" style="padding-top: 30px;">
+        <div class="card">
+            <div class="card-header">
+                <h3>工资记录</h3>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>月份</th>
+                        <th>基本工资</th>
+                        <th>补贴</th>
+                        <th>慰问金</th>
+                        <th>变动说明</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="salaryList"></tbody>
+            </table>
+        </div>
+
+        <div class="card" style="margin-top: 20px;">
+            <div class="card-header">
+                <h3>我的申诉记录</h3>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>月份</th>
+                        <th>申诉原因</th>
+                        <th>回复</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody id="appealList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 申诉模态框 -->
+    <div class="modal" id="appealModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>工资申诉</h3>
+                <span class="modal-close" onclick="closeAppealModal()">&times;</span>
+            </div>
+            <input type="hidden" id="appealSalaryId">
+            <div class="form-group">
+                <label>申诉原因 <span style="color: red;">*</span></label>
+                <textarea id="appealReason" style="width: 100%; height: 100px; resize: vertical;" required></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeAppealModal()">取消</button>
+                <button class="btn btn-primary" onclick="submitAppeal()">提交申诉</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/common.js"></script>
+    <script>
+        if (!checkLogin()) window.location.href = '../../login.html';
+
+        const userInfo = getUserInfo();
+        if (userInfo) {
+            document.getElementById('userInfo').innerHTML = `
+                <span>欢迎, ${userInfo.realName || userInfo.username}</span>
+                <span class="logout" onclick="logout()">退出</span>
+            `;
+        }
+
+        async function loadSalaries() {
+            const result = await get('/api/salary/my-records');
+            if (result.code === 200 && result.data) {
+                const tbody = document.getElementById('salaryList');
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #909399;">暂无工资记录</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = result.data.map(item => `
+                    <tr>
+                        <td>${item.yearMonth}</td>
+                        <td>${formatMoney(item.baseSalary)}</td>
+                        <td>${formatMoney(item.subsidy)}</td>
+                        <td>${formatMoney(item.condolenceFee)}</td>
+                        <td>${item.changeReason || '-'}</td>
+                        <td>
+                            <button class="btn btn-warning btn-small" onclick="showAppealModal(${item.salaryId})">申诉</button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        async function loadAppeals() {
+            const result = await get('/api/salary/my-appeals');
+            if (result.code === 200 && result.data) {
+                const tbody = document.getElementById('appealList');
+                if (result.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #909399;">暂无申诉记录</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = result.data.map(item => `
+                    <tr>
+                        <td>${item.yearMonth}</td>
+                        <td>${item.reason}</td>
+                        <td>${item.reply || '-'}</td>
+                        <td>
+                            <span class="status-tag ${item.status === 0 ? 'pending' : 'success'}">${item.status === 0 ? '待处理' : '已回复'}</span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function showAppealModal(salaryId) {
+            document.getElementById('appealSalaryId').value = salaryId;
+            document.getElementById('appealModal').classList.add('show');
+        }
+
+        function closeAppealModal() {
+            document.getElementById('appealModal').classList.remove('show');
+            document.getElementById('appealReason').value = '';
+        }
+
+        async function submitAppeal() {
+            const salaryId = document.getElementById('appealSalaryId').value;
+            const reason = document.getElementById('appealReason').value.trim();
+
+            if (!reason) {
+                showMessage('请填写申诉原因', 'error');
+                return;
+            }
+
+            const result = await post('/api/salary/appeal', { salaryId: parseInt(salaryId), reason });
+            if (result.code === 200) {
+                showMessage('申诉已提交');
+                closeAppealModal();
+                loadAppeals();
+            } else {
+                showMessage(result.message || '提交失败', 'error');
+            }
+        }
+
+        loadSalaries();
+        loadAppeals();
+    </script>
+</body>
+</html>

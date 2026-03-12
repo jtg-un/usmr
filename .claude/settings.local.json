@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd.exe /c \"taskkill /F /PID 8988\")",
+      "Bash(powershell -Command \"Stop-Process -Id 8988 -Force\")",
+      "Bash(tasklist | grep -i java || echo \"No Java process running\")",
+      "Bash(netstat -ano | grep \":8080\")",
+      "Bash(curl -v \"http://localhost:8080/urms/login.html\" 2>&1)",
+      "Bash(cd \"D:/Administrator/Desktop/urms/urms/urms_backed\" && mvn clean package -q)",
+      "Read(//e/IT/apache-tomcat-9.0.98/bin/**)",
+      "Bash(./shutdown.bat)",
+      "Bash(sleep 2 && rm -rf \"E:/IT/apache-tomcat-9.0.98/webapps/urms\" && cp \"D:/Administrator/Desktop/urms/urms/urms_backed/target/urms.war\" \"E:/IT/apache-tomcat-9.0.98/webapps/\")",
+      "Bash(cd \"E:/IT/apache-tomcat-9.0.98/bin\" && ./startup.bat)",
+      "Bash(sleep 8 && curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost:8080/urms/login.html\")",
+      "Bash(curl -s \"http://localhost:8080/urms/\" | head -10)",
+      "Bash(curl -s -X POST \"http://localhost:8080/urms/auth/login\" -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin\"}')",
+      "Bash(curl -s -X POST \"http://localhost:8080/urms/auth/login\" -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"admin\"}' --connect-timeout 10 --max-time 15)",
+      "Bash(powershell -Command \"Get-Service -Name '*mysql*' | Select-Object Name,Status\")",
+      "Bash(mysql -uroot -p123456 -e \"SHOW DATABASES LIKE 'urms_db';\" 2>/dev/null)",
+      "Bash(where mysql:*)",
+      "Bash(ls -la \"D:\\\\Administrator\\\\Desktop\\\\urms\\\\urms\\\\urms_fronted\" 2>/dev/null || dir \"D:\\\\Administrator\\\\Desktop\\\\urms\\\\urms\\\\urms_fronted\")",
+      "Bash(mkdir -p \"D:/upload\")",
+      "Read(//d//**)",
+      "Bash(cd \"D:\\\\Administrator\\\\Desktop\\\\urms\\\\urms\\\\urms_backed\" && mvn compile 2>&1 | head -100)",
+      "Bash(cd \"D:/Administrator/Desktop/urms/urms/urms_backed\" && mvn compile 2>&1)"
+    ]
+  }
+}

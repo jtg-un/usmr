@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.SalaryAppealDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.SalaryAppeal">
+        <id column="appeal_id" property="appealId"/>
+        <result column="salary_id" property="salaryId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="reason" property="reason"/>
+        <result column="reply" property="reply"/>
+        <result column="status" property="status"/>
+        <result column="staff_name" property="staffName"/>
+        <result column="year_month" property="yearMonth"/>
+    </resultMap>
+
+    <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
+        SELECT a.*, r.real_name as staff_name, s.year_month
+        FROM salary_appeal a
+        LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
+        LEFT JOIN salary_record s ON a.salary_id = s.salary_id
+        WHERE a.staff_id = #{staffId}
+        ORDER BY a.appeal_id DESC
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT a.*, r.real_name as staff_name, s.year_month
+        FROM salary_appeal a
+        LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
+        LEFT JOIN salary_record s ON a.salary_id = s.salary_id
+        ORDER BY a.appeal_id DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT a.*, r.real_name as staff_name, s.year_month
+        FROM salary_appeal a
+        LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
+        LEFT JOIN salary_record s ON a.salary_id = s.salary_id
+        WHERE a.appeal_id = #{appealId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.SalaryAppeal" useGeneratedKeys="true" keyProperty="appealId">
+        INSERT INTO salary_appeal (salary_id, staff_id, reason, reply, status)
+        VALUES (#{salaryId}, #{staffId}, #{reason}, #{reply}, #{status})
+    </insert>
+
+    <update id="update" parameterType="com.urms.entity.SalaryAppeal">
+        UPDATE salary_appeal
+        <set>
+            <if test="reply != null">reply = #{reply},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        WHERE appeal_id = #{appealId}
+    </update>
+
+</mapper>

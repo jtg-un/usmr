@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.RetiredStaffDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.RetiredStaff">
+        <id column="staff_id" property="staffId"/>
+        <result column="real_name" property="realName"/>
+        <result column="photo" property="photo"/>
+        <result column="gender" property="gender"/>
+        <result column="id_card" property="idCard"/>
+        <result column="age" property="age"/>
+        <result column="nation" property="nation"/>
+        <result column="education" property="education"/>
+        <result column="native_place" property="nativePlace"/>
+        <result column="work_start_date" property="workStartDate"/>
+        <result column="retire_date" property="retireDate"/>
+        <result column="former_dept" property="formerDept"/>
+        <result column="job_title" property="jobTitle"/>
+    </resultMap>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM retired_staff WHERE staff_id = #{staffId}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT * FROM retired_staff ORDER BY staff_id DESC
+    </select>
+
+    <select id="search" parameterType="map" resultMap="BaseResultMap">
+        SELECT DISTINCT rs.* FROM retired_staff rs
+        <if test="childName != null and childName != ''">
+            LEFT JOIN staff_relative sr ON rs.staff_id = sr.staff_id
+        </if>
+        <where>
+            <if test="realName != null and realName != ''">
+                AND rs.real_name LIKE CONCAT('%', #{realName}, '%')
+            </if>
+            <if test="formerDept != null and formerDept != ''">
+                AND rs.former_dept LIKE CONCAT('%', #{formerDept}, '%')
+            </if>
+            <if test="jobTitle != null and jobTitle != ''">
+                AND rs.job_title LIKE CONCAT('%', #{jobTitle}, '%')
+            </if>
+            <if test="ageMin != null">
+                AND rs.age >= #{ageMin}
+            </if>
+            <if test="ageMax != null">
+                AND rs.age &lt;= #{ageMax}
+            </if>
+            <if test="retireDateStart != null and retireDateStart != ''">
+                AND rs.retire_date >= #{retireDateStart}
+            </if>
+            <if test="retireDateEnd != null and retireDateEnd != ''">
+                AND rs.retire_date &lt;= #{retireDateEnd}
+            </if>
+            <if test="childName != null and childName != ''">
+                AND sr.name LIKE CONCAT('%', #{childName}, '%')
+                AND sr.relation_type IN ('儿子', '女儿', '子女')
+            </if>
+        </where>
+        ORDER BY rs.staff_id DESC
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.RetiredStaff">
+        INSERT INTO retired_staff (staff_id, real_name, photo, gender, id_card, age, nation, education, native_place, work_start_date, retire_date, former_dept, job_title)
+        VALUES (#{staffId}, #{realName}, #{photo}, #{gender}, #{idCard}, #{age}, #{nation}, #{education}, #{nativePlace}, #{workStartDate}, #{retireDate}, #{formerDept}, #{jobTitle})
+    </insert>
+
+    <update id="update" parameterType="com.urms.entity.RetiredStaff">
+        UPDATE retired_staff
+        <set>
+            <if test="realName != null">real_name = #{realName},</if>
+            <if test="photo != null and photo != ''">photo = #{photo},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="nation != null">nation = #{nation},</if>
+            <if test="education != null">education = #{education},</if>
+            <if test="nativePlace != null">native_place = #{nativePlace},</if>
+            <if test="workStartDate != null">work_start_date = #{workStartDate},</if>
+            <if test="retireDate != null">retire_date = #{retireDate},</if>
+            <if test="formerDept != null">former_dept = #{formerDept},</if>
+            <if test="jobTitle != null">job_title = #{jobTitle},</if>
+        </set>
+        WHERE staff_id = #{staffId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM retired_staff WHERE staff_id = #{staffId}
+    </delete>
+
+</mapper>

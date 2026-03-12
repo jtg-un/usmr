@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.CommentMessageDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.CommentMessage">
+        <id column="cm_id" property="cmId"/>
+        <result column="user_id" property="userId"/>
+        <result column="target_id" property="targetId"/>
+        <result column="target_type" property="targetType"/>
+        <result column="content" property="content"/>
+        <result column="create_time" property="createTime"/>
+        <result column="user_name" property="userName"/>
+    </resultMap>
+
+    <select id="findByTargetId" parameterType="map" resultMap="BaseResultMap">
+        SELECT c.*, u.username as user_name
+        FROM comment_message c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        WHERE c.target_id = #{targetId} AND c.target_type = #{targetType}
+        ORDER BY c.create_time DESC
+    </select>
+
+    <select id="findById" parameterType="int" resultMap="BaseResultMap">
+        SELECT c.*, u.username as user_name
+        FROM comment_message c
+        LEFT JOIN sys_user u ON c.user_id = u.user_id
+        WHERE c.cm_id = #{cmId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.CommentMessage" useGeneratedKeys="true" keyProperty="cmId">
+        INSERT INTO comment_message (user_id, target_id, target_type, content, create_time)
+        VALUES (#{userId}, #{targetId}, #{targetType}, #{content}, NOW())
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM comment_message WHERE cm_id = #{cmId}
+    </delete>
+
+    <delete id="deleteByTargetId" parameterType="map">
+        DELETE FROM comment_message WHERE target_id = #{targetId} AND target_type = #{targetType}
+    </delete>
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.ActivityRegistrationDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.ActivityRegistration">
+        <id column="reg_id" property="regId"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="reg_time" property="regTime"/>
+        <result column="group_name" property="groupName"/>
+        <result column="activity_title" property="activityTitle"/>
+        <result column="staff_name" property="staffName"/>
+    </resultMap>
+
+    <select id="findByActivityId" parameterType="int" resultMap="BaseResultMap">
+        SELECT r.*, a.title as activity_title, s.real_name as staff_name
+        FROM activity_registration r
+        LEFT JOIN activity a ON r.activity_id = a.activity_id
+        LEFT JOIN retired_staff s ON r.staff_id = s.staff_id
+        WHERE r.activity_id = #{activityId}
+        ORDER BY r.reg_time DESC
+    </select>
+
+    <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
+        SELECT r.*, a.title as activity_title, s.real_name as staff_name
+        FROM activity_registration r
+        LEFT JOIN activity a ON r.activity_id = a.activity_id
+        LEFT JOIN retired_staff s ON r.staff_id = s.staff_id
+        WHERE r.staff_id = #{staffId}
+        ORDER BY r.reg_time DESC
+    </select>
+
+    <select id="checkRegistered" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM activity_registration
+        WHERE activity_id = #{activityId} AND staff_id = #{staffId}
+    </select>
+
+    <insert id="insert" parameterType="com.urms.entity.ActivityRegistration" useGeneratedKeys="true" keyProperty="regId">
+        INSERT INTO activity_registration (activity_id, staff_id, reg_time, group_name)
+        VALUES (#{activityId}, #{staffId}, NOW(), #{groupName})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM activity_registration WHERE reg_id = #{regId}
+    </delete>
+
+    <delete id="deleteByActivityId" parameterType="int">
+        DELETE FROM activity_registration WHERE activity_id = #{activityId}
+    </delete>
+
+</mapper>
