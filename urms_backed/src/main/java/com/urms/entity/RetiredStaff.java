@@ -1,7 +1,10 @@
 package com.urms.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 退休人员信息实体类
@@ -18,8 +21,13 @@ public class RetiredStaff implements Serializable {
     private String nation;
     private String education;
     private String nativePlace;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate workStartDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate retireDate;
+
     private String formerDept;
     private String jobTitle;
 
@@ -105,12 +113,32 @@ public class RetiredStaff implements Serializable {
         this.workStartDate = workStartDate;
     }
 
+    public void setWorkStartDateStr(String workStartDate) {
+        if (workStartDate != null && !workStartDate.isEmpty()) {
+            try {
+                this.workStartDate = LocalDate.parse(workStartDate);
+            } catch (Exception e) {
+                // ignore parse error
+            }
+        }
+    }
+
     public LocalDate getRetireDate() {
         return retireDate;
     }
 
     public void setRetireDate(LocalDate retireDate) {
         this.retireDate = retireDate;
+    }
+
+    public void setRetireDateStr(String retireDate) {
+        if (retireDate != null && !retireDate.isEmpty()) {
+            try {
+                this.retireDate = LocalDate.parse(retireDate);
+            } catch (Exception e) {
+                // ignore parse error
+            }
+        }
     }
 
     public String getFormerDept() {

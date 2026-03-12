@@ -27,19 +27,38 @@
     </select>
 
     <select id="search" parameterType="map" resultMap="BaseResultMap">
-        SELECT * FROM retired_staff
+        SELECT DISTINCT rs.* FROM retired_staff rs
+        <if test="childName != null and childName != ''">
+            LEFT JOIN staff_relative sr ON rs.staff_id = sr.staff_id
+        </if>
         <where>
             <if test="realName != null and realName != ''">
-                AND real_name LIKE CONCAT('%', #{realName}, '%')
+                AND rs.real_name LIKE CONCAT('%', #{realName}, '%')
             </if>
             <if test="formerDept != null and formerDept != ''">
-                AND former_dept LIKE CONCAT('%', #{formerDept}, '%')
+                AND rs.former_dept LIKE CONCAT('%', #{formerDept}, '%')
             </if>
             <if test="jobTitle != null and jobTitle != ''">
-                AND job_title LIKE CONCAT('%', #{jobTitle}, '%')
+                AND rs.job_title LIKE CONCAT('%', #{jobTitle}, '%')
+            </if>
+            <if test="ageMin != null">
+                AND rs.age >= #{ageMin}
+            </if>
+            <if test="ageMax != null">
+                AND rs.age &lt;= #{ageMax}
+            </if>
+            <if test="retireDateStart != null and retireDateStart != ''">
+                AND rs.retire_date >= #{retireDateStart}
+            </if>
+            <if test="retireDateEnd != null and retireDateEnd != ''">
+                AND rs.retire_date &lt;= #{retireDateEnd}
+            </if>
+            <if test="childName != null and childName != ''">
+                AND sr.name LIKE CONCAT('%', #{childName}, '%')
+                AND sr.relation_type IN ('儿子', '女儿', '子女')
             </if>
         </where>
-        ORDER BY staff_id DESC
+        ORDER BY rs.staff_id DESC
     </select>
 
     <insert id="insert" parameterType="com.urms.entity.RetiredStaff">

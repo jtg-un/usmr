@@ -75,4 +75,19 @@ public class SysUserServiceImpl implements SysUserService {
         sysUserDao.updatePassword(userId, newPassword.trim());
         return Result.success("密码修改成功");
     }
+
+    @Override
+    public boolean checkUsernameExists(String username) {
+        return sysUserDao.checkUsernameExists(username) > 0;
+    }
+
+    @Override
+    public int insert(SysUser user) {
+        return sysUserDao.insert(user);
+    }
+
+    @Override
+    public int delete(Integer userId) {
+        return sysUserDao.delete(userId);
+    }
 }

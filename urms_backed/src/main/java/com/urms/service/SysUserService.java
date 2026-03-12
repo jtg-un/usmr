@@ -22,4 +22,19 @@ public interface SysUserService {
      * 修改密码
      */
     Result updatePassword(Integer userId, String oldPassword, String newPassword);
+
+    /**
+     * 检查用户名是否存在
+     */
+    boolean checkUsernameExists(String username);
+
+    /**
+     * 新增用户
+     */
+    int insert(SysUser user);
+
+    /**
+     * 删除用户
+     */
+    int delete(Integer userId);
 }

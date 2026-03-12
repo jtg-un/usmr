@@ -42,4 +42,9 @@ public class RetiredStaffServiceImpl implements RetiredStaffService {
             return retiredStaffDao.update(staff);
         }
     }
+
+    @Override
+    public int delete(Integer staffId) {
+        return retiredStaffDao.delete(staffId);
+    }
 }

@@ -1,7 +1,9 @@
 package com.urms.controller;
 
 import com.urms.entity.RetiredStaff;
+import com.urms.entity.SysUser;
 import com.urms.service.RetiredStaffService;
+import com.urms.service.SysUserService;
 import com.urms.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,9 @@ public class RetiredStaffController {
 
     @Autowired
     private RetiredStaffService retiredStaffService;
+
+    @Autowired
+    private SysUserService sysUserService;
 
     /**
      * 获取个人信息
@@ -145,7 +149,12 @@ public class RetiredStaffController {
     public Result searchStaff(HttpServletRequest request,
                               @RequestParam(required = false) String realName,
                               @RequestParam(required = false) String formerDept,
-                              @RequestParam(required = false) String jobTitle) {
+                              @RequestParam(required = false) String jobTitle,
+                              @RequestParam(required = false) Integer ageMin,
+                              @RequestParam(required = false) Integer ageMax,
+                              @RequestParam(required = false) String retireDateStart,
+                              @RequestParam(required = false) String retireDateEnd,
+                              @RequestParam(required = false) String childName) {
         Integer role = (Integer) request.getAttribute("role");
         if (role != 2) {
             return Result.error("无权限");
@@ -161,9 +170,132 @@ public class RetiredStaffController {
         if (jobTitle != null && !jobTitle.isEmpty()) {
             params.put("jobTitle", jobTitle);
         }
+        if (ageMin != null) {
+            params.put("ageMin", ageMin);
+        }
+        if (ageMax != null) {
+            params.put("ageMax", ageMax);
+        }
+        if (retireDateStart != null && !retireDateStart.isEmpty()) {
+            params.put("retireDateStart", retireDateStart);
+        }
+        if (retireDateEnd != null && !retireDateEnd.isEmpty()) {
+            params.put("retireDateEnd", retireDateEnd);
+        }
+        if (childName != null && !childName.isEmpty()) {
+            params.put("childName", childName);
+        }
 
         List<RetiredStaff> list = retiredStaffService.search(params);
         return Result.success(list);
+    }
+
+    /**
+     * 新增退休人员（管理员）
+     */
+    @PostMapping("/staff/add")
+    public Result addStaff(HttpServletRequest request, @RequestBody Map<String, Object> params) {
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 2) {
+            return Result.error("无权限");
+        }
+
+        String username = (String) params.get("username");
+        String password = (String) params.get("password");
+        String realName = (String) params.get("realName");
+
+        // 验证必填项
+        if (username == null || username.trim().isEmpty()) {
+            return Result.error("用户名不能为空");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            return Result.error("密码不能为空");
+        }
+        if (realName == null || realName.trim().isEmpty()) {
+            return Result.error("姓名不能为空");
+        }
+
+        // 检查用户名是否已存在
+        if (sysUserService.checkUsernameExists(username.trim())) {
+            return Result.error("用户名已存在");
+        }
+
+        // 创建用户账号
+        SysUser user = new SysUser();
+        user.setUsername(username.trim());
+        user.setPassword(password.trim());
+        user.setRole(1); // 退休人员角色
+        sysUserService.insert(user);
+
+        // 创建退休人员信息
+        RetiredStaff staff = new RetiredStaff();
+        staff.setStaffId(user.getUserId());
+        staff.setRealName(realName.trim());
+        staff.setGender((String) params.get("gender"));
+        staff.setIdCard((String) params.get("idCard"));
+        if (params.get("age") != null && !params.get("age").toString().isEmpty()) {
+            staff.setAge(Integer.parseInt(params.get("age").toString()));
+        }
+        staff.setNation((String) params.get("nation"));
+        staff.setEducation((String) params.get("education"));
+        staff.setNativePlace((String) params.get("nativePlace"));
+        // 处理日期
+        String workStartDateStr = (String) params.get("workStartDate");
+        if (workStartDateStr != null && !workStartDateStr.isEmpty()) {
+            staff.setWorkStartDateStr(workStartDateStr);
+        }
+        String retireDateStr = (String) params.get("retireDate");
+        if (retireDateStr != null && !retireDateStr.isEmpty()) {
+            staff.setRetireDateStr(retireDateStr);
+        }
+        staff.setFormerDept((String) params.get("formerDept"));
+        staff.setJobTitle((String) params.get("jobTitle"));
+        staff.setPhoto((String) params.get("photo"));
+
+        int result = retiredStaffService.save(staff);
+        if (result > 0) {
+            return Result.success("添加成功");
+        }
+        return Result.error("添加失败");
+    }
+
+    /**
+     * 编辑退休人员（管理员）
+     */
+    @PostMapping("/staff/update")
+    public Result updateStaff(HttpServletRequest request, @RequestBody RetiredStaff staff) {
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 2) {
+            return Result.error("无权限");
+        }
+
+        if (staff.getStaffId() == null) {
+            return Result.error("人员ID不能为空");
+        }
+
+        int result = retiredStaffService.save(staff);
+        if (result > 0) {
+            return Result.success("更新成功");
+        }
+        return Result.error("更新失败");
+    }
+
+    /**
+     * 删除退休人员（管理员）
+     */
+    @DeleteMapping("/staff/{staffId}")
+    public Result deleteStaff(HttpServletRequest request, @PathVariable Integer staffId) {
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 2) {
+            return Result.error("无权限");
+        }
+
+        // 删除退休人员信息
+        retiredStaffService.delete(staffId);
+        // 删除用户账号
+        sysUserService.delete(staffId);
+
+        return Result.success("删除成功");
     }
 
     /**

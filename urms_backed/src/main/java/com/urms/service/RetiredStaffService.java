@@ -28,4 +28,9 @@ public interface RetiredStaffService {
      * 新增或更新（登记/修改个人信息）
      */
     int save(RetiredStaff staff);
+
+    /**
+     * 删除
+     */
+    int delete(Integer staffId);
 }

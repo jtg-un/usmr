@@ -51,4 +51,12 @@
         UPDATE sys_user SET password = #{password} WHERE user_id = #{userId}
     </update>
 
+    <delete id="delete" parameterType="int">
+        DELETE FROM sys_user WHERE user_id = #{userId}
+    </delete>
+
+    <select id="checkUsernameExists" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM sys_user WHERE username = #{username}
+    </select>
+
 </mapper>
