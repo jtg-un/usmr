@@ -38,6 +38,14 @@
         WHERE a.appeal_id = #{appealId}
     </select>
 
+    <select id="findBySalaryId" resultMap="BaseResultMap">
+        SELECT a.*, r.real_name as staff_name, s.year_month
+        FROM salary_appeal a
+        LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
+        LEFT JOIN salary_record s ON a.salary_id = s.salary_id
+        WHERE a.salary_id = #{salaryId} AND a.staff_id = #{staffId}
+    </select>
+
     <insert id="insert" parameterType="com.urms.entity.SalaryAppeal" useGeneratedKeys="true" keyProperty="appealId">
         INSERT INTO salary_appeal (salary_id, staff_id, reason, reply, status)
         VALUES (#{salaryId}, #{staffId}, #{reason}, #{reply}, #{status})
@@ -51,5 +59,9 @@
         </set>
         WHERE appeal_id = #{appealId}
     </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM salary_appeal WHERE appeal_id = #{appealId}
+    </delete>
 
 </mapper>

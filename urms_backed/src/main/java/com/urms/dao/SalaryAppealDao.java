@@ -2,6 +2,7 @@ package com.urms.dao;
 
 import com.urms.entity.SalaryAppeal;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
@@ -14,6 +15,11 @@ public interface SalaryAppealDao {
      * 根据员工ID查询申诉
      */
     List<SalaryAppeal> findByStaffId(Integer staffId);
+
+    /**
+     * 根据工资记录ID查询申诉
+     */
+    SalaryAppeal findBySalaryId(@Param("salaryId") Integer salaryId, @Param("staffId") Integer staffId);
 
     /**
      * 查询所有申诉
@@ -34,4 +40,9 @@ public interface SalaryAppealDao {
      * 更新申诉
      */
     int update(SalaryAppeal appeal);
+
+    /**
+     * 删除申诉
+     */
+    int delete(Integer appealId);
 }

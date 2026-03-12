@@ -64,6 +64,12 @@ public class SalaryController {
             return Result.error("只有退休人员可以提交申诉");
         }
 
+        // 检查是否已申诉
+        SalaryAppeal existing = salaryAppealService.findBySalaryId(appeal.getSalaryId(), userId);
+        if (existing != null) {
+            return Result.error("该工资记录已提交过申诉，不能重复申诉");
+        }
+
         appeal.setStaffId(userId);
         appeal.setStatus(0);
 
@@ -72,6 +78,39 @@ public class SalaryController {
             return Result.success("申诉已提交");
         }
         return Result.error("提交失败");
+    }
+
+    /**
+     * 取消申诉
+     */
+    @DeleteMapping("/appeal/{appealId}")
+    public Result cancelAppeal(HttpServletRequest request, @PathVariable Integer appealId) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 1) {
+            return Result.error("只有退休人员可以取消申诉");
+        }
+
+        int result = salaryAppealService.cancel(appealId, userId);
+        if (result > 0) {
+            return Result.success("申诉已取消");
+        }
+        return Result.error("取消失败，申诉不存在或已处理");
+    }
+
+    /**
+     * 检查是否已申诉
+     */
+    @GetMapping("/appeal/check/{salaryId}")
+    public Result checkAppeal(HttpServletRequest request, @PathVariable Integer salaryId) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 1) {
+            return Result.error("无权限");
+        }
+
+        SalaryAppeal appeal = salaryAppealService.findBySalaryId(salaryId, userId);
+        return Result.success(appeal);
     }
 
     /**

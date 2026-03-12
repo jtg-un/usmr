@@ -16,6 +16,7 @@
             <a href="user-activity.html">活动报名</a>
             <a href="user-salary.html" class="active">工资查询</a>
             <a href="user-relative.html">亲属管理</a>
+            <a href="user-message.html">站内留言</a>
         </div>
         <div class="user-info" id="userInfo"></div>
     </nav>
@@ -33,6 +34,7 @@
                         <th>补贴</th>
                         <th>慰问金</th>
                         <th>变动说明</th>
+                        <th>申诉状态</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -51,6 +53,7 @@
                         <th>申诉原因</th>
                         <th>回复</th>
                         <th>状态</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="appealList"></tbody>
@@ -89,26 +92,53 @@
             `;
         }
 
+        // 存储申诉状态
+        let appealMap = {};
+
         async function loadSalaries() {
             const result = await get('/api/salary/my-records');
             if (result.code === 200 && result.data) {
                 const tbody = document.getElementById('salaryList');
                 if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #909399;">暂无工资记录</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #909399;">暂无工资记录</td></tr>';
                     return;
                 }
-                tbody.innerHTML = result.data.map(item => `
-                    <tr>
-                        <td>${item.yearMonth}</td>
-                        <td>${formatMoney(item.baseSalary)}</td>
-                        <td>${formatMoney(item.subsidy)}</td>
-                        <td>${formatMoney(item.condolenceFee)}</td>
-                        <td>${item.changeReason || '-'}</td>
-                        <td>
-                            <button class="btn btn-warning btn-small" onclick="showAppealModal(${item.salaryId})">申诉</button>
-                        </td>
-                    </tr>
-                `).join('');
+
+                // 检查每个工资记录的申诉状态
+                for (const item of result.data) {
+                    const appealResult = await get('/api/salary/appeal/check/' + item.salaryId);
+                    if (appealResult.code === 200 && appealResult.data) {
+                        appealMap[item.salaryId] = appealResult.data;
+                    }
+                }
+
+                tbody.innerHTML = result.data.map(item => {
+                    const appeal = appealMap[item.salaryId];
+                    let appealStatus = '-';
+                    let actionBtn = `<button class="btn btn-warning btn-small" onclick="showAppealModal(${item.salaryId})">申诉</button>`;
+
+                    if (appeal) {
+                        if (appeal.status === 0) {
+                            appealStatus = '<span class="status-tag pending">申诉中</span>';
+                            actionBtn = '<span style="color: #909399; font-size: 12px;">已申诉</span>';
+                        } else {
+                            appealStatus = '<span class="status-tag success">已回复</span>';
+                            actionBtn = '<span style="color: #909399; font-size: 12px;">已处理</span>';
+                        }
+                    }
+
+                    return `
+                        <tr>
+                            <td>${item.yearMonth}</td>
+                            <td>${formatMoney(item.baseSalary)}</td>
+                            <td>${formatMoney(item.subsidy)}</td>
+                            <td>${formatMoney(item.condolenceFee)}</td>
+                            <td>${item.changeReason || '-'}</td>
+                            <td>${appealStatus}</td>
+                            <td>${actionBtn}</td>
+                        </tr>
+                    `;
+                }).join('');
             }
         }
 
@@ -117,19 +147,27 @@
             if (result.code === 200 && result.data) {
                 const tbody = document.getElementById('appealList');
                 if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #909399;">暂无申诉记录</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #909399;">暂无申诉记录</td></tr>';
                     return;
                 }
-                tbody.innerHTML = result.data.map(item => `
-                    <tr>
-                        <td>${item.yearMonth}</td>
-                        <td>${item.reason}</td>
-                        <td>${item.reply || '-'}</td>
-                        <td>
-                            <span class="status-tag ${item.status === 0 ? 'pending' : 'success'}">${item.status === 0 ? '待处理' : '已回复'}</span>
-                        </td>
-                    </tr>
-                `).join('');
+                tbody.innerHTML = result.data.map(item => {
+                    let actionCol = '-';
+                    if (item.status === 0) {
+                        actionCol = `<button class="btn btn-danger btn-small" onclick="cancelAppeal(${item.appealId})">取消申诉</button>`;
+                    }
+
+                    return `
+                        <tr>
+                            <td>${item.yearMonth}</td>
+                            <td>${item.reason}</td>
+                            <td>${item.reply || '-'}</td>
+                            <td>
+                                <span class="status-tag ${item.status === 0 ? 'pending' : 'success'}">${item.status === 0 ? '待处理' : '已回复'}</span>
+                            </td>
+                            <td>${actionCol}</td>
+                        </tr>
+                    `;
+                }).join('');
             }
         }
 
@@ -156,9 +194,25 @@
             if (result.code === 200) {
                 showMessage('申诉已提交');
                 closeAppealModal();
+                appealMap = {}; // 清空缓存
+                loadSalaries();
                 loadAppeals();
             } else {
                 showMessage(result.message || '提交失败', 'error');
+            }
+        }
+
+        async function cancelAppeal(appealId) {
+            if (!confirm('确定要取消此申诉吗？')) return;
+
+            const result = await del('/api/salary/appeal/' + appealId);
+            if (result.code === 200) {
+                showMessage('申诉已取消');
+                appealMap = {}; // 清空缓存
+                loadSalaries();
+                loadAppeals();
+            } else {
+                showMessage(result.message || '取消失败', 'error');
             }
         }
 

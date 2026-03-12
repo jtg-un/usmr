@@ -14,6 +14,11 @@ public interface SalaryAppealService {
     List<SalaryAppeal> findByStaffId(Integer staffId);
 
     /**
+     * 根据工资记录ID查询申诉
+     */
+    SalaryAppeal findBySalaryId(Integer salaryId, Integer staffId);
+
+    /**
      * 查询所有申诉
      */
     List<SalaryAppeal> findAll();
@@ -27,6 +32,11 @@ public interface SalaryAppealService {
      * 提交申诉
      */
     int submit(SalaryAppeal appeal);
+
+    /**
+     * 取消申诉
+     */
+    int cancel(Integer appealId, Integer staffId);
 
     /**
      * 回复申诉

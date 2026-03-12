@@ -16,6 +16,7 @@
             <a href="user-activity.html">活动报名</a>
             <a href="user-salary.html">工资查询</a>
             <a href="user-relative.html" class="active">亲属管理</a>
+            <a href="user-message.html">站内留言</a>
         </div>
         <div class="user-info" id="userInfo"></div>
     </nav>
@@ -32,8 +33,11 @@
                         <th>关系</th>
                         <th>姓名</th>
                         <th>住址</th>
+                        <th>居住面积</th>
                         <th>电话</th>
+                        <th>邮箱</th>
                         <th>工作单位</th>
+                        <th>QQ/微信</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -112,16 +116,19 @@
             if (result.code === 200 && result.data) {
                 const tbody = document.getElementById('relativeList');
                 if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #909399;">暂无亲属信息</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #909399;">暂无亲属信息</td></tr>';
                     return;
                 }
                 tbody.innerHTML = result.data.map(item => `
                     <tr>
-                        <td>${item.relationType}</td>
-                        <td>${item.name}</td>
+                        <td>${item.relationType || '-'}</td>
+                        <td>${item.name || '-'}</td>
                         <td>${item.address || '-'}</td>
+                        <td>${item.livingArea ? item.livingArea + '㎡' : '-'}</td>
                         <td>${item.phone || '-'}</td>
+                        <td>${item.email || '-'}</td>
                         <td>${item.workplace || '-'}</td>
+                        <td>${item.qqWechat || '-'}</td>
                         <td>
                             <button class="btn btn-primary btn-small" onclick="editRelative(${item.relativeId})">编辑</button>
                             <button class="btn btn-danger btn-small" onclick="deleteRelative(${item.relativeId})">删除</button>

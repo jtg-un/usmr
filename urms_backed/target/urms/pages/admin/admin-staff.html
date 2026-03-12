@@ -207,7 +207,7 @@
 
     <!-- 亲属信息模态框 -->
     <div class="modal" id="relativeModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
                 <h3>亲属信息</h3>
                 <span class="modal-close" onclick="closeRelativeModal()">&times;</span>
@@ -218,8 +218,11 @@
                         <th>关系</th>
                         <th>姓名</th>
                         <th>住址</th>
+                        <th>居住面积</th>
                         <th>电话</th>
+                        <th>邮箱</th>
                         <th>工作单位</th>
+                        <th>QQ/微信</th>
                     </tr>
                 </thead>
                 <tbody id="relativeList"></tbody>
@@ -509,15 +512,18 @@
             if (result.code === 200) {
                 const tbody = document.getElementById('relativeList');
                 if (!result.data || result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #909399;">暂无亲属信息</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #909399;">暂无亲属信息</td></tr>';
                 } else {
                     tbody.innerHTML = result.data.map(item => `
                         <tr>
-                            <td>${item.relationType}</td>
-                            <td>${item.name}</td>
+                            <td>${item.relationType || '-'}</td>
+                            <td>${item.name || '-'}</td>
                             <td>${item.address || '-'}</td>
+                            <td>${item.livingArea ? item.livingArea + '㎡' : '-'}</td>
                             <td>${item.phone || '-'}</td>
+                            <td>${item.email || '-'}</td>
                             <td>${item.workplace || '-'}</td>
+                            <td>${item.qqWechat || '-'}</td>
                         </tr>
                     `).join('');
                 }

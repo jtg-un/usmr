@@ -22,6 +22,11 @@ public class SalaryAppealServiceImpl implements SalaryAppealService {
     }
 
     @Override
+    public SalaryAppeal findBySalaryId(Integer salaryId, Integer staffId) {
+        return salaryAppealDao.findBySalaryId(salaryId, staffId);
+    }
+
+    @Override
     public List<SalaryAppeal> findAll() {
         return salaryAppealDao.findAll();
     }
@@ -35,6 +40,23 @@ public class SalaryAppealServiceImpl implements SalaryAppealService {
     public int submit(SalaryAppeal appeal) {
         appeal.setStatus(0); // 待处理
         return salaryAppealDao.insert(appeal);
+    }
+
+    @Override
+    public int cancel(Integer appealId, Integer staffId) {
+        // 验证申诉是否属于当前用户
+        SalaryAppeal appeal = salaryAppealDao.findById(appealId);
+        if (appeal == null) {
+            return 0;
+        }
+        if (!appeal.getStaffId().equals(staffId)) {
+            return 0;
+        }
+        // 只能取消待处理的申诉
+        if (appeal.getStatus() != 0) {
+            return 0;
+        }
+        return salaryAppealDao.delete(appealId);
     }
 
     @Override
