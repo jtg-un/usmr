@@ -44,8 +44,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label>性别</label>
-                        <select id="gender" name="gender">
+                        <label>性别 <span style="color: red;">*</span></label>
+                        <select id="gender" name="gender" required>
                             <option value="">请选择</option>
                             <option value="男">男</option>
                             <option value="女">女</option>
@@ -53,23 +53,23 @@
                     </div>
 
                     <div class="form-group">
-                        <label>身份证号</label>
-                        <input type="text" id="idCard" name="idCard" maxlength="18">
+                        <label>身份证号 <span style="color: red;">*</span></label>
+                        <input type="text" id="idCard" name="idCard" maxlength="18" placeholder="18位身份证号" required>
                     </div>
 
                     <div class="form-group">
-                        <label>年龄</label>
-                        <input type="number" id="age" name="age" min="0" max="150">
+                        <label>年龄 <span style="color: red;">*</span></label>
+                        <input type="number" id="age" name="age" min="0" max="150" required>
                     </div>
 
                     <div class="form-group">
-                        <label>民族</label>
-                        <input type="text" id="nation" name="nation">
+                        <label>民族 <span style="color: red;">*</span></label>
+                        <input type="text" id="nation" name="nation" required>
                     </div>
 
                     <div class="form-group">
-                        <label>学历</label>
-                        <select id="education" name="education">
+                        <label>学历 <span style="color: red;">*</span></label>
+                        <select id="education" name="education" required>
                             <option value="">请选择</option>
                             <option value="小学">小学</option>
                             <option value="初中">初中</option>
@@ -83,28 +83,33 @@
                     </div>
 
                     <div class="form-group">
-                        <label>籍贯</label>
-                        <input type="text" id="nativePlace" name="nativePlace">
+                        <label>籍贯 <span style="color: red;">*</span></label>
+                        <input type="text" id="nativePlace" name="nativePlace" required>
                     </div>
 
                     <div class="form-group">
-                        <label>参加工作时间</label>
-                        <input type="date" id="workStartDate" name="workStartDate">
+                        <label>手机号 <span style="color: red;">*</span></label>
+                        <input type="text" id="phone" name="phone" maxlength="11" placeholder="11位手机号" required>
                     </div>
 
                     <div class="form-group">
-                        <label>退休时间</label>
-                        <input type="date" id="retireDate" name="retireDate">
+                        <label>参加工作时间 <span style="color: red;">*</span></label>
+                        <input type="date" id="workStartDate" name="workStartDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label>退休前所在单位</label>
-                        <input type="text" id="formerDept" name="formerDept">
+                        <label>退休时间 <span style="color: red;">*</span></label>
+                        <input type="date" id="retireDate" name="retireDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label>职称/职务</label>
-                        <input type="text" id="jobTitle" name="jobTitle">
+                        <label>退休前所在单位 <span style="color: red;">*</span></label>
+                        <input type="text" id="formerDept" name="formerDept" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>职称/职务 <span style="color: red;">*</span></label>
+                        <input type="text" id="jobTitle" name="jobTitle" required>
                     </div>
                 </div>
 
@@ -146,6 +151,7 @@
                 document.getElementById('nation').value = data.nation || '';
                 document.getElementById('education').value = data.education || '';
                 document.getElementById('nativePlace').value = data.nativePlace || '';
+                document.getElementById('phone').value = data.phone || '';
                 document.getElementById('workStartDate').value = data.workStartDate || '';
                 document.getElementById('retireDate').value = data.retireDate || '';
                 document.getElementById('formerDept').value = data.formerDept || '';
@@ -220,20 +226,34 @@
         document.getElementById('profileForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // 获取表单数据
             const data = {
-                realName: document.getElementById('realName').value,
+                realName: document.getElementById('realName').value.trim(),
                 gender: document.getElementById('gender').value,
-                idCard: document.getElementById('idCard').value,
+                idCard: document.getElementById('idCard').value.trim(),
                 age: document.getElementById('age').value ? parseInt(document.getElementById('age').value) : null,
-                nation: document.getElementById('nation').value,
+                nation: document.getElementById('nation').value.trim(),
                 education: document.getElementById('education').value,
-                nativePlace: document.getElementById('nativePlace').value,
+                nativePlace: document.getElementById('nativePlace').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
                 workStartDate: document.getElementById('workStartDate').value || null,
                 retireDate: document.getElementById('retireDate').value || null,
-                formerDept: document.getElementById('formerDept').value,
-                jobTitle: document.getElementById('jobTitle').value,
+                formerDept: document.getElementById('formerDept').value.trim(),
+                jobTitle: document.getElementById('jobTitle').value.trim(),
                 photo: currentPhotoPath || null
             };
+
+            // 验证身份证号格式（18位）
+            if (data.idCard && !/^\d{17}[\dXx]$/.test(data.idCard)) {
+                showMessage('请输入正确的18位身份证号', 'error');
+                return;
+            }
+
+            // 验证手机号格式（11位）
+            if (data.phone && !/^1[3-9]\d{9}$/.test(data.phone)) {
+                showMessage('请输入正确的11位手机号', 'error');
+                return;
+            }
 
             console.log('保存数据:', data);
 

@@ -16,6 +16,7 @@
         <result column="retire_date" property="retireDate"/>
         <result column="former_dept" property="formerDept"/>
         <result column="job_title" property="jobTitle"/>
+        <result column="phone" property="phone"/>
     </resultMap>
 
     <select id="findById" parameterType="int" resultMap="BaseResultMap">
@@ -62,8 +63,8 @@
     </select>
 
     <insert id="insert" parameterType="com.urms.entity.RetiredStaff">
-        INSERT INTO retired_staff (staff_id, real_name, photo, gender, id_card, age, nation, education, native_place, work_start_date, retire_date, former_dept, job_title)
-        VALUES (#{staffId}, #{realName}, #{photo}, #{gender}, #{idCard}, #{age}, #{nation}, #{education}, #{nativePlace}, #{workStartDate}, #{retireDate}, #{formerDept}, #{jobTitle})
+        INSERT INTO retired_staff (staff_id, real_name, photo, gender, id_card, age, nation, education, native_place, work_start_date, retire_date, former_dept, job_title, phone)
+        VALUES (#{staffId}, #{realName}, #{photo}, #{gender}, #{idCard}, #{age}, #{nation}, #{education}, #{nativePlace}, #{workStartDate}, #{retireDate}, #{formerDept}, #{jobTitle}, #{phone})
     </insert>
 
     <update id="update" parameterType="com.urms.entity.RetiredStaff">
@@ -81,6 +82,7 @@
             <if test="retireDate != null">retire_date = #{retireDate},</if>
             <if test="formerDept != null">former_dept = #{formerDept},</if>
             <if test="jobTitle != null">job_title = #{jobTitle},</if>
+            <if test="phone != null">phone = #{phone},</if>
         </set>
         WHERE staff_id = #{staffId}
     </update>

@@ -3,6 +3,7 @@ package com.urms.dao;
 import com.urms.entity.Activity;
 import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 活动DAO接口
@@ -34,4 +35,14 @@ public interface ActivityDao {
      * 删除活动
      */
     int delete(Integer activityId);
+
+    /**
+     * 获取活动的所有已有组名
+     */
+    List<String> findGroupNames(Integer activityId);
+
+    /**
+     * 获取活动的已有组名及人数
+     */
+    List<Map<String, Object>> findGroupsWithCount(Integer activityId);
 }

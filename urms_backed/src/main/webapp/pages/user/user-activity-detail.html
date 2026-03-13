@@ -5,6 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>活动详情 - 大学退休教职工管理系统</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .group-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        .group-suggestions.show {
+            display: block;
+        }
+        .group-suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .group-suggestion-item:hover {
+            background: #f5f7fa;
+        }
+        .form-group {
+            position: relative;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -33,8 +61,10 @@
                 <p><strong>结束时间:</strong> <span id="endTime"></span></p>
                 <p><strong>活动类型:</strong> <span id="type"></span></p>
                 <p><strong>当前投票数:</strong> <span id="voteCount"></span></p>
+
                 <div style="margin-top: 20px;">
                     <button class="btn btn-success" id="voteBtn" onclick="vote()">投票</button>
+                    <span id="votedText" style="color: #67c23a; display: none;">已投票</span>
                     <button class="btn btn-primary" id="registerBtn" onclick="showRegisterModal()">报名参加</button>
                     <span id="registeredText" style="color: #67c23a; display: none;">已报名</span>
                 </div>
@@ -62,8 +92,12 @@
                 <span class="modal-close" onclick="closeRegisterModal()">&times;</span>
             </div>
             <div class="form-group" id="groupNameDiv">
-                <label>组名（多人活动填写）</label>
-                <input type="text" id="groupName" placeholder="如: 大合唱组">
+                <label>组名 <span style="color: red;">*</span></label>
+                <div style="position: relative;">
+                    <input type="text" id="groupName" placeholder="选择已有组或输入新组名" autocomplete="off">
+                    <div class="group-suggestions" id="groupSuggestions"></div>
+                </div>
+                <small style="color: #909399;">多人活动需选择或输入组名，可选择已有小组或创建新小组</small>
             </div>
             <div class="modal-footer">
                 <button class="btn" onclick="closeRegisterModal()">取消</button>
@@ -86,6 +120,7 @@
 
         const activityId = getUrlParam('id');
         let currentActivity = null;
+        let groups = []; // 存储组信息（包含组名和人数）
 
         async function loadActivity() {
             const result = await get('/api/activity/' + activityId);
@@ -102,13 +137,46 @@
                     document.getElementById('registerBtn').style.display = 'none';
                     document.getElementById('registeredText').style.display = 'inline';
                 }
+
+                // 处理投票状态
+                if (result.data.hasVoted) {
+                    document.getElementById('voteBtn').style.display = 'none';
+                    document.getElementById('votedText').style.display = 'inline';
+                }
+
+                // 如果是多人活动，加载已有组信息
+                if (result.data.type === 2) {
+                    loadGroups();
+                } else {
+                    document.getElementById('groupNameDiv').style.display = 'none';
+                }
+            }
+        }
+
+        async function loadGroups() {
+            const result = await get('/api/activity/' + activityId + '/group-names');
+            if (result.code === 200 && result.data) {
+                groups = result.data;
+                // 更新提示信息
+                updateGroupHint();
+            }
+        }
+
+        function updateGroupHint() {
+            const hintSmall = document.querySelector('#groupNameDiv small');
+            if (groups.length === 0) {
+                hintSmall.innerHTML = '暂无已有小组，请输入新组名创建小组';
+                hintSmall.style.color = '#e6a23c';
+            } else {
+                hintSmall.innerHTML = '多人活动需选择或输入组名，可选择已有小组或创建新小组';
+                hintSmall.style.color = '#909399';
             }
         }
 
         async function vote() {
             const result = await post('/api/activity/' + activityId + '/vote');
             if (result.code === 200) {
-                showMessage('投票成功');
+                showMessage(result.message || '投票成功');
                 loadActivity();
             } else {
                 showMessage(result.message || '投票失败', 'error');
@@ -117,15 +185,73 @@
 
         function showRegisterModal() {
             document.getElementById('registerModal').classList.add('show');
+            document.getElementById('groupName').value = '';
         }
 
         function closeRegisterModal() {
             document.getElementById('registerModal').classList.remove('show');
             document.getElementById('groupName').value = '';
+            document.getElementById('groupSuggestions').classList.remove('show');
         }
+
+        // 组名输入自动补全
+        document.getElementById('groupName').addEventListener('input', function(e) {
+            const value = e.target.value.trim().toLowerCase();
+            const suggestionsDiv = document.getElementById('groupSuggestions');
+
+            if (value === '' || groups.length === 0) {
+                suggestionsDiv.classList.remove('show');
+                return;
+            }
+
+            const filtered = groups.filter(g =>
+                g.groupName.toLowerCase().includes(value)
+            );
+
+            if (filtered.length === 0) {
+                suggestionsDiv.classList.remove('show');
+                return;
+            }
+
+            suggestionsDiv.innerHTML = filtered.map(g =>
+                `<div class="group-suggestion-item" onclick="selectGroup('${g.groupName}')">${g.groupName} <span style="color: #909399; font-size: 12px;">(${g.memberCount}人)</span></div>`
+            ).join('');
+            suggestionsDiv.classList.add('show');
+        });
+
+        document.getElementById('groupName').addEventListener('focus', function(e) {
+            const value = e.target.value.trim();
+            if (value === '' && groups.length > 0) {
+                // 显示所有组名和人数
+                const suggestionsDiv = document.getElementById('groupSuggestions');
+                suggestionsDiv.innerHTML = groups.map(g =>
+                    `<div class="group-suggestion-item" onclick="selectGroup('${g.groupName}')">${g.groupName} <span style="color: #909399; font-size: 12px;">(${g.memberCount}人)</span></div>`
+                ).join('');
+                suggestionsDiv.classList.add('show');
+            }
+        });
+
+        function selectGroup(name) {
+            document.getElementById('groupName').value = name;
+            document.getElementById('groupSuggestions').classList.remove('show');
+        }
+
+        // 点击其他地方关闭建议列表
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#groupName') && !e.target.closest('#groupSuggestions')) {
+                document.getElementById('groupSuggestions').classList.remove('show');
+            }
+        });
 
         async function register() {
             const groupName = document.getElementById('groupName').value.trim();
+
+            // 多人活动时组名必填
+            if (currentActivity && currentActivity.type === 2 && !groupName) {
+                showMessage('多人活动请选择或输入组名', 'error');
+                return;
+            }
+
             const result = await post('/api/activity/' + activityId + '/register', { groupName });
             if (result.code === 200) {
                 showMessage('报名成功');

@@ -30,6 +30,7 @@ public class RetiredStaff implements Serializable {
 
     private String formerDept;
     private String jobTitle;
+    private String phone;  // 手机号
 
     public RetiredStaff() {}
 
@@ -155,5 +156,13 @@ public class RetiredStaff implements Serializable {
 
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

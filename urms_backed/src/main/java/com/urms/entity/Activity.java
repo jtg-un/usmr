@@ -16,11 +16,14 @@ public class Activity implements Serializable {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer voteCount;
+    private Integer voteLimit;  // 投票次数限制，默认10次
 
     // 用户是否已投票（非数据库字段）
     private Boolean hasVoted;
     // 用户是否已报名（非数据库字段）
     private Boolean hasRegistered;
+    // 用户今日已投票次数（非数据库字段）
+    private Integer todayVoteCount;
 
     public Activity() {}
 
@@ -94,5 +97,21 @@ public class Activity implements Serializable {
 
     public void setHasRegistered(Boolean hasRegistered) {
         this.hasRegistered = hasRegistered;
+    }
+
+    public Integer getVoteLimit() {
+        return voteLimit;
+    }
+
+    public void setVoteLimit(Integer voteLimit) {
+        this.voteLimit = voteLimit;
+    }
+
+    public Integer getTodayVoteCount() {
+        return todayVoteCount;
+    }
+
+    public void setTodayVoteCount(Integer todayVoteCount) {
+        this.todayVoteCount = todayVoteCount;
     }
 }

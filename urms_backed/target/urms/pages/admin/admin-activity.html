@@ -83,11 +83,12 @@
 
     <!-- 报名统计模态框 -->
     <div class="modal" id="statsModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
                 <h3>报名统计</h3>
                 <span class="modal-close" onclick="closeStatsModal()">&times;</span>
             </div>
+            <div id="groupStats" style="padding: 15px; background: #f5f7fa; border-radius: 4px; margin-bottom: 15px;"></div>
             <table class="table">
                 <thead>
                     <tr>
@@ -176,13 +177,37 @@
         }
 
         async function showStats(activityId) {
-            const result = await get('/api/activity/' + activityId + '/registrations');
-            if (result.code === 200 && result.data) {
+            // 获取报名列表
+            const regResult = await get('/api/activity/' + activityId + '/registrations');
+            // 获取组统计
+            const groupResult = await get('/api/activity/' + activityId + '/group-names');
+
+            if (regResult.code === 200 && regResult.data) {
                 const tbody = document.getElementById('registrationList');
-                if (result.data.length === 0) {
+                const groupStatsDiv = document.getElementById('groupStats');
+
+                // 显示组统计
+                if (groupResult.code === 200 && groupResult.data && groupResult.data.length > 0) {
+                    groupStatsDiv.innerHTML = `
+                        <h4 style="margin: 0 0 10px 0;">小组统计</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${groupResult.data.map(g => `
+                                <div style="background: white; padding: 8px 15px; border-radius: 4px; border: 1px solid #dcdfe6;">
+                                    <strong>${g.groupName}</strong>: ${g.memberCount}人
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    groupStatsDiv.style.display = 'block';
+                } else {
+                    groupStatsDiv.style.display = 'none';
+                }
+
+                // 显示报名列表
+                if (regResult.data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #909399;">暂无报名</td></tr>';
                 } else {
-                    tbody.innerHTML = result.data.map(item => `
+                    tbody.innerHTML = regResult.data.map(item => `
                         <tr>
                             <td>${item.staffName || '未知'}</td>
                             <td>${formatDateTime(item.regTime)}</td>

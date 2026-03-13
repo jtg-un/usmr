@@ -10,6 +10,7 @@
         <result column="start_time" property="startTime"/>
         <result column="end_time" property="endTime"/>
         <result column="vote_count" property="voteCount"/>
+        <result column="vote_limit" property="voteLimit"/>
     </resultMap>
 
     <select id="findAll" resultMap="BaseResultMap">
@@ -21,8 +22,8 @@
     </select>
 
     <insert id="insert" parameterType="com.urms.entity.Activity" useGeneratedKeys="true" keyProperty="activityId">
-        INSERT INTO activity (title, description, type, start_time, end_time, vote_count)
-        VALUES (#{title}, #{description}, #{type}, #{startTime}, #{endTime}, #{voteCount})
+        INSERT INTO activity (title, description, type, start_time, end_time, vote_count, vote_limit)
+        VALUES (#{title}, #{description}, #{type}, #{startTime}, #{endTime}, #{voteCount}, #{voteLimit})
     </insert>
 
     <update id="updateVoteCount" parameterType="int">
@@ -32,5 +33,17 @@
     <delete id="delete" parameterType="int">
         DELETE FROM activity WHERE activity_id = #{activityId}
     </delete>
+
+    <select id="findGroupNames" parameterType="int" resultType="string">
+        SELECT DISTINCT group_name FROM activity_registration
+        WHERE activity_id = #{activityId} AND group_name IS NOT NULL AND group_name != ''
+    </select>
+
+    <select id="findGroupsWithCount" parameterType="int" resultType="java.util.Map">
+        SELECT group_name as groupName, COUNT(*) as memberCount
+        FROM activity_registration
+        WHERE activity_id = #{activityId} AND group_name IS NOT NULL AND group_name != ''
+        GROUP BY group_name
+    </select>
 
 </mapper>

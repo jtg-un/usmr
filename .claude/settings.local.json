@@ -22,7 +22,8 @@
       "Bash(mkdir -p \"D:/upload\")",
       "Read(//d//**)",
       "Bash(cd \"D:\\\\Administrator\\\\Desktop\\\\urms\\\\urms\\\\urms_backed\" && mvn compile 2>&1 | head -100)",
-      "Bash(cd \"D:/Administrator/Desktop/urms/urms/urms_backed\" && mvn compile 2>&1)"
+      "Bash(cd \"D:/Administrator/Desktop/urms/urms/urms_backed\" && mvn compile 2>&1)",
+      "Bash(echo \"请在MySQL中执行以下命令检查表是否存在:\nSHOW TABLES LIKE 'vote_record';\n\n如果没有，请执行:\nCREATE TABLE IF NOT EXISTS vote_record \\(\n  vote_id int NOT NULL AUTO_INCREMENT,\n  activity_id int NOT NULL,\n  staff_id int NOT NULL,\n  vote_time datetime DEFAULT CURRENT_TIMESTAMP,\n  PRIMARY KEY \\(vote_id\\),\n  KEY idx_staff_activity \\(staff_id, activity_id\\)\n\\) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;\n\n-- 同时检查activity表是否有vote_limit字段\nSHOW COLUMNS FROM activity LIKE 'vote_limit';\n\n如果没有，执行:\nALTER TABLE activity ADD COLUMN vote_limit int DEFAULT 10;\")"
     ]
   }
 }

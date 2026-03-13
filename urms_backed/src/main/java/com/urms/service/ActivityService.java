@@ -31,14 +31,29 @@ public interface ActivityService {
     int delete(Integer activityId);
 
     /**
-     * 投票
+     * 投票（带限制）
      */
-    int vote(Integer activityId);
+    Map<String, Object> vote(Integer activityId, Integer staffId);
+
+    /**
+     * 检查投票权限
+     */
+    Map<String, Object> checkVotePermission(Integer staffId);
 
     /**
      * 报名
      */
     int register(Integer activityId, Integer staffId, String groupName);
+
+    /**
+     * 获取活动的已有组名列表
+     */
+    List<String> getGroupNames(Integer activityId);
+
+    /**
+     * 获取活动的已有组名及人数
+     */
+    List<Map<String, Object>> getGroupsWithCount(Integer activityId);
 
     /**
      * 查询活动报名列表
@@ -54,4 +69,9 @@ public interface ActivityService {
      * 取消报名
      */
     int cancelRegistration(Integer regId, Integer staffId);
+
+    /**
+     * 检查用户是否已对活动投票
+     */
+    boolean checkVoted(Integer activityId, Integer staffId);
 }

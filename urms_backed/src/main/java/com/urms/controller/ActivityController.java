@@ -50,14 +50,30 @@ public class ActivityController {
             return Result.error("活动不存在");
         }
 
-        // 检查用户是否已报名
+        // 检查用户是否已报名和已投票
         Integer userId = (Integer) request.getAttribute("userId");
         Integer role = (Integer) request.getAttribute("role");
         if (role == 1 && userId != null) {
             activity.setHasRegistered(activityService.checkRegistered(activityId, userId));
+            activity.setHasVoted(activityService.checkVoted(activityId, userId));
         }
 
         return Result.success(activity);
+    }
+
+    /**
+     * 检查投票权限
+     */
+    @GetMapping("/vote-permission")
+    public Result checkVotePermission(HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute("userId");
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 1) {
+            return Result.error("只有退休人员可以投票");
+        }
+
+        java.util.Map<String, Object> result = activityService.checkVotePermission(userId);
+        return Result.success(result);
     }
 
     /**
@@ -65,16 +81,27 @@ public class ActivityController {
      */
     @PostMapping("/{activityId}/vote")
     public Result vote(HttpServletRequest request, @PathVariable Integer activityId) {
+        Integer userId = (Integer) request.getAttribute("userId");
         Integer role = (Integer) request.getAttribute("role");
         if (role != 1) {
             return Result.error("只有退休人员可以投票");
         }
 
-        int result = activityService.vote(activityId);
-        if (result > 0) {
-            return Result.success("投票成功");
+        java.util.Map<String, Object> result = activityService.vote(activityId, userId);
+        if ((Boolean) result.get("success")) {
+            return Result.success((String) result.get("message"));
+        } else {
+            return Result.error((String) result.get("message"));
         }
-        return Result.error("投票失败");
+    }
+
+    /**
+     * 获取活动的已有组名及人数列表
+     */
+    @GetMapping("/{activityId}/group-names")
+    public Result getGroupNames(HttpServletRequest request, @PathVariable Integer activityId) {
+        List<java.util.Map<String, Object>> groups = activityService.getGroupsWithCount(activityId);
+        return Result.success(groups);
     }
 
     /**
