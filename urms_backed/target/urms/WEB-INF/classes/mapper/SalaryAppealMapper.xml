@@ -11,10 +11,11 @@
         <result column="status" property="status"/>
         <result column="staff_name" property="staffName"/>
         <result column="year_month" property="yearMonth"/>
+        <result column="change_reason" property="changeReason"/>
     </resultMap>
 
     <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
-        SELECT a.*, r.real_name as staff_name, s.year_month
+        SELECT a.*, r.real_name as staff_name, s.year_month, s.change_reason
         FROM salary_appeal a
         LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
         LEFT JOIN salary_record s ON a.salary_id = s.salary_id
@@ -23,7 +24,7 @@
     </select>
 
     <select id="findAll" resultMap="BaseResultMap">
-        SELECT a.*, r.real_name as staff_name, s.year_month
+        SELECT a.*, r.real_name as staff_name, s.year_month, s.change_reason
         FROM salary_appeal a
         LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
         LEFT JOIN salary_record s ON a.salary_id = s.salary_id
@@ -31,7 +32,7 @@
     </select>
 
     <select id="findById" parameterType="int" resultMap="BaseResultMap">
-        SELECT a.*, r.real_name as staff_name, s.year_month
+        SELECT a.*, r.real_name as staff_name, s.year_month, s.change_reason
         FROM salary_appeal a
         LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
         LEFT JOIN salary_record s ON a.salary_id = s.salary_id
@@ -39,7 +40,7 @@
     </select>
 
     <select id="findBySalaryId" resultMap="BaseResultMap">
-        SELECT a.*, r.real_name as staff_name, s.year_month
+        SELECT a.*, r.real_name as staff_name, s.year_month, s.change_reason
         FROM salary_appeal a
         LEFT JOIN retired_staff r ON a.staff_id = r.staff_id
         LEFT JOIN salary_record s ON a.salary_id = s.salary_id

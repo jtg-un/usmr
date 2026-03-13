@@ -27,6 +27,11 @@ public interface RetiredStaffDao {
     List<RetiredStaff> search(Map<String, Object> params);
 
     /**
+     * 快速搜索（姓名/身份证号/手机号）
+     */
+    List<RetiredStaff> quickSearch(Map<String, Object> params);
+
+    /**
      * 新增
      */
     int insert(RetiredStaff staff);

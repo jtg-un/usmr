@@ -18,6 +18,7 @@ public class SalaryAppeal implements Serializable {
     // 关联信息（非数据库字段）
     private String staffName;
     private String yearMonth;
+    private String changeReason;  // 工资变动说明
 
     public SalaryAppeal() {}
 
@@ -83,5 +84,13 @@ public class SalaryAppeal implements Serializable {
 
     public void setYearMonth(String yearMonth) {
         this.yearMonth = yearMonth;
+    }
+
+    public String getChangeReason() {
+        return changeReason;
+    }
+
+    public void setChangeReason(String changeReason) {
+        this.changeReason = changeReason;
     }
 }

@@ -154,7 +154,9 @@ public class RetiredStaffController {
                               @RequestParam(required = false) Integer ageMax,
                               @RequestParam(required = false) String retireDateStart,
                               @RequestParam(required = false) String retireDateEnd,
-                              @RequestParam(required = false) String childName) {
+                              @RequestParam(required = false) String childName,
+                              @RequestParam(required = false) String idCard,
+                              @RequestParam(required = false) String phone) {
         Integer role = (Integer) request.getAttribute("role");
         if (role != 2) {
             return Result.error("无权限");
@@ -185,8 +187,36 @@ public class RetiredStaffController {
         if (childName != null && !childName.isEmpty()) {
             params.put("childName", childName);
         }
+        if (idCard != null && !idCard.isEmpty()) {
+            params.put("idCard", idCard);
+        }
+        if (phone != null && !phone.isEmpty()) {
+            params.put("phone", phone);
+        }
 
         List<RetiredStaff> list = retiredStaffService.search(params);
+        return Result.success(list);
+    }
+
+    /**
+     * 快速搜索退休人员（用于工资记录选择员工）
+     */
+    @GetMapping("/staff/quickSearch")
+    public Result quickSearchStaff(HttpServletRequest request, @RequestParam(required = false) String keyword) {
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 2) {
+            return Result.error("无权限");
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // 按姓名、身份证号、手机号搜索
+            params.put("realName", keyword.trim());
+            params.put("idCard", keyword.trim());
+            params.put("phone", keyword.trim());
+        }
+
+        List<RetiredStaff> list = retiredStaffService.quickSearch(params);
         return Result.success(list);
     }
 

@@ -58,8 +58,27 @@
                 AND sr.name LIKE CONCAT('%', #{childName}, '%')
                 AND sr.relation_type IN ('儿子', '女儿', '子女')
             </if>
+            <if test="idCard != null and idCard != ''">
+                AND rs.id_card LIKE CONCAT('%', #{idCard}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND rs.phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
         </where>
         ORDER BY rs.staff_id DESC
+    </select>
+
+    <select id="quickSearch" parameterType="map" resultMap="BaseResultMap">
+        SELECT * FROM retired_staff
+        <where>
+            <if test="realName != null and realName != ''">
+                real_name LIKE CONCAT('%', #{realName}, '%')
+                OR id_card LIKE CONCAT('%', #{idCard}, '%')
+                OR phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+        </where>
+        ORDER BY staff_id DESC
+        LIMIT 20
     </select>
 
     <insert id="insert" parameterType="com.urms.entity.RetiredStaff">

@@ -36,6 +36,7 @@
                         <th>补贴</th>
                         <th>慰问金</th>
                         <th>变动说明</th>
+                        <th>状态</th>
                         <th>操作</th>
                     </tr>
                 </thead>
@@ -54,6 +55,8 @@
                         <th>员工</th>
                         <th>月份</th>
                         <th>申诉原因</th>
+                        <th>变动说明</th>
+                        <th>管理员回复</th>
                         <th>状态</th>
                         <th>操作</th>
                     </tr>
@@ -63,17 +66,38 @@
         </div>
     </div>
 
-    <!-- 添加工资记录模态框 -->
+    <!-- 添加/编辑工资记录模态框 -->
     <div class="modal" id="salaryModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>添加工资记录</h3>
+                <h3 id="salaryModalTitle">添加工资记录</h3>
                 <span class="modal-close" onclick="closeSalaryModal()">&times;</span>
             </div>
             <form id="salaryForm">
+                <input type="hidden" id="salaryId">
                 <div class="form-group">
-                    <label>员工 <span style="color: red;">*</span></label>
-                    <select id="salaryStaffId" required></select>
+                    <label>员工信息 <span style="color: red;">*</span></label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div style="position: relative;">
+                            <input type="text" id="searchName" placeholder="姓名" autocomplete="off" oninput="searchByField('name', this.value)">
+                            <input type="hidden" id="selectedStaffId">
+                            <div id="nameSearchResult" class="search-result" style="display: none;"></div>
+                        </div>
+                        <div style="position: relative;">
+                            <input type="text" id="searchIdCard" placeholder="身份证号" autocomplete="off" oninput="searchByField('idCard', this.value)">
+                            <div id="idCardSearchResult" class="search-result" style="display: none;"></div>
+                        </div>
+                        <div style="position: relative;">
+                            <input type="text" id="searchPhone" placeholder="手机号" autocomplete="off" oninput="searchByField('phone', this.value)">
+                            <div id="phoneSearchResult" class="search-result" style="display: none;"></div>
+                        </div>
+                    </div>
+                    <div id="selectedStaffInfo" style="margin-top: 8px; padding: 8px; background: #f0f9eb; border-radius: 4px; display: none;">
+                        <span style="color: #67c23a;">已选择：</span>
+                        <strong id="selectedStaffName"></strong>
+                        <span style="color: #909399; margin-left: 10px;">身份证：<span id="selectedStaffIdCard"></span></span>
+                        <span style="color: #909399; margin-left: 10px;">手机：<span id="selectedStaffPhone"></span></span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>月份 <span style="color: red;">*</span></label>
@@ -98,7 +122,7 @@
             </form>
             <div class="modal-footer">
                 <button class="btn" onclick="closeSalaryModal()">取消</button>
-                <button class="btn btn-primary" onclick="submitSalary()">添加</button>
+                <button class="btn btn-primary" onclick="submitSalary()">确定</button>
             </div>
         </div>
     </div>
@@ -139,7 +163,7 @@
             if (result.code === 200 && result.data) {
                 const tbody = document.getElementById('salaryList');
                 if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #909399;">暂无工资记录</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: #909399;">暂无工资记录</td></tr>';
                     return;
                 }
                 tbody.innerHTML = result.data.map(item => `
@@ -150,7 +174,9 @@
                         <td>${formatMoney(item.subsidy)}</td>
                         <td>${formatMoney(item.condolenceFee)}</td>
                         <td>${item.changeReason || '-'}</td>
+                        <td><span class="status-tag ${item.status === 0 ? 'success' : 'pending'}">${item.status === 0 ? '正常' : '有申诉'}</span></td>
                         <td>
+                            <button class="btn btn-primary btn-small" onclick="editSalary(${item.salaryId})">编辑</button>
                             <button class="btn btn-danger btn-small" onclick="deleteSalary(${item.salaryId})">删除</button>
                         </td>
                     </tr>
@@ -163,14 +189,16 @@
             if (result.code === 200 && result.data) {
                 const tbody = document.getElementById('appealList');
                 if (result.data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #909399;">暂无申诉记录</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #909399;">暂无申诉记录</td></tr>';
                     return;
                 }
                 tbody.innerHTML = result.data.map(item => `
                     <tr>
                         <td>${item.staffName || '-'}</td>
-                        <td>${item.yearMonth}</td>
-                        <td>${item.reason}</td>
+                        <td>${item.yearMonth || '-'}</td>
+                        <td>${item.reason || '-'}</td>
+                        <td>${item.changeReason || '-'}</td>
+                        <td>${item.reply || '-'}</td>
                         <td>
                             <span class="status-tag ${item.status === 0 ? 'pending' : 'success'}">${item.status === 0 ? '待处理' : '已回复'}</span>
                         </td>
@@ -183,28 +211,166 @@
         }
 
         async function loadStaffList() {
-            const result = await get('/api/staff/list');
-            if (result.code === 200 && result.data) {
-                const select = document.getElementById('salaryStaffId');
-                select.innerHTML = '<option value="">请选择员工</option>' + result.data.map(item => `
-                    <option value="${item.staffId}">${item.realName}</option>
-                `).join('');
-            }
+            // 不再需要加载全部员工列表
         }
 
+        // 当前选中的员工
+        let currentSelectedStaff = null;
+
+        // 按字段搜索员工
+        let searchTimer = null;
+        async function searchByField(field, value) {
+            clearTimeout(searchTimer);
+
+            const resultDivId = field === 'name' ? 'nameSearchResult' : (field === 'idCard' ? 'idCardSearchResult' : 'phoneSearchResult');
+            const resultDiv = document.getElementById(resultDivId);
+
+            if (!value || value.trim().length < 1) {
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            // 延迟搜索，避免频繁请求
+            searchTimer = setTimeout(async () => {
+                let url = '/api/staff/search?';
+                if (field === 'name') {
+                    url += 'realName=' + encodeURIComponent(value.trim());
+                } else if (field === 'idCard') {
+                    url += 'idCard=' + encodeURIComponent(value.trim());
+                } else {
+                    url += 'phone=' + encodeURIComponent(value.trim());
+                }
+
+                const result = await get(url);
+                if (result.code === 200 && result.data) {
+                    if (result.data.length === 0) {
+                        resultDiv.innerHTML = '<div class="search-item" style="color: #909399;">未找到匹配的员工</div>';
+                    } else {
+                        resultDiv.innerHTML = result.data.map(item => `
+                            <div class="search-item" onclick="selectStaff(${item.staffId}, '${escapeHtml(item.realName)}', '${escapeHtml(item.idCard || '')}', '${escapeHtml(item.phone || '')}')">
+                                <strong>${item.realName}</strong>
+                                <span style="color: #909399; margin-left: 8px; font-size: 12px;">身份证: ${item.idCard || '-'}</span>
+                                <span style="color: #909399; margin-left: 8px; font-size: 12px;">手机: ${item.phone || '-'}</span>
+                            </div>
+                        `).join('');
+                    }
+                    resultDiv.style.display = 'block';
+                }
+            }, 300);
+        }
+
+        // HTML转义
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+
+        // 选择员工
+        function selectStaff(staffId, realName, idCard, phone) {
+            currentSelectedStaff = { staffId, realName, idCard, phone };
+
+            document.getElementById('selectedStaffId').value = staffId;
+            document.getElementById('searchName').value = realName;
+            document.getElementById('searchIdCard').value = idCard || '';
+            document.getElementById('searchPhone').value = phone || '';
+
+            // 隐藏搜索结果
+            document.getElementById('nameSearchResult').style.display = 'none';
+            document.getElementById('idCardSearchResult').style.display = 'none';
+            document.getElementById('phoneSearchResult').style.display = 'none';
+
+            // 显示已选择信息
+            document.getElementById('selectedStaffInfo').style.display = 'block';
+            document.getElementById('selectedStaffName').textContent = realName;
+            document.getElementById('selectedStaffIdCard').textContent = idCard || '-';
+            document.getElementById('selectedStaffPhone').textContent = phone || '-';
+        }
+
+        // 清空选择
+        function clearStaffSelection() {
+            currentSelectedStaff = null;
+            document.getElementById('selectedStaffId').value = '';
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchIdCard').value = '';
+            document.getElementById('searchPhone').value = '';
+            document.getElementById('selectedStaffInfo').style.display = 'none';
+        }
+
+        // 点击其他地方关闭搜索结果
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#searchName') && !e.target.closest('#nameSearchResult')) {
+                document.getElementById('nameSearchResult').style.display = 'none';
+            }
+            if (!e.target.closest('#searchIdCard') && !e.target.closest('#idCardSearchResult')) {
+                document.getElementById('idCardSearchResult').style.display = 'none';
+            }
+            if (!e.target.closest('#searchPhone') && !e.target.closest('#phoneSearchResult')) {
+                document.getElementById('phoneSearchResult').style.display = 'none';
+            }
+        });
+
         function showAddSalaryModal() {
-            loadStaffList();
+            document.getElementById('salaryModalTitle').textContent = '添加工资记录';
+            document.getElementById('salaryId').value = '';
+            clearStaffSelection();
+            document.getElementById('salaryForm').reset();
             document.getElementById('salaryModal').classList.add('show');
+        }
+
+        async function editSalary(id) {
+            // 获取工资记录详情
+            const result = await get('/api/salary/' + id);
+            if (result.code === 200 && result.data) {
+                const record = result.data;
+                document.getElementById('salaryModalTitle').textContent = '编辑工资记录';
+                document.getElementById('salaryId').value = record.salaryId;
+
+                // 设置员工信息
+                currentSelectedStaff = { staffId: record.staffId, realName: record.staffName };
+                document.getElementById('selectedStaffId').value = record.staffId;
+                document.getElementById('searchName').value = record.staffName || '';
+
+                // 获取员工详细信息
+                const staffResult = await get('/api/staff/' + record.staffId);
+                if (staffResult.code === 200 && staffResult.data) {
+                    const staff = staffResult.data;
+                    document.getElementById('searchIdCard').value = staff.idCard || '';
+                    document.getElementById('searchPhone').value = staff.phone || '';
+                    document.getElementById('selectedStaffInfo').style.display = 'block';
+                    document.getElementById('selectedStaffName').textContent = staff.realName;
+                    document.getElementById('selectedStaffIdCard').textContent = staff.idCard || '-';
+                    document.getElementById('selectedStaffPhone').textContent = staff.phone || '-';
+                }
+
+                document.getElementById('salaryYearMonth').value = record.yearMonth;
+                document.getElementById('salaryBase').value = record.baseSalary;
+                document.getElementById('salarySubsidy').value = record.subsidy || 0;
+                document.getElementById('salaryCondolence').value = record.condolenceFee || 0;
+                document.getElementById('salaryReason').value = record.changeReason || '';
+                document.getElementById('salaryModal').classList.add('show');
+            } else {
+                showMessage('获取工资记录失败', 'error');
+            }
         }
 
         function closeSalaryModal() {
             document.getElementById('salaryModal').classList.remove('show');
             document.getElementById('salaryForm').reset();
+            document.getElementById('salaryId').value = '';
+            clearStaffSelection();
         }
 
         async function submitSalary() {
+            const salaryId = document.getElementById('salaryId').value;
+            const staffId = document.getElementById('selectedStaffId').value;
+
+            if (!staffId) {
+                showMessage('请选择员工', 'error');
+                return;
+            }
+
             const data = {
-                staffId: document.getElementById('salaryStaffId').value,
+                staffId: staffId,
                 yearMonth: document.getElementById('salaryYearMonth').value,
                 baseSalary: document.getElementById('salaryBase').value,
                 subsidy: document.getElementById('salarySubsidy').value || 0,
@@ -212,18 +378,27 @@
                 changeReason: document.getElementById('salaryReason').value
             };
 
-            if (!data.staffId || !data.yearMonth || !data.baseSalary) {
+            if (!data.yearMonth || !data.baseSalary) {
                 showMessage('请填写必填项', 'error');
                 return;
             }
 
-            const result = await post('/api/salary/add', data);
+            let result;
+            if (salaryId) {
+                // 编辑模式
+                data.salaryId = salaryId;
+                result = await post('/api/salary/update', data);
+            } else {
+                // 添加模式
+                result = await post('/api/salary/add', data);
+            }
+
             if (result.code === 200) {
-                showMessage('添加成功');
+                showMessage(salaryId ? '修改成功' : '添加成功');
                 closeSalaryModal();
                 loadSalaries();
             } else {
-                showMessage(result.message || '添加失败', 'error');
+                showMessage(result.message || '操作失败', 'error');
             }
         }
 

@@ -33,6 +33,11 @@ public class RetiredStaffServiceImpl implements RetiredStaffService {
     }
 
     @Override
+    public List<RetiredStaff> quickSearch(Map<String, Object> params) {
+        return retiredStaffDao.quickSearch(params);
+    }
+
+    @Override
     public int save(RetiredStaff staff) {
         // 检查是否存在
         RetiredStaff existing = retiredStaffDao.findById(staff.getStaffId());

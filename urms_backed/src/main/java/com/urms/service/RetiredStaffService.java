@@ -25,6 +25,11 @@ public interface RetiredStaffService {
     List<RetiredStaff> search(Map<String, Object> params);
 
     /**
+     * 快速搜索（姓名/身份证号/手机号）
+     */
+    List<RetiredStaff> quickSearch(Map<String, Object> params);
+
+    /**
      * 新增或更新（登记/修改个人信息）
      */
     int save(RetiredStaff staff);
