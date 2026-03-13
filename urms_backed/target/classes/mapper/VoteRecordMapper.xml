@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.urms.dao.VoteRecordDao">
+
+    <resultMap id="BaseResultMap" type="com.urms.entity.VoteRecord">
+        <id column="vote_id" property="voteId"/>
+        <result column="activity_id" property="activityId"/>
+        <result column="staff_id" property="staffId"/>
+        <result column="vote_time" property="voteTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.urms.entity.VoteRecord">
+        INSERT INTO vote_record (activity_id, staff_id, vote_time)
+        VALUES (#{activityId}, #{staffId}, NOW())
+    </insert>
+
+    <select id="countTodayVotes" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM vote_record
+        WHERE staff_id = #{staffId}
+        AND DATE(vote_time) = CURDATE()
+    </select>
+
+    <select id="checkVoted" resultType="int">
+        SELECT COUNT(*) FROM vote_record
+        WHERE activity_id = #{activityId} AND staff_id = #{staffId}
+    </select>
+
+    <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
+        SELECT * FROM vote_record WHERE staff_id = #{staffId} ORDER BY vote_time DESC
+    </select>
+
+</mapper>

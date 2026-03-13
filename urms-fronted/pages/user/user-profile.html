@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人信息 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统</div>
+            <div class="nav-links">
+                <a href="user-index.html">首页</a>
+                <a href="user-profile.html" class="active">个人信息</a>
+                <a href="user-notice.html">校园公告</a>
+                <a href="user-activity.html">活动报名</a>
+                <a href="user-salary.html">工资查询</a>
+                <a href="user-relative.html">亲属管理</a>
+                <a href="user-message.html">站内留言</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>个人信息管理</h3>
+                </div>
+
+                <form @submit.prevent="saveProfile">
+                    <!-- 照片上传 -->
+                    <div class="profile-photo">
+                        <img :src="form.photo || '../../images/default-avatar.svg'" alt="头像">
+                        <div style="margin-top: 10px;">
+                            <input type="file" id="photoFile" ref="photoFile" accept="image/*" style="display: none;" @change="handlePhotoUpload">
+                            <button type="button" class="btn btn-primary btn-small" @click="triggerFileInput">上传照片</button>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <div class="form-group">
+                            <label>姓名 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.realName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>性别 <span style="color: red;">*</span></label>
+                            <select v-model="form.gender" required>
+                                <option value="">请选择</option>
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>身份证号 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.idCard" maxlength="18" placeholder="18位身份证号" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>年龄 <span style="color: red;">*</span></label>
+                            <input type="number" v-model.number="form.age" min="0" max="150" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>民族 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.nation" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>学历 <span style="color: red;">*</span></label>
+                            <select v-model="form.education" required>
+                                <option value="">请选择</option>
+                                <option value="小学">小学</option>
+                                <option value="初中">初中</option>
+                                <option value="高中">高中</option>
+                                <option value="中专">中专</option>
+                                <option value="大专">大专</option>
+                                <option value="本科">本科</option>
+                                <option value="硕士">硕士</option>
+                                <option value="博士">博士</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>籍贯 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.nativePlace" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>手机号 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.phone" maxlength="11" placeholder="11位手机号" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>参加工作时间 <span style="color: red;">*</span></label>
+                            <input type="date" v-model="form.workStartDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>退休时间 <span style="color: red;">*</span></label>
+                            <input type="date" v-model="form.retireDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>退休前所在单位 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.formerDept" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>职称/职务 <span style="color: red;">*</span></label>
+                            <input type="text" v-model="form.jobTitle" required>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary" style="width: 200px;" :disabled="saving">
+                            {{ saving ? '保存中...' : '保存信息' }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                form: {
+                    realName: '',
+                    gender: '',
+                    idCard: '',
+                    age: null,
+                    nation: '',
+                    education: '',
+                    nativePlace: '',
+                    phone: '',
+                    workStartDate: '',
+                    retireDate: '',
+                    formerDept: '',
+                    jobTitle: '',
+                    photo: ''
+                },
+                saving: false
+            },
+            created() {
+                if (!checkLogin()) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                this.userInfo = getUserInfo() || {};
+                this.loadProfile();
+            },
+            methods: {
+                triggerFileInput() {
+                    document.getElementById('photoFile').click();
+                },
+                async loadProfile() {
+                    try {
+                        const result = await get('/api/profile');
+                        if (result.data) {
+                            Object.assign(this.form, result.data);
+                        }
+                    } catch (e) {}
+                },
+                async handlePhotoUpload(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    if (!file.type.startsWith('image/')) {
+                        showMessage('请选择图片文件', 'error');
+                        return;
+                    }
+
+                    if (file.size > 5 * 1024 * 1024) {
+                        showMessage('图片大小不能超过5MB', 'error');
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+
+                    try {
+                        showMessage('正在上传...', 'success');
+                        const token = localStorage.getItem('token');
+                        const response = await axios.post(API_BASE + '/api/upload/photo', formData, {
+                            headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        });
+
+                        const result = response.data;
+                        if (result.code === 200) {
+                            // 如果返回的是相对路径，拼接后端地址
+                            let photoUrl = result.data;
+                            if (photoUrl && !photoUrl.startsWith('http')) {
+                                photoUrl = API_BASE + photoUrl;
+                            }
+                            this.form.photo = photoUrl;
+                            showMessage('照片上传成功');
+                        } else {
+                            showMessage(result.message || '上传失败', 'error');
+                        }
+                    } catch (error) {
+                        showMessage('上传失败', 'error');
+                    }
+                },
+                async saveProfile() {
+                    // 验证身份证号格式
+                    if (this.form.idCard && !/^\d{17}[\dXx]$/.test(this.form.idCard)) {
+                        showMessage('请输入正确的18位身份证号', 'error');
+                        return;
+                    }
+
+                    // 验证手机号格式
+                    if (this.form.phone && !/^1[3-9]\d{9}$/.test(this.form.phone)) {
+                        showMessage('请输入正确的11位手机号', 'error');
+                        return;
+                    }
+
+                    this.saving = true;
+                    try {
+                        await post('/api/profile', this.form);
+                        showMessage('保存成功');
+                        // 更新本地存储
+                        this.userInfo.realName = this.form.realName;
+                        localStorage.setItem('userInfo', JSON.stringify(this.userInfo));
+                    } catch (e) {}
+                    finally {
+                        this.saving = false;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

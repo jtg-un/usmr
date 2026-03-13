@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>站内留言 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统</div>
+            <div class="nav-links">
+                <a href="user-index.html">首页</a>
+                <a href="user-profile.html">个人信息</a>
+                <a href="user-notice.html">校园公告</a>
+                <a href="user-activity.html">活动报名</a>
+                <a href="user-salary.html">工资查询</a>
+                <a href="user-relative.html">亲属管理</a>
+                <a href="user-message.html" class="active">站内留言</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>提交留言</h3>
+                </div>
+                <div style="padding: 20px;">
+                    <div class="form-group">
+                        <label>留言内容 <span style="color: red;">*</span></label>
+                        <textarea v-model="messageContent" style="width: 100%; height: 150px; resize: vertical;" placeholder="请输入您的意见或建议..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" @click="submitMessage">提交留言</button>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3>我的留言记录</h3>
+                </div>
+                <div>
+                    <div v-for="item in messages" :key="item.cmId" style="padding: 15px; border-bottom: 1px solid #ebeef5;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: #909399; font-size: 14px;">{{ formatDateTime(item.createTime) }}</span>
+                            <button class="btn btn-danger btn-small" @click="deleteMessage(item.cmId)">删除</button>
+                        </div>
+                        <p style="color: #606266;">{{ item.content }}</p>
+                        <div v-if="item.reply" style="margin-top: 10px; padding: 10px; background-color: #f5f7fa; border-radius: 4px;">
+                            <strong style="color: #409eff;">管理员回复：</strong>
+                            <span>{{ item.reply }}</span>
+                        </div>
+                    </div>
+                    <p v-if="messages.length === 0" style="color: #909399; text-align: center; padding: 20px;">暂无留言记录</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                messages: [],
+                messageContent: ''
+            },
+            created() {
+                if (!checkLogin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.loadMessages();
+            },
+            methods: {
+                async loadMessages() {
+                    try {
+                        const result = await get('/api/message/my-messages');
+                        if (result.data) {
+                            this.messages = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async submitMessage() {
+                    if (!this.messageContent.trim()) {
+                        showMessage('请输入留言内容', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/message/submit', { content: this.messageContent.trim() });
+                        showMessage('留言提交成功');
+                        this.messageContent = '';
+                        this.loadMessages();
+                    } catch (e) {}
+                },
+                async deleteMessage(cmId) {
+                    if (!confirm('确定要删除此留言吗？')) return;
+                    try {
+                        await del('/api/message/' + cmId);
+                        showMessage('删除成功');
+                        this.loadMessages();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

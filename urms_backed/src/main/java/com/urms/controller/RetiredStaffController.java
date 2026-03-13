@@ -106,7 +106,7 @@ public class RetiredStaffController {
             System.out.println("File exists: " + destFile.exists());
 
             // 返回可访问的URL路径
-            String photoUrl = "/urms/upload/" + fileName;
+            String photoUrl = "/upload/" + fileName;
             System.out.println("Photo URL: " + photoUrl);
 
             return Result.success("上传成功", photoUrl);

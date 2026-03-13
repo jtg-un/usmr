@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活动管理 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统 - 管理端</div>
+            <div class="nav-links">
+                <a href="admin-index.html">首页</a>
+                <a href="admin-notice.html">公告管理</a>
+                <a href="admin-activity.html" class="active">活动管理</a>
+                <a href="admin-salary.html">工资管理</a>
+                <a href="admin-staff.html">人员管理</a>
+                <a href="admin-message.html">留言管理</a>
+            </div>
+            <div class="user-info">
+                <span>管理员: {{ userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>活动管理</h3>
+                    <button class="btn btn-primary" @click="showAddModal = true">创建活动</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>活动名称</th>
+                            <th>类型</th>
+                            <th>开始时间</th>
+                            <th>结束时间</th>
+                            <th>投票数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in activities" :key="item.activityId">
+                            <td>{{ item.title }}</td>
+                            <td>{{ item.type === 2 ? '多人活动' : '普通活动' }}</td>
+                            <td>{{ formatDateTime(item.startTime) }}</td>
+                            <td>{{ formatDateTime(item.endTime) }}</td>
+                            <td>{{ item.voteCount || 0 }}</td>
+                            <td>
+                                <button class="btn btn-success btn-small" @click="showStats(item.activityId)">报名统计</button>
+                                <button class="btn btn-danger btn-small" @click="deleteActivity(item.activityId)">删除</button>
+                            </td>
+                        </tr>
+                        <tr v-if="activities.length === 0">
+                            <td colspan="6" style="text-align: center; color: #909399;">暂无活动</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 创建活动模态框 -->
+        <div class="modal" :class="{ show: showAddModal }">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>创建活动</h3>
+                    <span class="modal-close" @click="showAddModal = false">&times;</span>
+                </div>
+                <div class="form-group">
+                    <label>活动名称 <span style="color: red;">*</span></label>
+                    <input type="text" v-model="form.title" required>
+                </div>
+                <div class="form-group">
+                    <label>活动描述</label>
+                    <textarea v-model="form.description" style="width: 100%; height: 100px; resize: vertical;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>活动类型</label>
+                    <select v-model="form.type">
+                        <option :value="1">普通活动</option>
+                        <option :value="2">多人活动（大合唱等）</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>开始时间 <span style="color: red;">*</span></label>
+                    <input type="datetime-local" v-model="form.startTime" required>
+                </div>
+                <div class="form-group">
+                    <label>结束时间 <span style="color: red;">*</span></label>
+                    <input type="datetime-local" v-model="form.endTime" required>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" @click="showAddModal = false">取消</button>
+                    <button class="btn btn-primary" @click="submitActivity">创建</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 报名统计模态框 -->
+        <div class="modal" :class="{ show: showStatsModal }">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    <h3>报名统计</h3>
+                    <span class="modal-close" @click="showStatsModal = false">&times;</span>
+                </div>
+                <div v-if="groups.length > 0" style="padding: 15px; background: #f5f7fa; border-radius: 4px; margin-bottom: 15px;">
+                    <h4 style="margin: 0 0 10px 0;">小组统计</h4>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <div v-for="g in groups" :key="g.groupName" style="background: white; padding: 8px 15px; border-radius: 4px; border: 1px solid #dcdfe6;">
+                            <strong>{{ g.groupName }}</strong>: {{ g.memberCount }}人
+                        </div>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>报名人</th>
+                            <th>报名时间</th>
+                            <th>组名</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in registrations" :key="item.regId">
+                            <td>{{ item.staffName || '未知' }}</td>
+                            <td>{{ formatDateTime(item.regTime) }}</td>
+                            <td>{{ item.groupName || '-' }}</td>
+                        </tr>
+                        <tr v-if="registrations.length === 0">
+                            <td colspan="3" style="text-align: center; color: #909399;">暂无报名</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                activities: [],
+                showAddModal: false,
+                showStatsModal: false,
+                form: {
+                    title: '',
+                    description: '',
+                    type: 1,
+                    startTime: '',
+                    endTime: ''
+                },
+                registrations: [],
+                groups: []
+            },
+            created() {
+                if (!checkLogin() || !isAdmin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.loadActivities();
+            },
+            methods: {
+                async loadActivities() {
+                    try {
+                        const result = await get('/api/activity/list');
+                        if (result.data) {
+                            this.activities = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async submitActivity() {
+                    if (!this.form.title || !this.form.startTime || !this.form.endTime) {
+                        showMessage('请填写完整信息', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/activity/create', {
+                            title: this.form.title,
+                            description: this.form.description,
+                            type: this.form.type,
+                            startTime: this.form.startTime.replace('T', ' ') + ':00',
+                            endTime: this.form.endTime.replace('T', ' ') + ':00'
+                        });
+                        showMessage('创建成功');
+                        this.showAddModal = false;
+                        this.form = { title: '', description: '', type: 1, startTime: '', endTime: '' };
+                        this.loadActivities();
+                    } catch (e) {}
+                },
+                async showStats(activityId) {
+                    try {
+                        const regResult = await get('/api/activity/' + activityId + '/registrations');
+                        const groupResult = await get('/api/activity/' + activityId + '/group-names');
+                        if (regResult.data) {
+                            this.registrations = regResult.data;
+                        }
+                        if (groupResult.data) {
+                            this.groups = groupResult.data;
+                        } else {
+                            this.groups = [];
+                        }
+                        this.showStatsModal = true;
+                    } catch (e) {}
+                },
+                async deleteActivity(activityId) {
+                    if (!confirm('确定要删除此活动吗？相关报名数据也将被删除。')) return;
+                    try {
+                        await del('/api/activity/' + activityId);
+                        showMessage('删除成功');
+                        this.loadActivities();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活动详情 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        .group-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            max-height: 150px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .group-suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .group-suggestion-item:hover {
+            background: #f5f7fa;
+        }
+        .form-group {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统</div>
+            <div class="nav-links">
+                <a href="user-index.html">首页</a>
+                <a href="user-profile.html">个人信息</a>
+                <a href="user-notice.html">校园公告</a>
+                <a href="user-activity.html" class="active">活动报名</a>
+                <a href="user-salary.html">工资查询</a>
+                <a href="user-relative.html">亲属管理</a>
+                <a href="user-message.html">站内留言</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ activity.title || '活动详情' }}</h3>
+                    <a href="user-activity.html">返回列表</a>
+                </div>
+                <div style="padding: 20px;">
+                    <p><strong>活动描述:</strong> {{ activity.description || '暂无描述' }}</p>
+                    <p><strong>开始时间:</strong> {{ formatDateTime(activity.startTime) }}</p>
+                    <p><strong>结束时间:</strong> {{ formatDateTime(activity.endTime) }}</p>
+                    <p><strong>活动类型:</strong> {{ activity.type === 2 ? '多人活动' : '普通活动' }}</p>
+                    <p><strong>当前投票数:</strong> {{ activity.voteCount || 0 }}</p>
+
+                    <div style="margin-top: 20px;">
+                        <button v-if="!activity.hasVoted" class="btn btn-success" @click="vote">投票</button>
+                        <span v-else style="color: #67c23a;">已投票</span>
+                        <button v-if="!activity.hasRegistered" class="btn btn-primary" @click="showRegisterModal = true">报名参加</button>
+                        <span v-else style="color: #67c23a;">已报名</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 评论区域 -->
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3>评论</h3>
+                </div>
+                <div style="padding: 15px;">
+                    <textarea v-model="commentContent" placeholder="发表评论..." style="width: 100%; height: 80px; resize: none; padding: 10px; border: 1px solid #dcdfe6; border-radius: 4px;"></textarea>
+                    <button class="btn btn-primary btn-small" style="margin-top: 10px;" @click="submitComment">发表评论</button>
+                </div>
+                <div class="comment-list">
+                    <div v-for="item in comments" :key="item.cmId" class="comment-item">
+                        <div class="comment-header">
+                            <span class="comment-author">{{ item.userName || '用户' }}</span>
+                            <span class="comment-time">{{ formatDateTime(item.createTime) }}</span>
+                        </div>
+                        <div class="comment-content">{{ item.content }}</div>
+                        <div v-if="item.userId === userInfo.userId" class="comment-actions">
+                            <button class="btn btn-danger btn-small" @click="deleteComment(item.cmId)">删除</button>
+                        </div>
+                    </div>
+                    <p v-if="comments.length === 0" style="color: #909399; text-align: center; padding: 20px;">暂无评论</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 报名模态框 -->
+        <div class="modal" :class="{ show: showRegisterModal }">
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h3>活动报名</h3>
+                    <span class="modal-close" @click="showRegisterModal = false">&times;</span>
+                </div>
+                <div v-if="activity.type === 2" class="form-group">
+                    <label>组名 <span style="color: red;">*</span></label>
+                    <div style="position: relative;">
+                        <input type="text" v-model="groupName" @focus="showGroupSuggestions = true" @input="filterGroups" placeholder="选择已有组或输入新组名" autocomplete="off">
+                        <div v-if="showGroupSuggestions && filteredGroups.length > 0" class="group-suggestions">
+                            <div v-for="g in filteredGroups" :key="g.groupName" class="group-suggestion-item" @click="selectGroup(g.groupName)">
+                                {{ g.groupName }} <span style="color: #909399; font-size: 12px;">({{ g.memberCount }}人)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <small style="color: #909399;">多人活动需选择或输入组名，可选择已有小组或创建新小组</small>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" @click="showRegisterModal = false">取消</button>
+                    <button class="btn btn-primary" @click="register">确认报名</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                activity: {},
+                comments: [],
+                commentContent: '',
+                activityId: null,
+                showRegisterModal: false,
+                groupName: '',
+                groups: [],
+                showGroupSuggestions: false
+            },
+            computed: {
+                filteredGroups() {
+                    if (!this.groupName) return this.groups;
+                    return this.groups.filter(g =>
+                        g.groupName.toLowerCase().includes(this.groupName.toLowerCase())
+                    );
+                }
+            },
+            created() {
+                if (!checkLogin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.activityId = getUrlParam('id');
+                this.loadActivity();
+                this.loadComments();
+
+                // 点击其他地方关闭组名建议
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.form-group')) {
+                        this.showGroupSuggestions = false;
+                    }
+                });
+            },
+            methods: {
+                async loadActivity() {
+                    try {
+                        const result = await get('/api/activity/' + this.activityId);
+                        if (result.data) {
+                            this.activity = result.data;
+                            if (result.data.type === 2) {
+                                this.loadGroups();
+                            }
+                        }
+                    } catch (e) {}
+                },
+                async loadGroups() {
+                    try {
+                        const result = await get('/api/activity/' + this.activityId + '/group-names');
+                        if (result.data) {
+                            this.groups = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async vote() {
+                    try {
+                        await post('/api/activity/' + this.activityId + '/vote');
+                        showMessage('投票成功');
+                        this.loadActivity();
+                    } catch (e) {}
+                },
+                selectGroup(name) {
+                    this.groupName = name;
+                    this.showGroupSuggestions = false;
+                },
+                filterGroups() {
+                    this.showGroupSuggestions = true;
+                },
+                async register() {
+                    if (this.activity.type === 2 && !this.groupName.trim()) {
+                        showMessage('多人活动请选择或输入组名', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/activity/' + this.activityId + '/register', { groupName: this.groupName.trim() });
+                        showMessage('报名成功');
+                        this.showRegisterModal = false;
+                        this.activity.hasRegistered = true;
+                    } catch (e) {}
+                },
+                async loadComments() {
+                    try {
+                        const result = await get('/api/activity/' + this.activityId + '/comments');
+                        if (result.data) {
+                            this.comments = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async submitComment() {
+                    if (!this.commentContent.trim()) {
+                        showMessage('请输入评论内容', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/activity/' + this.activityId + '/comment', { content: this.commentContent.trim() });
+                        showMessage('评论成功');
+                        this.commentContent = '';
+                        this.loadComments();
+                    } catch (e) {}
+                },
+                async deleteComment(cmId) {
+                    if (!confirm('确定要删除此评论吗？')) return;
+                    try {
+                        await del('/api/activity/comment/' + cmId);
+                        showMessage('删除成功');
+                        this.loadComments();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

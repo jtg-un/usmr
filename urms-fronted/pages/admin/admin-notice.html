@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公告管理 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统 - 管理端</div>
+            <div class="nav-links">
+                <a href="admin-index.html">首页</a>
+                <a href="admin-notice.html" class="active">公告管理</a>
+                <a href="admin-activity.html">活动管理</a>
+                <a href="admin-salary.html">工资管理</a>
+                <a href="admin-staff.html">人员管理</a>
+                <a href="admin-message.html">留言管理</a>
+            </div>
+            <div class="user-info">
+                <span>管理员: {{ userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>公告管理</h3>
+                    <button class="btn btn-primary" @click="showAddModal = true">发布公告</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>标题</th>
+                            <th>发布时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in notices" :key="item.noticeId">
+                            <td>{{ item.title }}</td>
+                            <td>{{ formatDateTime(item.publishTime) }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-small" @click="deleteNotice(item.noticeId)">删除</button>
+                            </td>
+                        </tr>
+                        <tr v-if="notices.length === 0">
+                            <td colspan="3" style="text-align: center; color: #909399;">暂无公告</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 发布公告模态框 -->
+        <div class="modal" :class="{ show: showAddModal }">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>发布公告</h3>
+                    <span class="modal-close" @click="showAddModal = false">&times;</span>
+                </div>
+                <div class="form-group">
+                    <label>标题 <span style="color: red;">*</span></label>
+                    <input type="text" v-model="form.title" required>
+                </div>
+                <div class="form-group">
+                    <label>内容 <span style="color: red;">*</span></label>
+                    <textarea v-model="form.content" style="width: 100%; height: 200px; resize: vertical;" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" @click="showAddModal = false">取消</button>
+                    <button class="btn btn-primary" @click="submitNotice">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                notices: [],
+                showAddModal: false,
+                form: {
+                    title: '',
+                    content: ''
+                }
+            },
+            created() {
+                if (!checkLogin() || !isAdmin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.loadNotices();
+            },
+            methods: {
+                async loadNotices() {
+                    try {
+                        const result = await get('/api/notice/list');
+                        if (result.data) {
+                            this.notices = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async submitNotice() {
+                    if (!this.form.title.trim() || !this.form.content.trim()) {
+                        showMessage('请填写完整信息', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/notice/publish', { title: this.form.title.trim(), content: this.form.content.trim() });
+                        showMessage('发布成功');
+                        this.showAddModal = false;
+                        this.form.title = '';
+                        this.form.content = '';
+                        this.loadNotices();
+                    } catch (e) {}
+                },
+                async deleteNotice(noticeId) {
+                    if (!confirm('确定要删除此公告吗？')) return;
+                    try {
+                        await del('/api/notice/' + noticeId);
+                        showMessage('删除成功');
+                        this.loadNotices();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

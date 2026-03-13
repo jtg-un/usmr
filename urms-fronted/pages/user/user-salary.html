@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工资查询 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统</div>
+            <div class="nav-links">
+                <a href="user-index.html">首页</a>
+                <a href="user-profile.html">个人信息</a>
+                <a href="user-notice.html">校园公告</a>
+                <a href="user-activity.html">活动报名</a>
+                <a href="user-salary.html" class="active">工资查询</a>
+                <a href="user-relative.html">亲属管理</a>
+                <a href="user-message.html">站内留言</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>工资记录</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>月份</th>
+                            <th>基本工资</th>
+                            <th>补贴</th>
+                            <th>慰问金</th>
+                            <th>变动说明</th>
+                            <th>申诉状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in salaries" :key="item.salaryId">
+                            <td>{{ item.yearMonth }}</td>
+                            <td>{{ formatMoney(item.baseSalary) }}</td>
+                            <td>{{ formatMoney(item.subsidy) }}</td>
+                            <td>{{ formatMoney(item.condolenceFee) }}</td>
+                            <td>{{ item.changeReason || '-' }}</td>
+                            <td>
+                                <span v-if="item.appeal" :class="'status-tag ' + (item.appeal.status === 0 ? 'pending' : 'success')">
+                                    {{ item.appeal.status === 0 ? '申诉中' : '已回复' }}
+                                </span>
+                                <span v-else>-</span>
+                            </td>
+                            <td>
+                                <button v-if="!item.appeal" class="btn btn-warning btn-small" @click="showAppealModal(item.salaryId)">申诉</button>
+                                <span v-else style="color: #909399; font-size: 12px;">已申诉</span>
+                            </td>
+                        </tr>
+                        <tr v-if="salaries.length === 0">
+                            <td colspan="7" style="text-align: center; color: #909399;">暂无工资记录</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3>我的申诉记录</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>月份</th>
+                            <th>申诉原因</th>
+                            <th>回复</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in appeals" :key="item.appealId">
+                            <td>{{ item.yearMonth }}</td>
+                            <td>{{ item.reason }}</td>
+                            <td>{{ item.reply || '-' }}</td>
+                            <td>
+                                <span :class="'status-tag ' + (item.status === 0 ? 'pending' : 'success')">
+                                    {{ item.status === 0 ? '待处理' : '已回复' }}
+                                </span>
+                            </td>
+                            <td>
+                                <button v-if="item.status === 0" class="btn btn-danger btn-small" @click="cancelAppeal(item.appealId)">取消申诉</button>
+                                <span v-else>-</span>
+                            </td>
+                        </tr>
+                        <tr v-if="appeals.length === 0">
+                            <td colspan="5" style="text-align: center; color: #909399;">暂无申诉记录</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 申诉模态框 -->
+        <div class="modal" :class="{ show: showAppealModalFlag }">
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h3>工资申诉</h3>
+                    <span class="modal-close" @click="showAppealModalFlag = false">&times;</span>
+                </div>
+                <div class="form-group">
+                    <label>申诉原因 <span style="color: red;">*</span></label>
+                    <textarea v-model="appealReason" style="width: 100%; height: 100px; resize: vertical;" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" @click="showAppealModalFlag = false">取消</button>
+                    <button class="btn btn-primary" @click="submitAppeal">提交申诉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                salaries: [],
+                appeals: [],
+                showAppealModalFlag: false,
+                appealSalaryId: null,
+                appealReason: ''
+            },
+            created() {
+                if (!checkLogin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.loadSalaries();
+                this.loadAppeals();
+            },
+            methods: {
+                async loadSalaries() {
+                    try {
+                        const result = await get('/api/salary/my-records');
+                        if (result.data) {
+                            this.salaries = result.data;
+                            // 检查申诉状态
+                            for (let item of this.salaries) {
+                                try {
+                                    const appealResult = await get('/api/salary/appeal/check/' + item.salaryId);
+                                    if (appealResult.data) {
+                                        this.$set(item, 'appeal', appealResult.data);
+                                    }
+                                } catch (e) {}
+                            }
+                        }
+                    } catch (e) {}
+                },
+                async loadAppeals() {
+                    try {
+                        const result = await get('/api/salary/my-appeals');
+                        if (result.data) {
+                            this.appeals = result.data;
+                        }
+                    } catch (e) {}
+                },
+                showAppealModal(salaryId) {
+                    this.appealSalaryId = salaryId;
+                    this.appealReason = '';
+                    this.showAppealModalFlag = true;
+                },
+                async submitAppeal() {
+                    if (!this.appealReason.trim()) {
+                        showMessage('请填写申诉原因', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/salary/appeal', { salaryId: this.appealSalaryId, reason: this.appealReason.trim() });
+                        showMessage('申诉已提交');
+                        this.showAppealModalFlag = false;
+                        this.loadSalaries();
+                        this.loadAppeals();
+                    } catch (e) {}
+                },
+                async cancelAppeal(appealId) {
+                    if (!confirm('确定要取消此申诉吗？')) return;
+                    try {
+                        await del('/api/salary/appeal/' + appealId);
+                        showMessage('申诉已取消');
+                        this.loadSalaries();
+                        this.loadAppeals();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

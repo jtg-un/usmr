@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工资管理 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统 - 管理端</div>
+            <div class="nav-links">
+                <a href="admin-index.html">首页</a>
+                <a href="admin-notice.html">公告管理</a>
+                <a href="admin-activity.html">活动管理</a>
+                <a href="admin-salary.html" class="active">工资管理</a>
+                <a href="admin-staff.html">人员管理</a>
+                <a href="admin-message.html">留言管理</a>
+            </div>
+            <div class="user-info">
+                <span>管理员: {{ userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <!-- 工资记录管理 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>工资记录管理</h3>
+                    <button class="btn btn-primary" @click="showAddSalaryModal">添加工资记录</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>员工</th>
+                            <th>月份</th>
+                            <th>基本工资</th>
+                            <th>补贴</th>
+                            <th>慰问金</th>
+                            <th>变动说明</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in salaries" :key="item.salaryId">
+                            <td>{{ item.staffName || '-' }}</td>
+                            <td>{{ item.yearMonth }}</td>
+                            <td>{{ formatMoney(item.baseSalary) }}</td>
+                            <td>{{ formatMoney(item.subsidy) }}</td>
+                            <td>{{ formatMoney(item.condolenceFee) }}</td>
+                            <td>{{ item.changeReason || '-' }}</td>
+                            <td><span :class="'status-tag ' + (item.status === 0 ? 'success' : 'pending')">{{ item.status === 0 ? '正常' : '有申诉' }}</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-small" @click="editSalary(item)">编辑</button>
+                                <button class="btn btn-danger btn-small" @click="deleteSalary(item.salaryId)">删除</button>
+                            </td>
+                        </tr>
+                        <tr v-if="salaries.length === 0">
+                            <td colspan="8" style="text-align: center; color: #909399;">暂无工资记录</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 申诉处理 -->
+            <div class="card" style="margin-top: 20px;">
+                <div class="card-header">
+                    <h3>工资申诉处理</h3>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>员工</th>
+                            <th>月份</th>
+                            <th>申诉原因</th>
+                            <th>变动说明</th>
+                            <th>管理员回复</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in appeals" :key="item.appealId">
+                            <td>{{ item.staffName || '-' }}</td>
+                            <td>{{ item.yearMonth || '-' }}</td>
+                            <td>{{ item.reason || '-' }}</td>
+                            <td>{{ item.changeReason || '-' }}</td>
+                            <td>{{ item.reply || '-' }}</td>
+                            <td>
+                                <span :class="'status-tag ' + (item.status === 0 ? 'pending' : 'success')">{{ item.status === 0 ? '待处理' : '已回复' }}</span>
+                            </td>
+                            <td>
+                                <button v-if="item.status === 0" class="btn btn-primary btn-small" @click="showReplyModal(item.appealId)">回复</button>
+                                <span v-else>-</span>
+                            </td>
+                        </tr>
+                        <tr v-if="appeals.length === 0">
+                            <td colspan="7" style="text-align: center; color: #909399;">暂无申诉记录</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 添加/编辑工资记录模态框 -->
+        <div class="modal" :class="{ show: showSalaryModal }">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>{{ salaryForm.salaryId ? '编辑工资记录' : '添加工资记录' }}</h3>
+                    <span class="modal-close" @click="showSalaryModal = false">&times;</span>
+                </div>
+                <div class="form-group">
+                    <label>员工信息 <span style="color: red;">*</span></label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <input type="text" v-model="searchName" placeholder="姓名" @input="searchStaff">
+                        <input type="text" v-model="searchIdCard" placeholder="身份证号" @input="searchStaff">
+                        <input type="text" v-model="searchPhone" placeholder="手机号" @input="searchStaff">
+                    </div>
+                    <div v-if="selectedStaff" style="margin-top: 8px; padding: 8px; background: #f0f9eb; border-radius: 4px;">
+                        <span style="color: #67c23a;">已选择：</span>
+                        <strong>{{ selectedStaff.realName }}</strong>
+                        <span style="color: #909399; margin-left: 10px;">身份证：{{ selectedStaff.idCard || '-' }}</span>
+                        <span style="color: #909399; margin-left: 10px;">手机：{{ selectedStaff.phone || '-' }}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>月份 <span style="color: red;">*</span></label>
+                    <input type="month" v-model="salaryForm.yearMonth" required>
+                </div>
+                <div class="form-group">
+                    <label>基本工资 <span style="color: red;">*</span></label>
+                    <input type="number" v-model="salaryForm.baseSalary" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>补贴</label>
+                    <input type="number" v-model="salaryForm.subsidy" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>慰问金</label>
+                    <input type="number" v-model="salaryForm.condolenceFee" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>变动说明</label>
+                    <textarea v-model="salaryForm.changeReason" style="width: 100%; height: 80px; resize: vertical;"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" @click="showSalaryModal = false">取消</button>
+                    <button class="btn btn-primary" @click="submitSalary">确定</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 回复申诉模态框 -->
+        <div class="modal" :class="{ show: showReplyModalFlag }">
+            <div class="modal-content" style="max-width: 400px;">
+                <div class="modal-header">
+                    <h3>回复申诉</h3>
+                    <span class="modal-close" @click="showReplyModalFlag = false">&times;</span>
+                </div>
+                <div class="form-group">
+                    <label>回复内容 <span style="color: red;">*</span></label>
+                    <textarea v-model="replyContent" style="width: 100%; height: 100px; resize: vertical;" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" @click="showReplyModalFlag = false">取消</button>
+                    <button class="btn btn-primary" @click="submitReply">提交回复</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                salaries: [],
+                appeals: [],
+                showSalaryModal: false,
+                showReplyModalFlag: false,
+                replyAppealId: null,
+                replyContent: '',
+                salaryForm: {
+                    salaryId: null,
+                    staffId: null,
+                    yearMonth: '',
+                    baseSalary: '',
+                    subsidy: 0,
+                    condolenceFee: 0,
+                    changeReason: ''
+                },
+                selectedStaff: null,
+                searchName: '',
+                searchIdCard: '',
+                searchPhone: '',
+                searchTimer: null
+            },
+            created() {
+                if (!checkLogin() || !isAdmin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.loadSalaries();
+                this.loadAppeals();
+            },
+            methods: {
+                async loadSalaries() {
+                    try {
+                        const result = await get('/api/salary/list');
+                        if (result.data) {
+                            this.salaries = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async loadAppeals() {
+                    try {
+                        const result = await get('/api/salary/appeals');
+                        if (result.data) {
+                            this.appeals = result.data;
+                        }
+                    } catch (e) {}
+                },
+                async searchStaff() {
+                    clearTimeout(this.searchTimer);
+                    this.searchTimer = setTimeout(async () => {
+                        const name = this.searchName.trim();
+                        const idCard = this.searchIdCard.trim();
+                        const phone = this.searchPhone.trim();
+                        if (!name && !idCard && !phone) return;
+
+                        let url = '/api/staff/search?';
+                        if (name) url += 'realName=' + encodeURIComponent(name);
+                        if (idCard) url += (name ? '&' : '') + 'idCard=' + encodeURIComponent(idCard);
+                        if (phone) url += ((name || idCard) ? '&' : '') + 'phone=' + encodeURIComponent(phone);
+
+                        try {
+                            const result = await get(url);
+                            if (result.data && result.data.length > 0) {
+                                this.selectedStaff = result.data[0];
+                                this.searchName = this.selectedStaff.realName;
+                                this.searchIdCard = this.selectedStaff.idCard || '';
+                                this.searchPhone = this.selectedStaff.phone || '';
+                            }
+                        } catch (e) {}
+                    }, 300);
+                },
+                showAddSalaryModal() {
+                    this.salaryForm = { salaryId: null, staffId: null, yearMonth: '', baseSalary: '', subsidy: 0, condolenceFee: 0, changeReason: '' };
+                    this.selectedStaff = null;
+                    this.searchName = '';
+                    this.searchIdCard = '';
+                    this.searchPhone = '';
+                    this.showSalaryModal = true;
+                },
+                async editSalary(item) {
+                    this.salaryForm = {
+                        salaryId: item.salaryId,
+                        staffId: item.staffId,
+                        yearMonth: item.yearMonth,
+                        baseSalary: item.baseSalary,
+                        subsidy: item.subsidy || 0,
+                        condolenceFee: item.condolenceFee || 0,
+                        changeReason: item.changeReason || ''
+                    };
+                    this.selectedStaff = { staffId: item.staffId, realName: item.staffName };
+                    this.searchName = item.staffName;
+                    try {
+                        const result = await get('/api/staff/' + item.staffId);
+                        if (result.data) {
+                            this.selectedStaff = result.data;
+                            this.searchIdCard = result.data.idCard || '';
+                            this.searchPhone = result.data.phone || '';
+                        }
+                    } catch (e) {}
+                    this.showSalaryModal = true;
+                },
+                async submitSalary() {
+                    if (!this.selectedStaff) {
+                        showMessage('请选择员工', 'error');
+                        return;
+                    }
+                    if (!this.salaryForm.yearMonth || !this.salaryForm.baseSalary) {
+                        showMessage('请填写必填项', 'error');
+                        return;
+                    }
+                    const data = {
+                        ...this.salaryForm,
+                        staffId: this.selectedStaff.staffId
+                    };
+                    try {
+                        if (this.salaryForm.salaryId) {
+                            await post('/api/salary/update', data);
+                        } else {
+                            await post('/api/salary/add', data);
+                        }
+                        showMessage(this.salaryForm.salaryId ? '修改成功' : '添加成功');
+                        this.showSalaryModal = false;
+                        this.loadSalaries();
+                    } catch (e) {}
+                },
+                async deleteSalary(id) {
+                    if (!confirm('确定要删除此工资记录吗？')) return;
+                    try {
+                        await del('/api/salary/' + id);
+                        showMessage('删除成功');
+                        this.loadSalaries();
+                    } catch (e) {}
+                },
+                showReplyModal(id) {
+                    this.replyAppealId = id;
+                    this.replyContent = '';
+                    this.showReplyModalFlag = true;
+                },
+                async submitReply() {
+                    if (!this.replyContent.trim()) {
+                        showMessage('请填写回复内容', 'error');
+                        return;
+                    }
+                    try {
+                        await post('/api/salary/appeal/' + this.replyAppealId + '/reply', { reply: this.replyContent.trim() });
+                        showMessage('回复成功');
+                        this.showReplyModalFlag = false;
+                        this.loadAppeals();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

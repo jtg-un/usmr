@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>亲属管理 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统</div>
+            <div class="nav-links">
+                <a href="user-index.html">首页</a>
+                <a href="user-profile.html">个人信息</a>
+                <a href="user-notice.html">校园公告</a>
+                <a href="user-activity.html">活动报名</a>
+                <a href="user-salary.html">工资查询</a>
+                <a href="user-relative.html" class="active">亲属管理</a>
+                <a href="user-message.html">站内留言</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <div class="card">
+                <div class="card-header">
+                    <h3>亲属信息</h3>
+                    <button class="btn btn-primary" @click="showAddModal">添加亲属</button>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>关系</th>
+                            <th>姓名</th>
+                            <th>住址</th>
+                            <th>居住面积</th>
+                            <th>电话</th>
+                            <th>邮箱</th>
+                            <th>工作单位</th>
+                            <th>QQ/微信</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in relatives" :key="item.relativeId">
+                            <td>{{ item.relationType || '-' }}</td>
+                            <td>{{ item.name || '-' }}</td>
+                            <td>{{ item.address || '-' }}</td>
+                            <td>{{ item.livingArea ? item.livingArea + '㎡' : '-' }}</td>
+                            <td>{{ item.phone || '-' }}</td>
+                            <td>{{ item.email || '-' }}</td>
+                            <td>{{ item.workplace || '-' }}</td>
+                            <td>{{ item.qqWechat || '-' }}</td>
+                            <td>
+                                <button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button>
+                                <button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button>
+                            </td>
+                        </tr>
+                        <tr v-if="relatives.length === 0">
+                            <td colspan="9" style="text-align: center; color: #909399;">暂无亲属信息</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 添加/编辑亲属模态框 -->
+        <div class="modal" :class="{ show: showModal }">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>{{ isEdit ? '编辑亲属' : '添加亲属' }}</h3>
+                    <span class="modal-close" @click="closeModal">&times;</span>
+                </div>
+                <form @submit.prevent="submitRelative">
+                    <div class="form-group">
+                        <label>关系类型 <span style="color: red;">*</span></label>
+                        <select v-model="form.relationType" required>
+                            <option value="">请选择</option>
+                            <option value="配偶">配偶</option>
+                            <option value="子女">子女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>姓名 <span style="color: red;">*</span></label>
+                        <input type="text" v-model="form.name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>住址 <span style="color: red;">*</span></label>
+                        <input type="text" v-model="form.address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>居住面积（平方米）</label>
+                        <input type="number" v-model="form.livingArea" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>电话 <span style="color: red;">*</span></label>
+                        <input type="text" v-model="form.phone" maxlength="11" placeholder="11位手机号" required>
+                    </div>
+                    <div class="form-group">
+                        <label>邮箱</label>
+                        <input type="email" v-model="form.email">
+                    </div>
+                    <div class="form-group">
+                        <label>工作单位</label>
+                        <input type="text" v-model="form.workplace">
+                    </div>
+                    <div class="form-group">
+                        <label>QQ/微信</label>
+                        <input type="text" v-model="form.qqWechat">
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button class="btn" @click="closeModal">取消</button>
+                    <button class="btn btn-primary" @click="submitRelative">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                relatives: [],
+                showModal: false,
+                isEdit: false,
+                form: {
+                    relativeId: null,
+                    relationType: '',
+                    name: '',
+                    address: '',
+                    livingArea: null,
+                    phone: '',
+                    email: '',
+                    workplace: '',
+                    qqWechat: ''
+                }
+            },
+            created() {
+                if (!checkLogin()) window.location.href = '../../login.html';
+                this.userInfo = getUserInfo() || {};
+                this.loadRelatives();
+            },
+            methods: {
+                async loadRelatives() {
+                    try {
+                        const result = await get('/api/relative/my-relatives');
+                        if (result.data) {
+                            this.relatives = result.data;
+                        }
+                    } catch (e) {}
+                },
+                showAddModal() {
+                    this.isEdit = false;
+                    this.form = {
+                        relativeId: null,
+                        relationType: '',
+                        name: '',
+                        address: '',
+                        livingArea: null,
+                        phone: '',
+                        email: '',
+                        workplace: '',
+                        qqWechat: ''
+                    };
+                    this.showModal = true;
+                },
+                editRelative(item) {
+                    this.isEdit = true;
+                    this.form = { ...item };
+                    this.showModal = true;
+                },
+                closeModal() {
+                    this.showModal = false;
+                },
+                async submitRelative() {
+                    if (!this.form.relationType || !this.form.name || !this.form.address || !this.form.phone) {
+                        showMessage('请填写所有必填项', 'error');
+                        return;
+                    }
+                    if (!/^1[3-9]\d{9}$/.test(this.form.phone)) {
+                        showMessage('请输入正确的11位手机号', 'error');
+                        return;
+                    }
+                    try {
+                        if (this.isEdit) {
+                            await post('/api/relative/update', this.form);
+                        } else {
+                            await post('/api/relative/add', this.form);
+                        }
+                        showMessage('保存成功');
+                        this.closeModal();
+                        this.loadRelatives();
+                    } catch (e) {}
+                },
+                async deleteRelative(id) {
+                    if (!confirm('确定要删除此亲属信息吗？')) return;
+                    try {
+                        await del('/api/relative/' + id);
+                        showMessage('删除成功');
+                        this.loadRelatives();
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>

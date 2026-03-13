@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页 - 大学退休教职工管理系统</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar">
+            <div class="logo">大学退休教职工管理系统</div>
+            <div class="nav-links">
+                <a href="user-index.html" class="active">首页</a>
+                <a href="user-profile.html">个人信息</a>
+                <a href="user-notice.html">校园公告</a>
+                <a href="user-activity.html">活动报名</a>
+                <a href="user-salary.html">工资查询</a>
+                <a href="user-relative.html">亲属管理</a>
+                <a href="user-message.html">站内留言</a>
+            </div>
+            <div class="user-info">
+                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
+                <span class="logout" @click="logout">退出</span>
+            </div>
+        </nav>
+
+        <div class="container" style="padding-top: 30px;">
+            <!-- 欢迎区域 -->
+            <div class="card">
+                <h2>欢迎您，{{ userInfo.realName || userInfo.username }}！</h2>
+                <p style="color: #909399; margin-top: 10px;">以下是您的个人信息概览</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+                <!-- 待办事项 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>待处理事项</h3>
+                    </div>
+                    <div>
+                        <p style="color: #909399;">暂无待处理事项</p>
+                    </div>
+                </div>
+
+                <!-- 最新公告 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>最新公告</h3>
+                        <a href="user-notice.html">更多</a>
+                    </div>
+                    <div>
+                        <div v-for="item in notices" :key="item.noticeId" style="padding: 10px 0; border-bottom: 1px solid #ebeef5;">
+                            <a :href="'user-notice-detail.html?id=' + item.noticeId">{{ item.title }}</a>
+                            <div style="font-size: 12px; color: #909399; margin-top: 5px;">{{ formatDateTime(item.publishTime) }}</div>
+                        </div>
+                        <p v-if="notices.length === 0" style="color: #909399; padding: 10px 0;">暂无公告</p>
+                    </div>
+                </div>
+
+                <!-- 近期活动 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>近期活动</h3>
+                        <a href="user-activity.html">更多</a>
+                    </div>
+                    <div>
+                        <div v-for="item in activities" :key="item.activityId" style="padding: 10px 0; border-bottom: 1px solid #ebeef5;">
+                            <a :href="'user-activity-detail.html?id=' + item.activityId">{{ item.title }}</a>
+                            <div style="font-size: 12px; color: #909399; margin-top: 5px;">{{ formatDateTime(item.startTime) }}</div>
+                        </div>
+                        <p v-if="activities.length === 0" style="color: #909399; padding: 10px 0;">暂无活动</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../js/vue.min.js"></script>
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/common.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userInfo: {},
+                notices: [],
+                activities: []
+            },
+            created() {
+                // 检查登录
+                if (!checkLogin()) {
+                    window.location.href = '../../login.html';
+                    return;
+                }
+                this.userInfo = getUserInfo() || {};
+                this.loadNotices();
+                this.loadActivities();
+            },
+            methods: {
+                async loadNotices() {
+                    try {
+                        const result = await get('/api/notice/list');
+                        if (result.data && result.data.length > 0) {
+                            this.notices = result.data.slice(0, 5);
+                        }
+                    } catch (e) {}
+                },
+                async loadActivities() {
+                    try {
+                        const result = await get('/api/activity/list');
+                        if (result.data && result.data.length > 0) {
+                            this.activities = result.data.slice(0, 5);
+                        }
+                    } catch (e) {}
+                }
+            }
+        });
+    </script>
+</body>
+</html>
