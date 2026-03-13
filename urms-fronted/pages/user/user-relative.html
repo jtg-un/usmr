@@ -4,211 +4,129 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>亲属管理 - 大学退休教职工管理系统</title>
-    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; }
+        .header { height: 60px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header .logo { display: flex; align-items: center; gap: 10px; color: white; }
+        .header .logo svg { width: 32px; height: 32px; fill: white; }
+        .header .logo h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
+        .header .user-info { display: flex; align-items: center; gap: 15px; color: white; }
+        .header .user-info .logout-btn { padding: 6px 16px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; font-size: 13px; }
+        .main-layout { display: flex; padding-top: 60px; min-height: 100vh; }
+        .sidebar { width: 200px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 60px; left: 0; bottom: 0; overflow-y: auto; }
+        .sidebar .menu-title { padding: 15px 20px; font-size: 12px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
+        .sidebar .menu-item { display: block; padding: 14px 20px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
+        .sidebar .menu-item:hover { background: #e6f0fa; color: #2c5aa0; }
+        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 3px solid #2c5aa0; font-weight: 500; }
+        .sidebar .menu-item svg { width: 16px; height: 16px; fill: currentColor; margin-right: 10px; vertical-align: middle; margin-top: -2px; }
+        .content-area { flex: 1; margin-left: 200px; padding: 20px; min-height: calc(100vh - 60px); }
+        .breadcrumb { background: #fff; padding: 12px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .breadcrumb a { color: #2c5aa0; text-decoration: none; }
+        .page-card { background: #fff; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .page-card .card-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .page-card .card-header h3 { font-size: 16px; color: #333; font-weight: 600; }
+        .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; border: none; }
+        .btn-primary { background: #2c5aa0; color: white; }
+        .btn-default { background: #f5f5f5; color: #333; border: 1px solid #d9d9d9; }
+        .btn-small { padding: 5px 12px; font-size: 12px; }
+        .btn-warning { background: #faad14; color: white; }
+        .btn-danger { background: #ff4d4f; color: white; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
+        .data-table th { background: #fafafa; color: #333; font-weight: 500; }
+        .data-table tr:hover { background: #fafafa; }
+        .empty-tip { text-align: center; color: #999; padding: 30px 20px; font-size: 14px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: #fff; border-radius: 4px; width: 500px; max-width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 16px; color: #333; }
+        .modal-close { font-size: 20px; color: #999; cursor: pointer; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; color: #333; margin-bottom: 6px; }
+        .form-group input, .form-group select { width: 100%; height: 36px; padding: 0 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 12px 30px; border-radius: 4px; z-index: 9999; font-size: 14px; }
+        .message.success { background: #f0f9eb; color: #67c23a; border: 1px solid #e1f3d8; }
+        .message.error { background: #fef0f0; color: #f56c6c; border: 1px solid #fde2e2; }
+        @media (max-width: 768px) { .sidebar { display: none; } .content-area { margin-left: 0; } .form-row { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar">
-            <div class="logo">大学退休教职工管理系统</div>
-            <div class="nav-links">
-                <a href="user-index.html">首页</a>
-                <a href="user-profile.html">个人信息</a>
-                <a href="user-notice.html">校园公告</a>
-                <a href="user-activity.html">活动报名</a>
-                <a href="user-salary.html">工资查询</a>
-                <a href="user-relative.html" class="active">亲属管理</a>
-                <a href="user-message.html">站内留言</a>
-            </div>
-            <div class="user-info">
-                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
-                <span class="logout" @click="logout">退出</span>
-            </div>
-        </nav>
-
-        <div class="container" style="padding-top: 30px;">
-            <div class="card">
-                <div class="card-header">
-                    <h3>亲属信息</h3>
-                    <button class="btn btn-primary" @click="showAddModal">添加亲属</button>
+        <header class="header">
+            <div class="logo"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg><h1>大学退休教职工管理系统</h1></div>
+            <div class="user-info"><span>欢迎您，{{ userInfo.realName || userInfo.username }}</span><button class="logout-btn" @click="logout">退出登录</button></div>
+        </header>
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="menu-title">功能菜单</div>
+                <a href="user-index.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>首页</a>
+                <a href="user-profile.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>个人信息</a>
+                <a href="user-notice.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>校园公告</a>
+                <a href="user-activity.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>活动报名</a>
+                <a href="user-salary.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>工资查询</a>
+                <a href="user-relative.html" class="menu-item active"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>亲属管理</a>
+                <a href="user-message.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>站内留言</a>
+            </aside>
+            <main class="content-area">
+                <div class="breadcrumb"><a href="user-index.html">首页</a> / 亲属管理</div>
+                <div class="page-card">
+                    <div class="card-header"><h3>亲属信息</h3><button class="btn btn-primary" @click="showAddModal">添加亲属</button></div>
+                    <table class="data-table">
+                        <thead><tr><th>关系</th><th>姓名</th><th>住址</th><th>居住面积</th><th>电话</th><th>邮箱</th><th>工作单位</th><th>QQ/微信</th><th>操作</th></tr></thead>
+                        <tbody>
+                            <tr v-for="item in relatives" :key="item.relativeId">
+                                <td>{{ item.relationType || '-' }}</td><td>{{ item.name || '-' }}</td><td>{{ item.address || '-' }}</td><td>{{ item.livingArea ? item.livingArea + '㎡' : '-' }}</td><td>{{ item.phone || '-' }}</td><td>{{ item.email || '-' }}</td><td>{{ item.workplace || '-' }}</td><td>{{ item.qqWechat || '-' }}</td>
+                                <td><button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button><button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button></td>
+                            </tr>
+                            <tr v-if="relatives.length === 0"><td colspan="9" class="empty-tip">暂无亲属信息</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>关系</th>
-                            <th>姓名</th>
-                            <th>住址</th>
-                            <th>居住面积</th>
-                            <th>电话</th>
-                            <th>邮箱</th>
-                            <th>工作单位</th>
-                            <th>QQ/微信</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in relatives" :key="item.relativeId">
-                            <td>{{ item.relationType || '-' }}</td>
-                            <td>{{ item.name || '-' }}</td>
-                            <td>{{ item.address || '-' }}</td>
-                            <td>{{ item.livingArea ? item.livingArea + '㎡' : '-' }}</td>
-                            <td>{{ item.phone || '-' }}</td>
-                            <td>{{ item.email || '-' }}</td>
-                            <td>{{ item.workplace || '-' }}</td>
-                            <td>{{ item.qqWechat || '-' }}</td>
-                            <td>
-                                <button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button>
-                                <button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button>
-                            </td>
-                        </tr>
-                        <tr v-if="relatives.length === 0">
-                            <td colspan="9" style="text-align: center; color: #909399;">暂无亲属信息</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            </main>
         </div>
-
-        <!-- 添加/编辑亲属模态框 -->
         <div class="modal" :class="{ show: showModal }">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h3>{{ isEdit ? '编辑亲属' : '添加亲属' }}</h3>
-                    <span class="modal-close" @click="closeModal">&times;</span>
+                <div class="modal-header"><h3>{{ isEdit ? '编辑亲属' : '添加亲属' }}</h3><span class="modal-close" @click="closeModal">&times;</span></div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group"><label>关系类型 <span style="color:#f5222d;">*</span></label><select v-model="form.relationType" required><option value="">请选择</option><option value="配偶">配偶</option><option value="子女">子女</option></select></div>
+                        <div class="form-group"><label>姓名 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.name" required></div>
+                    </div>
+                    <div class="form-group"><label>住址 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.address" required></div>
+                    <div class="form-row">
+                        <div class="form-group"><label>居住面积（平方米）</label><input type="number" v-model="form.livingArea" step="0.01"></div>
+                        <div class="form-group"><label>电话 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.phone" maxlength="11" placeholder="11位手机号" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>邮箱</label><input type="email" v-model="form.email"></div>
+                        <div class="form-group"><label>工作单位</label><input type="text" v-model="form.workplace"></div>
+                    </div>
+                    <div class="form-group"><label>QQ/微信</label><input type="text" v-model="form.qqWechat"></div>
                 </div>
-                <form @submit.prevent="submitRelative">
-                    <div class="form-group">
-                        <label>关系类型 <span style="color: red;">*</span></label>
-                        <select v-model="form.relationType" required>
-                            <option value="">请选择</option>
-                            <option value="配偶">配偶</option>
-                            <option value="子女">子女</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>姓名 <span style="color: red;">*</span></label>
-                        <input type="text" v-model="form.name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>住址 <span style="color: red;">*</span></label>
-                        <input type="text" v-model="form.address" required>
-                    </div>
-                    <div class="form-group">
-                        <label>居住面积（平方米）</label>
-                        <input type="number" v-model="form.livingArea" step="0.01">
-                    </div>
-                    <div class="form-group">
-                        <label>电话 <span style="color: red;">*</span></label>
-                        <input type="text" v-model="form.phone" maxlength="11" placeholder="11位手机号" required>
-                    </div>
-                    <div class="form-group">
-                        <label>邮箱</label>
-                        <input type="email" v-model="form.email">
-                    </div>
-                    <div class="form-group">
-                        <label>工作单位</label>
-                        <input type="text" v-model="form.workplace">
-                    </div>
-                    <div class="form-group">
-                        <label>QQ/微信</label>
-                        <input type="text" v-model="form.qqWechat">
-                    </div>
-                </form>
-                <div class="modal-footer">
-                    <button class="btn" @click="closeModal">取消</button>
-                    <button class="btn btn-primary" @click="submitRelative">保存</button>
-                </div>
+                <div class="modal-footer"><button class="btn btn-default" @click="closeModal">取消</button><button class="btn btn-primary" @click="submitRelative">保存</button></div>
             </div>
         </div>
     </div>
-
     <script src="../../js/vue.min.js"></script>
     <script src="../../js/axios.min.js"></script>
     <script src="../../js/common.js"></script>
     <script>
         new Vue({
             el: '#app',
-            data: {
-                userInfo: {},
-                relatives: [],
-                showModal: false,
-                isEdit: false,
-                form: {
-                    relativeId: null,
-                    relationType: '',
-                    name: '',
-                    address: '',
-                    livingArea: null,
-                    phone: '',
-                    email: '',
-                    workplace: '',
-                    qqWechat: ''
-                }
-            },
-            created() {
-                if (!checkLogin()) window.location.href = '../../login.html';
-                this.userInfo = getUserInfo() || {};
-                this.loadRelatives();
-            },
+            data: { userInfo: {}, relatives: [], showModal: false, isEdit: false, form: { relativeId: null, relationType: '', name: '', address: '', livingArea: null, phone: '', email: '', workplace: '', qqWechat: '' } },
+            created() { if (!checkLogin()) window.location.href = '../../login.html'; this.userInfo = getUserInfo() || {}; this.loadRelatives(); },
             methods: {
-                async loadRelatives() {
-                    try {
-                        const result = await get('/api/relative/my-relatives');
-                        if (result.data) {
-                            this.relatives = result.data;
-                        }
-                    } catch (e) {}
-                },
-                showAddModal() {
-                    this.isEdit = false;
-                    this.form = {
-                        relativeId: null,
-                        relationType: '',
-                        name: '',
-                        address: '',
-                        livingArea: null,
-                        phone: '',
-                        email: '',
-                        workplace: '',
-                        qqWechat: ''
-                    };
-                    this.showModal = true;
-                },
-                editRelative(item) {
-                    this.isEdit = true;
-                    this.form = { ...item };
-                    this.showModal = true;
-                },
-                closeModal() {
-                    this.showModal = false;
-                },
-                async submitRelative() {
-                    if (!this.form.relationType || !this.form.name || !this.form.address || !this.form.phone) {
-                        showMessage('请填写所有必填项', 'error');
-                        return;
-                    }
-                    if (!/^1[3-9]\d{9}$/.test(this.form.phone)) {
-                        showMessage('请输入正确的11位手机号', 'error');
-                        return;
-                    }
-                    try {
-                        if (this.isEdit) {
-                            await post('/api/relative/update', this.form);
-                        } else {
-                            await post('/api/relative/add', this.form);
-                        }
-                        showMessage('保存成功');
-                        this.closeModal();
-                        this.loadRelatives();
-                    } catch (e) {}
-                },
-                async deleteRelative(id) {
-                    if (!confirm('确定要删除此亲属信息吗？')) return;
-                    try {
-                        await del('/api/relative/' + id);
-                        showMessage('删除成功');
-                        this.loadRelatives();
-                    } catch (e) {}
-                }
+                async loadRelatives() { try { const result = await get('/api/relative/my-relatives'); if (result.data) { this.relatives = result.data; } } catch (e) {} },
+                showAddModal() { this.isEdit = false; this.form = { relativeId: null, relationType: '', name: '', address: '', livingArea: null, phone: '', email: '', workplace: '', qqWechat: '' }; this.showModal = true; },
+                editRelative(item) { this.isEdit = true; this.form = { ...item }; this.showModal = true; },
+                closeModal() { this.showModal = false; },
+                async submitRelative() { if (!this.form.relationType || !this.form.name || !this.form.address || !this.form.phone) { showMessage('请填写所有必填项', 'error'); return; } if (!/^1[3-9]\d{9}$/.test(this.form.phone)) { showMessage('请输入正确的11位手机号', 'error'); return; } try { if (this.isEdit) { await post('/api/relative/update', this.form); } else { await post('/api/relative/add', this.form); } showMessage('保存成功'); this.closeModal(); this.loadRelatives(); } catch (e) {} },
+                async deleteRelative(id) { if (!confirm('确定要删除此亲属信息吗？')) return; try { await del('/api/relative/' + id); showMessage('删除成功'); this.loadRelatives(); } catch (e) {} }
             }
         });
     </script>

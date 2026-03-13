@@ -4,29 +4,366 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录 - 大学退休教职工管理系统</title>
-    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f0f2f5;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+        }
+
+        /* 顶部条 */
+        .top-bar {
+            height: 80px;
+            background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .top-bar .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .top-bar .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-bar .logo-icon svg {
+            width: 35px;
+            height: 35px;
+        }
+
+        .top-bar .system-title {
+            color: white;
+        }
+
+        .top-bar .system-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 4px;
+        }
+
+        .top-bar .system-title p {
+            font-size: 12px;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            margin-top: 2px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 40px;
+        }
+
+        /* 登录框 */
+        .login-wrapper {
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 900px;
+            min-height: 450px;
+        }
+
+        /* 左侧图片区 */
+        .login-banner {
+            width: 450px;
+            background: linear-gradient(135deg, #1a3a6e 0%, #2c5aa0 50%, #3d7bd9 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
+            position: relative;
+        }
+
+        .login-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/><circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/><circle cx="50" cy="50" r="20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></svg>');
+            background-size: 200px 200px;
+            opacity: 0.5;
+        }
+
+        .login-banner .banner-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .login-banner .banner-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .login-banner .banner-icon svg {
+            width: 60px;
+            height: 60px;
+            fill: white;
+        }
+
+        .login-banner h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .login-banner p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.8;
+        }
+
+        /* 右侧登录表单 */
+        .login-form-area {
+            flex: 1;
+            padding: 50px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-form-area h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .login-form-area .subtitle {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 40px;
+        }
+
+        .form-item {
+            margin-bottom: 25px;
+        }
+
+        .form-item label {
+            display: block;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-item .input-wrapper {
+            position: relative;
+        }
+
+        .form-item .input-wrapper svg {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            fill: #999;
+        }
+
+        .form-item input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #dcdfe6;
+            border-radius: 4px;
+            padding: 0 15px 0 45px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-item input:focus {
+            outline: none;
+            border-color: #2c5aa0;
+            box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
+        }
+
+        .form-item input::placeholder {
+            color: #c0c4cc;
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 4px;
+            transition: all 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(90deg, #16315c 0%, #254a8a 100%);
+        }
+
+        .btn-login:disabled {
+            background: #a0c4e8;
+            cursor: not-allowed;
+        }
+
+        /* 测试账号 */
+        .test-account {
+            margin-top: 30px;
+            padding: 15px;
+            background: #f5f7fa;
+            border-radius: 4px;
+            border-left: 3px solid #2c5aa0;
+        }
+
+        .test-account h4 {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .test-account p {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* 底部版权 */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* 消息提示 */
+        .message {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 30px;
+            border-radius: 4px;
+            z-index: 9999;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .message.success {
+            background: #f0f9eb;
+            color: #67c23a;
+            border: 1px solid #e1f3d8;
+        }
+
+        .message.error {
+            background: #fef0f0;
+            color: #f56c6c;
+            border: 1px solid #fde2e2;
+        }
+    </style>
 </head>
 <body>
-    <div id="app" class="login-container">
-        <div class="login-box">
-            <h2>大学退休教职工管理系统</h2>
-            <form @submit.prevent="handleLogin">
-                <div class="form-group">
-                    <label>用户名</label>
-                    <input type="text" v-model="form.username" placeholder="请输入用户名" required>
-                </div>
-                <div class="form-group">
-                    <label>密码</label>
-                    <input type="password" v-model="form.password" placeholder="请输入密码" required>
-                </div>
-                <button type="submit" class="btn btn-primary" :disabled="loading">
-                    {{ loading ? '登录中...' : '登 录' }}
-                </button>
-            </form>
-            <p style="margin-top: 20px; text-align: center; color: #909399; font-size: 12px;">
-                测试账号: admin/admin (管理员) | user1/123456 (退休人员)
-            </p>
+    <!-- 顶部条 -->
+    <div class="top-bar">
+        <div class="logo-area">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="#1a3a6e">
+                    <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
+                </svg>
+            </div>
+            <div class="system-title">
+                <h1>大学退休教职工管理系统</h1>
+                <p>University Retired Staff Management System</p>
+            </div>
         </div>
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <div class="login-wrapper">
+            <!-- 左侧横幅 -->
+            <div class="login-banner">
+                <div class="banner-content">
+                    <div class="banner-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
+                    </div>
+                    <h2>欢迎登录</h2>
+                    <p>本系统为大学退休教职工提供<br>信息管理、活动报名、工资查询等服务</p>
+                </div>
+            </div>
+
+            <!-- 右侧表单 -->
+            <div class="login-form-area">
+                <h3>用户登录</h3>
+                <p class="subtitle">请输入您的账号信息</p>
+
+                <form @submit.prevent="handleLogin">
+                    <div class="form-item">
+                        <label>用户名</label>
+                        <div class="input-wrapper">
+                            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                            <input type="text" v-model="form.username" placeholder="请输入用户名" required>
+                        </div>
+                    </div>
+
+                    <div class="form-item">
+                        <label>密码</label>
+                        <div class="input-wrapper">
+                            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                            <input type="password" v-model="form.password" placeholder="请输入密码" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-login" :disabled="loading">
+                        {{ loading ? '登录中...' : '登 录' }}
+                    </button>
+                </form>
+
+                <div class="test-account">
+                    <h4>测试账号</h4>
+                    <p>
+                        管理员账号：admin / admin<br>
+                        退休人员账号：user1 / 123456
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2024 大学退休教职工管理系统 版权所有
     </div>
 
     <script src="js/vue.min.js"></script>
@@ -34,7 +371,7 @@
     <script src="js/common.js"></script>
     <script>
         new Vue({
-            el: '#app',
+            el: '.main-content',
             data: {
                 form: {
                     username: '',
@@ -56,13 +393,11 @@
                             password: this.form.password
                         });
 
-                        // 保存登录信息
                         localStorage.setItem('token', result.data.token);
                         localStorage.setItem('userInfo', JSON.stringify(result.data));
 
                         showMessage('登录成功', 'success');
 
-                        // 根据角色跳转
                         setTimeout(() => {
                             if (result.data.role === 2) {
                                 window.location.href = 'pages/admin/admin-index.html';

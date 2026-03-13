@@ -4,238 +4,163 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>活动详情 - 大学退休教职工管理系统</title>
-    <link rel="stylesheet" href="../../css/style.css">
     <style>
-        .group-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #dcdfe6;
-            border-radius: 4px;
-            max-height: 150px;
-            overflow-y: auto;
-            z-index: 100;
-        }
-        .group-suggestion-item {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-        .group-suggestion-item:hover {
-            background: #f5f7fa;
-        }
-        .form-group {
-            position: relative;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; }
+        .header { height: 60px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header .logo { display: flex; align-items: center; gap: 10px; color: white; }
+        .header .logo svg { width: 32px; height: 32px; fill: white; }
+        .header .logo h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
+        .header .user-info { display: flex; align-items: center; gap: 15px; color: white; }
+        .header .user-info .logout-btn { padding: 6px 16px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; font-size: 13px; }
+        .main-layout { display: flex; padding-top: 60px; min-height: 100vh; }
+        .sidebar { width: 200px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 60px; left: 0; bottom: 0; overflow-y: auto; }
+        .sidebar .menu-title { padding: 15px 20px; font-size: 12px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
+        .sidebar .menu-item { display: block; padding: 14px 20px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
+        .sidebar .menu-item:hover { background: #e6f0fa; color: #2c5aa0; }
+        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 3px solid #2c5aa0; font-weight: 500; }
+        .sidebar .menu-item svg { width: 16px; height: 16px; fill: currentColor; margin-right: 10px; vertical-align: middle; margin-top: -2px; }
+        .content-area { flex: 1; margin-left: 200px; padding: 20px; min-height: calc(100vh - 60px); }
+        .breadcrumb { background: #fff; padding: 12px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .breadcrumb a { color: #2c5aa0; text-decoration: none; }
+        .page-card { background: #fff; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .page-card .card-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .page-card .card-header h3 { font-size: 16px; color: #333; font-weight: 600; }
+        .page-card .card-header a { color: #2c5aa0; text-decoration: none; font-size: 13px; }
+        .page-card .card-body { padding: 20px; }
+        .info-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px; }
+        .info-item { font-size: 14px; }
+        .info-item label { color: #999; margin-right: 8px; }
+        .info-item span { color: #333; }
+        .action-bar { margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; display: flex; gap: 15px; }
+        .btn { padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 13px; border: none; }
+        .btn-primary { background: #2c5aa0; color: white; }
+        .btn-success { background: #52c41a; color: white; }
+        .btn-default { background: #f5f5f5; color: #333; border: 1px solid #d9d9d9; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .status-voted { color: #52c41a; font-size: 13px; }
+        .comment-form textarea { width: 100%; height: 80px; resize: none; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+        .comment-form textarea:focus { outline: none; border-color: #2c5aa0; }
+        .comment-form button { margin-top: 10px; }
+        .comment-item { padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .comment-item:last-child { border-bottom: none; }
+        .comment-item .comment-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .comment-item .comment-author { font-size: 14px; color: #333; font-weight: 500; }
+        .comment-item .comment-time { font-size: 12px; color: #999; }
+        .comment-item .comment-content { font-size: 13px; color: #666; }
+        .comment-item .comment-actions { margin-top: 8px; }
+        .comment-item .comment-actions button { padding: 4px 12px; background: #fff; color: #f5222d; border: 1px solid #f5222d; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .empty-tip { text-align: center; color: #999; padding: 30px 20px; font-size: 14px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: #fff; border-radius: 4px; width: 400px; max-width: 90%; }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 16px; color: #333; }
+        .modal-close { font-size: 20px; color: #999; cursor: pointer; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; color: #333; margin-bottom: 6px; }
+        .form-group input { width: 100%; height: 36px; padding: 0 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+        .form-group small { color: #999; font-size: 12px; }
+        .group-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dcdfe6; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 100; }
+        .group-suggestion-item { padding: 8px 12px; cursor: pointer; }
+        .group-suggestion-item:hover { background: #f5f7fa; }
+        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 12px 30px; border-radius: 4px; z-index: 9999; font-size: 14px; }
+        .message.success { background: #f0f9eb; color: #67c23a; border: 1px solid #e1f3d8; }
+        .message.error { background: #fef0f0; color: #f56c6c; border: 1px solid #fde2e2; }
+        @media (max-width: 768px) { .sidebar { display: none; } .content-area { margin-left: 0; } .info-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar">
-            <div class="logo">大学退休教职工管理系统</div>
-            <div class="nav-links">
-                <a href="user-index.html">首页</a>
-                <a href="user-profile.html">个人信息</a>
-                <a href="user-notice.html">校园公告</a>
-                <a href="user-activity.html" class="active">活动报名</a>
-                <a href="user-salary.html">工资查询</a>
-                <a href="user-relative.html">亲属管理</a>
-                <a href="user-message.html">站内留言</a>
-            </div>
-            <div class="user-info">
-                <span>欢迎, {{ userInfo.realName || userInfo.username }}</span>
-                <span class="logout" @click="logout">退出</span>
-            </div>
-        </nav>
-
-        <div class="container" style="padding-top: 30px;">
-            <div class="card">
-                <div class="card-header">
-                    <h3>{{ activity.title || '活动详情' }}</h3>
-                    <a href="user-activity.html">返回列表</a>
-                </div>
-                <div style="padding: 20px;">
-                    <p><strong>活动描述:</strong> {{ activity.description || '暂无描述' }}</p>
-                    <p><strong>开始时间:</strong> {{ formatDateTime(activity.startTime) }}</p>
-                    <p><strong>结束时间:</strong> {{ formatDateTime(activity.endTime) }}</p>
-                    <p><strong>活动类型:</strong> {{ activity.type === 2 ? '多人活动' : '普通活动' }}</p>
-                    <p><strong>当前投票数:</strong> {{ activity.voteCount || 0 }}</p>
-
-                    <div style="margin-top: 20px;">
-                        <button v-if="!activity.hasVoted" class="btn btn-success" @click="vote">投票</button>
-                        <span v-else style="color: #67c23a;">已投票</span>
-                        <button v-if="!activity.hasRegistered" class="btn btn-primary" @click="showRegisterModal = true">报名参加</button>
-                        <span v-else style="color: #67c23a;">已报名</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 评论区域 -->
-            <div class="card" style="margin-top: 20px;">
-                <div class="card-header">
-                    <h3>评论</h3>
-                </div>
-                <div style="padding: 15px;">
-                    <textarea v-model="commentContent" placeholder="发表评论..." style="width: 100%; height: 80px; resize: none; padding: 10px; border: 1px solid #dcdfe6; border-radius: 4px;"></textarea>
-                    <button class="btn btn-primary btn-small" style="margin-top: 10px;" @click="submitComment">发表评论</button>
-                </div>
-                <div class="comment-list">
-                    <div v-for="item in comments" :key="item.cmId" class="comment-item">
-                        <div class="comment-header">
-                            <span class="comment-author">{{ item.userName || '用户' }}</span>
-                            <span class="comment-time">{{ formatDateTime(item.createTime) }}</span>
+        <header class="header">
+            <div class="logo"><svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg><h1>大学退休教职工管理系统</h1></div>
+            <div class="user-info"><span>欢迎您，{{ userInfo.realName || userInfo.username }}</span><button class="logout-btn" @click="logout">退出登录</button></div>
+        </header>
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="menu-title">功能菜单</div>
+                <a href="user-index.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>首页</a>
+                <a href="user-profile.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>个人信息</a>
+                <a href="user-notice.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>校园公告</a>
+                <a href="user-activity.html" class="menu-item active"><svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>活动报名</a>
+                <a href="user-salary.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>工资查询</a>
+                <a href="user-relative.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>亲属管理</a>
+                <a href="user-message.html" class="menu-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>站内留言</a>
+            </aside>
+            <main class="content-area">
+                <div class="breadcrumb"><a href="user-index.html">首页</a> / <a href="user-activity.html">活动报名</a> / 活动详情</div>
+                <div class="page-card">
+                    <div class="card-header"><h3>{{ activity.title || '活动详情' }}</h3><a href="user-activity.html">返回列表</a></div>
+                    <div class="card-body">
+                        <div class="info-row">
+                            <div class="info-item"><label>活动描述:</label><span>{{ activity.description || '暂无描述' }}</span></div>
+                            <div class="info-item"><label>活动类型:</label><span>{{ activity.type === 2 ? '多人活动' : '普通活动' }}</span></div>
                         </div>
-                        <div class="comment-content">{{ item.content }}</div>
-                        <div v-if="item.userId === userInfo.userId" class="comment-actions">
-                            <button class="btn btn-danger btn-small" @click="deleteComment(item.cmId)">删除</button>
+                        <div class="info-row">
+                            <div class="info-item"><label>开始时间:</label><span>{{ formatDateTime(activity.startTime) }}</span></div>
+                            <div class="info-item"><label>结束时间:</label><span>{{ formatDateTime(activity.endTime) }}</span></div>
+                        </div>
+                        <div class="info-item"><label>当前投票数:</label><span>{{ activity.voteCount || 0 }}</span></div>
+                        <div class="action-bar">
+                            <button v-if="!activity.hasVoted" class="btn btn-success" @click="vote">投票</button>
+                            <span v-else class="status-voted">已投票</span>
+                            <button v-if="!activity.hasRegistered" class="btn btn-primary" @click="showRegisterModal = true">报名参加</button>
+                            <span v-else class="status-voted">已报名</span>
                         </div>
                     </div>
-                    <p v-if="comments.length === 0" style="color: #909399; text-align: center; padding: 20px;">暂无评论</p>
                 </div>
-            </div>
+                <div class="page-card">
+                    <div class="card-header"><h3>评论</h3></div>
+                    <div class="card-body">
+                        <div class="comment-form"><textarea v-model="commentContent" placeholder="发表评论..."></textarea><button class="btn btn-primary" @click="submitComment">发表评论</button></div>
+                        <div v-for="item in comments" :key="item.cmId" class="comment-item">
+                            <div class="comment-header"><span class="comment-author">{{ item.userName || '用户' }}</span><span class="comment-time">{{ formatDateTime(item.createTime) }}</span></div>
+                            <div class="comment-content">{{ item.content }}</div>
+                            <div v-if="item.userId === userInfo.userId" class="comment-actions"><button @click="deleteComment(item.cmId)">删除</button></div>
+                        </div>
+                        <div v-if="comments.length === 0" class="empty-tip">暂无评论</div>
+                    </div>
+                </div>
+            </main>
         </div>
-
-        <!-- 报名模态框 -->
         <div class="modal" :class="{ show: showRegisterModal }">
-            <div class="modal-content" style="max-width: 400px;">
-                <div class="modal-header">
-                    <h3>活动报名</h3>
-                    <span class="modal-close" @click="showRegisterModal = false">&times;</span>
-                </div>
-                <div v-if="activity.type === 2" class="form-group">
-                    <label>组名 <span style="color: red;">*</span></label>
-                    <div style="position: relative;">
+            <div class="modal-content">
+                <div class="modal-header"><h3>活动报名</h3><span class="modal-close" @click="showRegisterModal = false">&times;</span></div>
+                <div class="modal-body">
+                    <div v-if="activity.type === 2" class="form-group" style="position:relative;">
+                        <label>组名 <span style="color:#f5222d;">*</span></label>
                         <input type="text" v-model="groupName" @focus="showGroupSuggestions = true" @input="filterGroups" placeholder="选择已有组或输入新组名" autocomplete="off">
                         <div v-if="showGroupSuggestions && filteredGroups.length > 0" class="group-suggestions">
-                            <div v-for="g in filteredGroups" :key="g.groupName" class="group-suggestion-item" @click="selectGroup(g.groupName)">
-                                {{ g.groupName }} <span style="color: #909399; font-size: 12px;">({{ g.memberCount }}人)</span>
-                            </div>
+                            <div v-for="g in filteredGroups" :key="g.groupName" class="group-suggestion-item" @click="selectGroup(g.groupName)">{{ g.groupName }} <span style="color:#999;font-size:12px;">({{ g.memberCount }}人)</span></div>
                         </div>
+                        <small>多人活动需选择或输入组名，可选择已有小组或创建新小组</small>
                     </div>
-                    <small style="color: #909399;">多人活动需选择或输入组名，可选择已有小组或创建新小组</small>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn" @click="showRegisterModal = false">取消</button>
-                    <button class="btn btn-primary" @click="register">确认报名</button>
-                </div>
+                <div class="modal-footer"><button class="btn btn-default" @click="showRegisterModal = false">取消</button><button class="btn btn-primary" @click="register">确认报名</button></div>
             </div>
         </div>
     </div>
-
     <script src="../../js/vue.min.js"></script>
     <script src="../../js/axios.min.js"></script>
     <script src="../../js/common.js"></script>
     <script>
         new Vue({
             el: '#app',
-            data: {
-                userInfo: {},
-                activity: {},
-                comments: [],
-                commentContent: '',
-                activityId: null,
-                showRegisterModal: false,
-                groupName: '',
-                groups: [],
-                showGroupSuggestions: false
-            },
-            computed: {
-                filteredGroups() {
-                    if (!this.groupName) return this.groups;
-                    return this.groups.filter(g =>
-                        g.groupName.toLowerCase().includes(this.groupName.toLowerCase())
-                    );
-                }
-            },
-            created() {
-                if (!checkLogin()) window.location.href = '../../login.html';
-                this.userInfo = getUserInfo() || {};
-                this.activityId = getUrlParam('id');
-                this.loadActivity();
-                this.loadComments();
-
-                // 点击其他地方关闭组名建议
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.form-group')) {
-                        this.showGroupSuggestions = false;
-                    }
-                });
-            },
+            data: { userInfo: {}, activity: {}, comments: [], commentContent: '', activityId: null, showRegisterModal: false, groupName: '', groups: [], showGroupSuggestions: false },
+            computed: { filteredGroups() { if (!this.groupName) return this.groups; return this.groups.filter(g => g.groupName.toLowerCase().includes(this.groupName.toLowerCase())); } },
+            created() { if (!checkLogin()) window.location.href = '../../login.html'; this.userInfo = getUserInfo() || {}; this.activityId = getUrlParam('id'); this.loadActivity(); this.loadComments(); document.addEventListener('click', (e) => { if (!e.target.closest('.form-group')) { this.showGroupSuggestions = false; } }); },
             methods: {
-                async loadActivity() {
-                    try {
-                        const result = await get('/api/activity/' + this.activityId);
-                        if (result.data) {
-                            this.activity = result.data;
-                            if (result.data.type === 2) {
-                                this.loadGroups();
-                            }
-                        }
-                    } catch (e) {}
-                },
-                async loadGroups() {
-                    try {
-                        const result = await get('/api/activity/' + this.activityId + '/group-names');
-                        if (result.data) {
-                            this.groups = result.data;
-                        }
-                    } catch (e) {}
-                },
-                async vote() {
-                    try {
-                        await post('/api/activity/' + this.activityId + '/vote');
-                        showMessage('投票成功');
-                        this.loadActivity();
-                    } catch (e) {}
-                },
-                selectGroup(name) {
-                    this.groupName = name;
-                    this.showGroupSuggestions = false;
-                },
-                filterGroups() {
-                    this.showGroupSuggestions = true;
-                },
-                async register() {
-                    if (this.activity.type === 2 && !this.groupName.trim()) {
-                        showMessage('多人活动请选择或输入组名', 'error');
-                        return;
-                    }
-                    try {
-                        await post('/api/activity/' + this.activityId + '/register', { groupName: this.groupName.trim() });
-                        showMessage('报名成功');
-                        this.showRegisterModal = false;
-                        this.activity.hasRegistered = true;
-                    } catch (e) {}
-                },
-                async loadComments() {
-                    try {
-                        const result = await get('/api/activity/' + this.activityId + '/comments');
-                        if (result.data) {
-                            this.comments = result.data;
-                        }
-                    } catch (e) {}
-                },
-                async submitComment() {
-                    if (!this.commentContent.trim()) {
-                        showMessage('请输入评论内容', 'error');
-                        return;
-                    }
-                    try {
-                        await post('/api/activity/' + this.activityId + '/comment', { content: this.commentContent.trim() });
-                        showMessage('评论成功');
-                        this.commentContent = '';
-                        this.loadComments();
-                    } catch (e) {}
-                },
-                async deleteComment(cmId) {
-                    if (!confirm('确定要删除此评论吗？')) return;
-                    try {
-                        await del('/api/activity/comment/' + cmId);
-                        showMessage('删除成功');
-                        this.loadComments();
-                    } catch (e) {}
-                }
+                async loadActivity() { try { const result = await get('/api/activity/' + this.activityId); if (result.data) { this.activity = result.data; if (result.data.type === 2) { this.loadGroups(); } } } catch (e) {} },
+                async loadGroups() { try { const result = await get('/api/activity/' + this.activityId + '/group-names'); if (result.data) { this.groups = result.data; } } catch (e) {} },
+                async vote() { try { await post('/api/activity/' + this.activityId + '/vote'); showMessage('投票成功'); this.loadActivity(); } catch (e) {} },
+                selectGroup(name) { this.groupName = name; this.showGroupSuggestions = false; },
+                filterGroups() { this.showGroupSuggestions = true; },
+                async register() { if (this.activity.type === 2 && !this.groupName.trim()) { showMessage('多人活动请选择或输入组名', 'error'); return; } try { await post('/api/activity/' + this.activityId + '/register', { groupName: this.groupName.trim() }); showMessage('报名成功'); this.showRegisterModal = false; this.activity.hasRegistered = true; } catch (e) {} },
+                async loadComments() { try { const result = await get('/api/activity/' + this.activityId + '/comments'); if (result.data) { this.comments = result.data; } } catch (e) {} },
+                async submitComment() { if (!this.commentContent.trim()) { showMessage('请输入评论内容', 'error'); return; } try { await post('/api/activity/' + this.activityId + '/comment', { content: this.commentContent.trim() }); showMessage('评论成功'); this.commentContent = ''; this.loadComments(); } catch (e) {} },
+                async deleteComment(cmId) { if (!confirm('确定要删除此评论吗？')) return; try { await del('/api/activity/comment/' + cmId); showMessage('删除成功'); this.loadComments(); } catch (e) {} }
             }
         });
     </script>
