@@ -388,9 +388,12 @@
 
                     this.loading = true;
                     try {
+                        // 对密码进行MD5加密后再传输
+                        const encryptedPassword = md5(this.form.password);
+
                         const result = await post('/auth/login', {
                             username: this.form.username.trim(),
-                            password: this.form.password
+                            password: encryptedPassword
                         });
 
                         localStorage.setItem('token', result.data.token);

@@ -4,6 +4,7 @@ import com.urms.dao.SysUserDao;
 import com.urms.entity.SysUser;
 import com.urms.service.SysUserService;
 import com.urms.util.JwtUtil;
+import com.urms.util.Md5Util;
 import com.urms.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,8 @@ public class SysUserServiceImpl implements SysUserService {
             return Result.error("用户不存在");
         }
 
-        if (!user.getPassword().equals(password)) {
+        // 前端传来的密码已经是MD5加密后的，直接对比
+        if (!Md5Util.verify(password.trim(), user.getPassword())) {
             return Result.error("密码错误");
         }
 
@@ -64,7 +66,8 @@ public class SysUserServiceImpl implements SysUserService {
             return Result.error("用户不存在");
         }
 
-        if (!user.getPassword().equals(oldPassword)) {
+        // 前端传来的密码已经是MD5加密后的，直接对比
+        if (!Md5Util.verify(oldPassword, user.getPassword())) {
             return Result.error("原密码错误");
         }
 
@@ -72,6 +75,7 @@ public class SysUserServiceImpl implements SysUserService {
             return Result.error("新密码不能为空");
         }
 
+        // 前端传来的新密码已经是MD5加密后的，直接存储
         sysUserDao.updatePassword(userId, newPassword.trim());
         return Result.success("密码修改成功");
     }

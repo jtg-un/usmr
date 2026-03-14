@@ -1,11 +1,14 @@
 # 数据库初始化脚本
 # 用于创建初始用户数据
+# 密码使用MD5加密存储
 
 -- 插入管理员账户 (用户名: admin, 密码: admin)
-INSERT INTO sys_user (username, password, role, create_time) VALUES ('admin', 'admin', 2, NOW());
+-- MD5('admin') = 21232f297a57a5a743894a0e4a801fc3
+INSERT INTO sys_user (username, password, role, create_time) VALUES ('admin', '21232f297a57a5a743894a0e4a801fc3', 2, NOW());
 
 -- 插入测试退休人员账户 (用户名: user1, 密码: 123456)
-INSERT INTO sys_user (username, password, role, create_time) VALUES ('user1', '123456', 1, NOW());
+-- MD5('123456') = e10adc3949ba59abbe56e057f20f883e
+INSERT INTO sys_user (username, password, role, create_time) VALUES ('user1', 'e10adc3949ba59abbe56e057f20f883e', 1, NOW());
 
 -- 为user1创建退休人员信息
 INSERT INTO retired_staff (staff_id, real_name, gender, age, nation, education, former_dept, job_title)
