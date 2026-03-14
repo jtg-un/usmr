@@ -6,35 +6,37 @@
     <title>校园公告 - 大学退休教职工管理系统</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; }
-        .header { height: 60px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .header .logo { display: flex; align-items: center; gap: 10px; color: white; }
-        .header .logo svg { width: 32px; height: 32px; fill: white; }
-        .header .logo h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
-        .header .user-info { display: flex; align-items: center; gap: 15px; color: white; }
-        .header .user-info .logout-btn { padding: 6px 16px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; font-size: 13px; }
-        .header .user-info .logout-btn:hover { background: rgba(255,255,255,0.25); }
-        .main-layout { display: flex; padding-top: 60px; min-height: 100vh; }
-        .sidebar { width: 200px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 60px; left: 0; bottom: 0; overflow-y: auto; }
-        .sidebar .menu-title { padding: 15px 20px; font-size: 12px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
-        .sidebar .menu-item { display: block; padding: 14px 20px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
+        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; font-size: 18px; }
+        .header { height: 70px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header .logo { display: flex; align-items: center; gap: 12px; color: white; }
+        .header .logo svg { width: 36px; height: 36px; fill: white; }
+        .header .logo h1 { font-size: 22px; font-weight: 600; letter-spacing: 2px; }
+        .header .user-info { display: flex; align-items: center; gap: 20px; color: white; }
+        .header .user-info span { font-size: 18px; }
+        .header .user-info .logout-btn { padding: 10px 24px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 17px; }
+        .main-layout { display: flex; padding-top: 70px; min-height: 100vh; }
+        .sidebar { width: 240px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 70px; left: 0; bottom: 0; overflow-y: auto; }
+        .sidebar .menu-title { padding: 18px 25px; font-size: 16px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
+        .sidebar .menu-item { display: block; padding: 18px 25px; color: #333; text-decoration: none; font-size: 18px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
         .sidebar .menu-item:hover { background: #e6f0fa; color: #2c5aa0; }
-        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 3px solid #2c5aa0; font-weight: 500; }
-        .sidebar .menu-item svg { width: 16px; height: 16px; fill: currentColor; margin-right: 10px; vertical-align: middle; margin-top: -2px; }
-        .content-area { flex: 1; margin-left: 200px; padding: 20px; min-height: calc(100vh - 60px); }
-        .breadcrumb { background: #fff; padding: 12px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 4px solid #2c5aa0; font-weight: 600; }
+        .sidebar .menu-item svg { width: 20px; height: 20px; fill: currentColor; margin-right: 12px; vertical-align: middle; margin-top: -2px; }
+        .content-area { flex: 1; margin-left: 240px; padding: 25px; min-height: calc(100vh - 70px); }
+        .breadcrumb { background: #fff; padding: 15px 25px; margin-bottom: 25px; border-radius: 6px; font-size: 16px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
         .breadcrumb a { color: #2c5aa0; text-decoration: none; }
-        .page-card { background: #fff; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .page-card .card-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; }
-        .page-card .card-header h3 { font-size: 16px; color: #333; font-weight: 600; }
+        .guide-tip { background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 6px; padding: 15px 20px; margin-bottom: 25px; font-size: 17px; color: #0050b3; display: flex; align-items: center; gap: 10px; }
+        .guide-tip svg { width: 22px; height: 22px; fill: #1890ff; flex-shrink: 0; }
+        .page-card { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .page-card .card-header { padding: 18px 25px; border-bottom: 1px solid #f0f0f0; }
+        .page-card .card-header h3 { font-size: 20px; color: #333; font-weight: 600; }
         .page-card .card-body { padding: 0; }
-        .notice-item { padding: 18px 20px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: all 0.3s; }
+        .notice-item { padding: 22px 25px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: all 0.3s; }
         .notice-item:last-child { border-bottom: none; }
         .notice-item:hover { background: #fafafa; }
-        .notice-item h4 { font-size: 15px; color: #333; margin-bottom: 8px; font-weight: 500; }
-        .notice-item p { font-size: 13px; color: #999; }
-        .empty-tip { text-align: center; color: #999; padding: 50px 20px; font-size: 14px; }
-        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 12px 30px; border-radius: 4px; z-index: 9999; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .notice-item h4 { font-size: 19px; color: #333; margin-bottom: 10px; font-weight: 500; }
+        .notice-item p { font-size: 16px; color: #999; }
+        .empty-tip { text-align: center; color: #999; padding: 60px 25px; font-size: 18px; }
+        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 15px 35px; border-radius: 6px; z-index: 9999; font-size: 17px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         .message.success { background: #f0f9eb; color: #67c23a; border: 1px solid #e1f3d8; }
         .message.error { background: #fef0f0; color: #f56c6c; border: 1px solid #fde2e2; }
         @media (max-width: 768px) { .sidebar { display: none; } .content-area { margin-left: 0; } }
@@ -67,6 +69,12 @@
 
             <main class="content-area">
                 <div class="breadcrumb"><a href="user-index.html">首页</a> / 校园公告</div>
+
+                <div class="guide-tip">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <span>提示：点击公告标题可以查看详细内容，还可以发表评论。</span>
+                </div>
+
                 <div class="page-card">
                     <div class="card-header"><h3>校园公告</h3></div>
                     <div class="card-body">

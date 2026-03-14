@@ -6,52 +6,56 @@
     <title>亲属管理 - 大学退休教职工管理系统</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; }
-        .header { height: 60px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .header .logo { display: flex; align-items: center; gap: 10px; color: white; }
-        .header .logo svg { width: 32px; height: 32px; fill: white; }
-        .header .logo h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
-        .header .user-info { display: flex; align-items: center; gap: 15px; color: white; }
-        .header .user-info .logout-btn { padding: 6px 16px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; font-size: 13px; }
-        .main-layout { display: flex; padding-top: 60px; min-height: 100vh; }
-        .sidebar { width: 200px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 60px; left: 0; bottom: 0; overflow-y: auto; }
-        .sidebar .menu-title { padding: 15px 20px; font-size: 12px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
-        .sidebar .menu-item { display: block; padding: 14px 20px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
+        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; font-size: 18px; }
+        .header { height: 70px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header .logo { display: flex; align-items: center; gap: 12px; color: white; }
+        .header .logo svg { width: 36px; height: 36px; fill: white; }
+        .header .logo h1 { font-size: 22px; font-weight: 600; letter-spacing: 2px; }
+        .header .user-info { display: flex; align-items: center; gap: 20px; color: white; }
+        .header .user-info span { font-size: 18px; }
+        .header .user-info .logout-btn { padding: 10px 24px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 17px; }
+        .main-layout { display: flex; padding-top: 70px; min-height: 100vh; }
+        .sidebar { width: 240px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 70px; left: 0; bottom: 0; overflow-y: auto; }
+        .sidebar .menu-title { padding: 18px 25px; font-size: 16px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
+        .sidebar .menu-item { display: block; padding: 18px 25px; color: #333; text-decoration: none; font-size: 18px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
         .sidebar .menu-item:hover { background: #e6f0fa; color: #2c5aa0; }
-        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 3px solid #2c5aa0; font-weight: 500; }
-        .sidebar .menu-item svg { width: 16px; height: 16px; fill: currentColor; margin-right: 10px; vertical-align: middle; margin-top: -2px; }
-        .content-area { flex: 1; margin-left: 200px; padding: 20px; min-height: calc(100vh - 60px); }
-        .breadcrumb { background: #fff; padding: 12px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 4px solid #2c5aa0; font-weight: 600; }
+        .sidebar .menu-item svg { width: 20px; height: 20px; fill: currentColor; margin-right: 12px; vertical-align: middle; margin-top: -2px; }
+        .content-area { flex: 1; margin-left: 240px; padding: 25px; min-height: calc(100vh - 70px); }
+        .breadcrumb { background: #fff; padding: 15px 25px; margin-bottom: 25px; border-radius: 6px; font-size: 16px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
         .breadcrumb a { color: #2c5aa0; text-decoration: none; }
-        .page-card { background: #fff; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .page-card .card-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .page-card .card-header h3 { font-size: 16px; color: #333; font-weight: 600; }
-        .btn { padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; border: none; }
+        .guide-tip { background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 6px; padding: 15px 20px; margin-bottom: 25px; font-size: 17px; color: #0050b3; display: flex; align-items: center; gap: 10px; }
+        .guide-tip svg { width: 22px; height: 22px; fill: #1890ff; flex-shrink: 0; }
+        .page-card { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .page-card .card-header { padding: 18px 25px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .page-card .card-header h3 { font-size: 20px; color: #333; font-weight: 600; }
+        .btn { padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 17px; border: none; }
         .btn-primary { background: #2c5aa0; color: white; }
-        .btn-default { background: #f5f5f5; color: #333; border: 1px solid #d9d9d9; }
-        .btn-small { padding: 5px 12px; font-size: 12px; }
+        .btn-default { background: #f5f5f5; color: #333; border: 2px solid #d9d9d9; }
+        .btn-small { padding: 10px 18px; font-size: 16px; }
         .btn-warning { background: #faad14; color: white; }
         .btn-danger { background: #ff4d4f; color: white; }
         .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-        .data-table th { background: #fafafa; color: #333; font-weight: 500; }
+        .data-table th, .data-table td { padding: 16px 18px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 16px; }
+        .data-table th { background: #fafafa; color: #333; font-weight: 600; }
         .data-table tr:hover { background: #fafafa; }
-        .empty-tip { text-align: center; color: #999; padding: 30px 20px; font-size: 14px; }
+        .empty-tip { text-align: center; color: #999; padding: 50px 25px; font-size: 18px; }
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.show { display: flex; }
-        .modal-content { background: #fff; border-radius: 4px; width: 500px; max-width: 90%; max-height: 80vh; overflow-y: auto; }
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { font-size: 16px; color: #333; }
-        .modal-close { font-size: 20px; color: #999; cursor: pointer; }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; color: #333; margin-bottom: 6px; }
-        .form-group input, .form-group select { width: 100%; height: 36px; padding: 0 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 12px 30px; border-radius: 4px; z-index: 9999; font-size: 14px; }
+        .modal-content { background: #fff; border-radius: 8px; width: 600px; max-width: 95%; max-height: 85vh; overflow-y: auto; }
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 20px; color: #333; }
+        .modal-close { font-size: 28px; color: #999; cursor: pointer; }
+        .modal-body { padding: 25px; }
+        .modal-footer { padding: 20px 25px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 15px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 17px; color: #333; margin-bottom: 10px; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; height: 48px; padding: 0 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 15px 35px; border-radius: 6px; z-index: 9999; font-size: 17px; }
         .message.success { background: #f0f9eb; color: #67c23a; border: 1px solid #e1f3d8; }
         .message.error { background: #fef0f0; color: #f56c6c; border: 1px solid #fde2e2; }
+        .table-wrapper { overflow-x: auto; }
         @media (max-width: 768px) { .sidebar { display: none; } .content-area { margin-left: 0; } .form-row { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -74,39 +78,58 @@
             </aside>
             <main class="content-area">
                 <div class="breadcrumb"><a href="user-index.html">首页</a> / 亲属管理</div>
+
+                <div class="guide-tip">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    <span>提示：在此管理您的亲属信息。点击"添加亲属"添加新信息，点击"编辑"修改已有信息。</span>
+                </div>
+
                 <div class="page-card">
                     <div class="card-header"><h3>亲属信息</h3><button class="btn btn-primary" @click="showAddModal">添加亲属</button></div>
-                    <table class="data-table">
-                        <thead><tr><th>关系</th><th>姓名</th><th>住址</th><th>居住面积</th><th>电话</th><th>邮箱</th><th>工作单位</th><th>QQ/微信</th><th>操作</th></tr></thead>
-                        <tbody>
-                            <tr v-for="item in relatives" :key="item.relativeId">
-                                <td>{{ item.relationType || '-' }}</td><td>{{ item.name || '-' }}</td><td>{{ item.address || '-' }}</td><td>{{ item.livingArea ? item.livingArea + '㎡' : '-' }}</td><td>{{ item.phone || '-' }}</td><td>{{ item.email || '-' }}</td><td>{{ item.workplace || '-' }}</td><td>{{ item.qqWechat || '-' }}</td>
-                                <td><button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button><button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button></td>
-                            </tr>
-                            <tr v-if="relatives.length === 0"><td colspan="9" class="empty-tip">暂无亲属信息</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead><tr><th>关系</th><th>姓名</th><th>住址</th><th>电话</th><th>工作单位</th><th>操作</th></tr></thead>
+                            <tbody>
+                                <tr v-for="item in relatives" :key="item.relativeId">
+                                    <td>{{ item.relationType || '-' }}</td>
+                                    <td>{{ item.name || '-' }}</td>
+                                    <td>{{ item.address || '-' }}</td>
+                                    <td>{{ item.phone || '-' }}</td>
+                                    <td>{{ item.workplace || '-' }}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button>
+                                        <button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button>
+                                    </td>
+                                </tr>
+                                <tr v-if="relatives.length === 0"><td colspan="6" class="empty-tip">暂无亲属信息，点击上方"添加亲属"按钮添加</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </main>
         </div>
         <div class="modal" :class="{ show: showModal }">
             <div class="modal-content">
-                <div class="modal-header"><h3>{{ isEdit ? '编辑亲属' : '添加亲属' }}</h3><span class="modal-close" @click="closeModal">&times;</span></div>
+                <div class="modal-header"><h3>{{ isEdit ? '编辑亲属信息' : '添加亲属' }}</h3><span class="modal-close" @click="closeModal">&times;</span></div>
                 <div class="modal-body">
+                    <div class="guide-tip">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>带 <span style="color:#f5222d;">*</span> 的为必填项，请认真填写。</span>
+                    </div>
                     <div class="form-row">
                         <div class="form-group"><label>关系类型 <span style="color:#f5222d;">*</span></label><select v-model="form.relationType" required><option value="">请选择</option><option value="配偶">配偶</option><option value="子女">子女</option></select></div>
-                        <div class="form-group"><label>姓名 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.name" required></div>
+                        <div class="form-group"><label>姓名 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.name" required placeholder="请输入姓名"></div>
                     </div>
-                    <div class="form-group"><label>住址 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.address" required></div>
+                    <div class="form-group"><label>住址 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.address" required placeholder="请输入详细住址"></div>
                     <div class="form-row">
-                        <div class="form-group"><label>居住面积（平方米）</label><input type="number" v-model="form.livingArea" step="0.01"></div>
+                        <div class="form-group"><label>居住面积（平方米）</label><input type="number" v-model="form.livingArea" step="0.01" placeholder="选填"></div>
                         <div class="form-group"><label>电话 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.phone" maxlength="11" placeholder="11位手机号" required></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>邮箱</label><input type="email" v-model="form.email"></div>
-                        <div class="form-group"><label>工作单位</label><input type="text" v-model="form.workplace"></div>
+                        <div class="form-group"><label>邮箱</label><input type="email" v-model="form.email" placeholder="选填"></div>
+                        <div class="form-group"><label>工作单位</label><input type="text" v-model="form.workplace" placeholder="选填"></div>
                     </div>
-                    <div class="form-group"><label>QQ/微信</label><input type="text" v-model="form.qqWechat"></div>
+                    <div class="form-group"><label>QQ/微信</label><input type="text" v-model="form.qqWechat" placeholder="选填"></div>
                 </div>
                 <div class="modal-footer"><button class="btn btn-default" @click="closeModal">取消</button><button class="btn btn-primary" @click="submitRelative">保存</button></div>
             </div>

@@ -6,70 +6,73 @@
     <title>活动详情 - 大学退休教职工管理系统</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; }
-        .header { height: 60px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
-        .header .logo { display: flex; align-items: center; gap: 10px; color: white; }
-        .header .logo svg { width: 32px; height: 32px; fill: white; }
-        .header .logo h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; }
-        .header .user-info { display: flex; align-items: center; gap: 15px; color: white; }
-        .header .user-info .logout-btn { padding: 6px 16px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; color: white; cursor: pointer; font-size: 13px; }
-        .main-layout { display: flex; padding-top: 60px; min-height: 100vh; }
-        .sidebar { width: 200px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 60px; left: 0; bottom: 0; overflow-y: auto; }
-        .sidebar .menu-title { padding: 15px 20px; font-size: 12px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
-        .sidebar .menu-item { display: block; padding: 14px 20px; color: #333; text-decoration: none; font-size: 14px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
+        body { min-height: 100vh; background: #f0f2f5; font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif; font-size: 18px; }
+        .header { height: 70px; background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 25px; position: fixed; top: 0; left: 0; right: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .header .logo { display: flex; align-items: center; gap: 12px; color: white; }
+        .header .logo svg { width: 36px; height: 36px; fill: white; }
+        .header .logo h1 { font-size: 22px; font-weight: 600; letter-spacing: 2px; }
+        .header .user-info { display: flex; align-items: center; gap: 20px; color: white; }
+        .header .user-info span { font-size: 18px; }
+        .header .user-info .logout-btn { padding: 10px 24px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 6px; color: white; cursor: pointer; font-size: 17px; }
+        .main-layout { display: flex; padding-top: 70px; min-height: 100vh; }
+        .sidebar { width: 240px; background: #fff; border-right: 1px solid #e8e8e8; position: fixed; top: 70px; left: 0; bottom: 0; overflow-y: auto; }
+        .sidebar .menu-title { padding: 18px 25px; font-size: 16px; color: #999; background: #fafafa; border-bottom: 1px solid #e8e8e8; }
+        .sidebar .menu-item { display: block; padding: 18px 25px; color: #333; text-decoration: none; font-size: 18px; border-bottom: 1px solid #f0f0f0; transition: all 0.3s; }
         .sidebar .menu-item:hover { background: #e6f0fa; color: #2c5aa0; }
-        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 3px solid #2c5aa0; font-weight: 500; }
-        .sidebar .menu-item svg { width: 16px; height: 16px; fill: currentColor; margin-right: 10px; vertical-align: middle; margin-top: -2px; }
-        .content-area { flex: 1; margin-left: 200px; padding: 20px; min-height: calc(100vh - 60px); }
-        .breadcrumb { background: #fff; padding: 12px 20px; margin-bottom: 20px; border-radius: 4px; font-size: 13px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .sidebar .menu-item.active { background: #e6f0fa; color: #2c5aa0; border-left: 4px solid #2c5aa0; font-weight: 600; }
+        .sidebar .menu-item svg { width: 20px; height: 20px; fill: currentColor; margin-right: 12px; vertical-align: middle; margin-top: -2px; }
+        .content-area { flex: 1; margin-left: 240px; padding: 25px; min-height: calc(100vh - 70px); }
+        .breadcrumb { background: #fff; padding: 15px 25px; margin-bottom: 25px; border-radius: 6px; font-size: 16px; color: #666; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
         .breadcrumb a { color: #2c5aa0; text-decoration: none; }
-        .page-card { background: #fff; border-radius: 4px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .page-card .card-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .page-card .card-header h3 { font-size: 16px; color: #333; font-weight: 600; }
-        .page-card .card-header a { color: #2c5aa0; text-decoration: none; font-size: 13px; }
-        .page-card .card-body { padding: 20px; }
-        .info-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px; }
-        .info-item { font-size: 14px; }
-        .info-item label { color: #999; margin-right: 8px; }
+        .page-card { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 25px; }
+        .page-card .card-header { padding: 18px 25px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .page-card .card-header h3 { font-size: 20px; color: #333; font-weight: 600; }
+        .page-card .card-header a { color: #2c5aa0; text-decoration: none; font-size: 17px; }
+        .page-card .card-body { padding: 25px; }
+        .info-row { display: grid; grid-template-columns: 1fr; gap: 18px; margin-bottom: 18px; }
+        .info-item { font-size: 18px; line-height: 1.6; }
+        .info-item label { color: #666; margin-right: 10px; font-weight: 500; }
         .info-item span { color: #333; }
-        .action-bar { margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0f0f0; display: flex; gap: 15px; }
-        .btn { padding: 8px 20px; border-radius: 4px; cursor: pointer; font-size: 13px; border: none; }
+        .guide-tip { background: #fff7e6; border: 1px solid #ffd591; border-radius: 6px; padding: 15px 20px; margin-bottom: 20px; font-size: 17px; color: #ad6800; display: flex; align-items: center; gap: 10px; }
+        .guide-tip svg { width: 22px; height: 22px; fill: #fa8c16; flex-shrink: 0; }
+        .action-bar { margin-top: 25px; padding-top: 25px; border-top: 2px solid #f0f0f0; display: flex; gap: 20px; flex-wrap: wrap; }
+        .btn { padding: 14px 35px; border-radius: 6px; cursor: pointer; font-size: 18px; border: none; font-weight: 500; }
         .btn-primary { background: #2c5aa0; color: white; }
         .btn-success { background: #52c41a; color: white; }
-        .btn-default { background: #f5f5f5; color: #333; border: 1px solid #d9d9d9; }
+        .btn-default { background: #f5f5f5; color: #333; border: 2px solid #d9d9d9; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .status-voted { color: #52c41a; font-size: 13px; }
-        .comment-form textarea { width: 100%; height: 80px; resize: none; padding: 10px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
+        .status-voted { color: #52c41a; font-size: 18px; font-weight: 500; }
+        .comment-form textarea { width: 100%; height: 100px; resize: none; padding: 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; }
         .comment-form textarea:focus { outline: none; border-color: #2c5aa0; }
-        .comment-form button { margin-top: 10px; }
-        .comment-item { padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .comment-form button { margin-top: 15px; }
+        .comment-item { padding: 20px 0; border-bottom: 1px solid #f0f0f0; }
         .comment-item:last-child { border-bottom: none; }
-        .comment-item .comment-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-        .comment-item .comment-author { font-size: 14px; color: #333; font-weight: 500; }
-        .comment-item .comment-time { font-size: 12px; color: #999; }
-        .comment-item .comment-content { font-size: 13px; color: #666; }
-        .comment-item .comment-actions { margin-top: 8px; }
-        .comment-item .comment-actions button { padding: 4px 12px; background: #fff; color: #f5222d; border: 1px solid #f5222d; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .empty-tip { text-align: center; color: #999; padding: 30px 20px; font-size: 14px; }
+        .comment-item .comment-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .comment-item .comment-author { font-size: 18px; color: #333; font-weight: 500; }
+        .comment-item .comment-time { font-size: 16px; color: #999; }
+        .comment-item .comment-content { font-size: 17px; color: #666; line-height: 1.6; }
+        .comment-item .comment-actions { margin-top: 12px; }
+        .comment-item .comment-actions button { padding: 8px 18px; background: #fff; color: #f5222d; border: 1px solid #f5222d; border-radius: 6px; cursor: pointer; font-size: 16px; }
+        .empty-tip { text-align: center; color: #999; padding: 40px 25px; font-size: 18px; }
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal.show { display: flex; }
-        .modal-content { background: #fff; border-radius: 4px; width: 400px; max-width: 90%; }
-        .modal-header { padding: 15px 20px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header h3 { font-size: 16px; color: #333; }
-        .modal-close { font-size: 20px; color: #999; cursor: pointer; }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; color: #333; margin-bottom: 6px; }
-        .form-group input { width: 100%; height: 36px; padding: 0 12px; border: 1px solid #d9d9d9; border-radius: 4px; font-size: 13px; }
-        .form-group small { color: #999; font-size: 12px; }
-        .group-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dcdfe6; border-radius: 4px; max-height: 150px; overflow-y: auto; z-index: 100; }
-        .group-suggestion-item { padding: 8px 12px; cursor: pointer; }
+        .modal-content { background: #fff; border-radius: 8px; width: 500px; max-width: 90%; }
+        .modal-header { padding: 20px 25px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { font-size: 20px; color: #333; }
+        .modal-close { font-size: 28px; color: #999; cursor: pointer; }
+        .modal-body { padding: 25px; }
+        .modal-footer { padding: 20px 25px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 15px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 17px; color: #333; margin-bottom: 10px; font-weight: 500; }
+        .form-group input { width: 100%; height: 48px; padding: 0 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; }
+        .form-group small { color: #999; font-size: 15px; }
+        .group-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #dcdfe6; border-radius: 6px; max-height: 150px; overflow-y: auto; z-index: 100; }
+        .group-suggestion-item { padding: 12px 15px; cursor: pointer; font-size: 17px; }
         .group-suggestion-item:hover { background: #f5f7fa; }
-        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 12px 30px; border-radius: 4px; z-index: 9999; font-size: 14px; }
+        .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 15px 35px; border-radius: 6px; z-index: 9999; font-size: 17px; }
         .message.success { background: #f0f9eb; color: #67c23a; border: 1px solid #e1f3d8; }
         .message.error { background: #fef0f0; color: #f56c6c; border: 1px solid #fde2e2; }
-        @media (max-width: 768px) { .sidebar { display: none; } .content-area { margin-left: 0; } .info-row { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .sidebar { display: none; } .content-area { margin-left: 0; } }
     </style>
 </head>
 <body>
@@ -96,29 +99,39 @@
                     <div class="card-body">
                         <div class="info-row">
                             <div class="info-item"><label>活动描述:</label><span>{{ activity.description || '暂无描述' }}</span></div>
-                            <div class="info-item"><label>活动类型:</label><span>{{ activity.type === 2 ? '多人活动' : '普通活动' }}</span></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-item"><label>活动类型:</label><span>{{ activity.type === 2 ? '多人活动（可组队参加）' : '普通活动（单人参加）' }}</span></div>
                         </div>
                         <div class="info-row">
                             <div class="info-item"><label>开始时间:</label><span>{{ formatDateTime(activity.startTime) }}</span></div>
+                        </div>
+                        <div class="info-row">
                             <div class="info-item"><label>结束时间:</label><span>{{ formatDateTime(activity.endTime) }}</span></div>
                         </div>
-                        <div class="info-item"><label>当前投票数:</label><span>{{ activity.voteCount || 0 }}</span></div>
+                        <div class="info-item"><label>当前投票数:</label><span style="color: #2c5aa0; font-weight: 600;">{{ activity.voteCount || 0 }} 票</span></div>
+
+                        <div class="guide-tip">
+                            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <span>操作提示：点击"投票"按钮支持此活动，点击"报名参加"按钮进行报名。</span>
+                        </div>
+
                         <div class="action-bar">
-                            <button v-if="!activity.hasVoted" class="btn btn-success" @click="vote">投票</button>
-                            <span v-else class="status-voted">已投票</span>
+                            <button v-if="!activity.hasVoted" class="btn btn-success" @click="vote">投票支持</button>
+                            <span v-else class="status-voted">您已投票</span>
                             <button v-if="!activity.hasRegistered" class="btn btn-primary" @click="showRegisterModal = true">报名参加</button>
-                            <span v-else class="status-voted">已报名</span>
+                            <span v-else class="status-voted">您已报名</span>
                         </div>
                     </div>
                 </div>
                 <div class="page-card">
-                    <div class="card-header"><h3>评论</h3></div>
+                    <div class="card-header"><h3>评论区</h3></div>
                     <div class="card-body">
-                        <div class="comment-form"><textarea v-model="commentContent" placeholder="发表评论..."></textarea><button class="btn btn-primary" @click="submitComment">发表评论</button></div>
+                        <div class="comment-form"><textarea v-model="commentContent" placeholder="请输入您的评论..."></textarea><button class="btn btn-primary" @click="submitComment">发表评论</button></div>
                         <div v-for="item in comments" :key="item.cmId" class="comment-item">
                             <div class="comment-header"><span class="comment-author">{{ item.userName || '用户' }}</span><span class="comment-time">{{ formatDateTime(item.createTime) }}</span></div>
                             <div class="comment-content">{{ item.content }}</div>
-                            <div v-if="item.userId === userInfo.userId" class="comment-actions"><button @click="deleteComment(item.cmId)">删除</button></div>
+                            <div v-if="item.userId === userInfo.userId" class="comment-actions"><button @click="deleteComment(item.cmId)">删除我的评论</button></div>
                         </div>
                         <div v-if="comments.length === 0" class="empty-tip">暂无评论</div>
                     </div>
@@ -129,11 +142,15 @@
             <div class="modal-content">
                 <div class="modal-header"><h3>活动报名</h3><span class="modal-close" @click="showRegisterModal = false">&times;</span></div>
                 <div class="modal-body">
+                    <div class="guide-tip">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <span>多人活动可以选择已有小组或创建新小组。</span>
+                    </div>
                     <div v-if="activity.type === 2" class="form-group" style="position:relative;">
                         <label>组名 <span style="color:#f5222d;">*</span></label>
                         <input type="text" v-model="groupName" @focus="showGroupSuggestions = true" @input="filterGroups" placeholder="选择已有组或输入新组名" autocomplete="off">
                         <div v-if="showGroupSuggestions && filteredGroups.length > 0" class="group-suggestions">
-                            <div v-for="g in filteredGroups" :key="g.groupName" class="group-suggestion-item" @click="selectGroup(g.groupName)">{{ g.groupName }} <span style="color:#999;font-size:12px;">({{ g.memberCount }}人)</span></div>
+                            <div v-for="g in filteredGroups" :key="g.groupName" class="group-suggestion-item" @click="selectGroup(g.groupName)">{{ g.groupName }} <span style="color:#999;">({{ g.memberCount }}人)</span></div>
                         </div>
                         <small>多人活动需选择或输入组名，可选择已有小组或创建新小组</small>
                     </div>
@@ -154,10 +171,10 @@
             methods: {
                 async loadActivity() { try { const result = await get('/api/activity/' + this.activityId); if (result.data) { this.activity = result.data; if (result.data.type === 2) { this.loadGroups(); } } } catch (e) {} },
                 async loadGroups() { try { const result = await get('/api/activity/' + this.activityId + '/group-names'); if (result.data) { this.groups = result.data; } } catch (e) {} },
-                async vote() { try { await post('/api/activity/' + this.activityId + '/vote'); showMessage('投票成功'); this.loadActivity(); } catch (e) {} },
+                async vote() { try { await post('/api/activity/' + this.activityId + '/vote'); showMessage('投票成功！感谢您的支持'); this.loadActivity(); } catch (e) {} },
                 selectGroup(name) { this.groupName = name; this.showGroupSuggestions = false; },
                 filterGroups() { this.showGroupSuggestions = true; },
-                async register() { if (this.activity.type === 2 && !this.groupName.trim()) { showMessage('多人活动请选择或输入组名', 'error'); return; } try { await post('/api/activity/' + this.activityId + '/register', { groupName: this.groupName.trim() }); showMessage('报名成功'); this.showRegisterModal = false; this.activity.hasRegistered = true; } catch (e) {} },
+                async register() { if (this.activity.type === 2 && !this.groupName.trim()) { showMessage('多人活动请选择或输入组名', 'error'); return; } try { await post('/api/activity/' + this.activityId + '/register', { groupName: this.groupName.trim() }); showMessage('报名成功！'); this.showRegisterModal = false; this.activity.hasRegistered = true; } catch (e) {} },
                 async loadComments() { try { const result = await get('/api/activity/' + this.activityId + '/comments'); if (result.data) { this.comments = result.data; } } catch (e) {} },
                 async submitComment() { if (!this.commentContent.trim()) { showMessage('请输入评论内容', 'error'); return; } try { await post('/api/activity/' + this.activityId + '/comment', { content: this.commentContent.trim() }); showMessage('评论成功'); this.commentContent = ''; this.loadComments(); } catch (e) {} },
                 async deleteComment(cmId) { if (!confirm('确定要删除此评论吗？')) return; try { await del('/api/activity/comment/' + cmId); showMessage('删除成功'); this.loadComments(); } catch (e) {} }
