@@ -260,6 +260,7 @@ public class RetiredStaffController {
         String username = (String) params.get("username");
         String password = (String) params.get("password");
         String realName = (String) params.get("realName");
+        String phone = (String) params.get("phone");
 
         // 验证必填项
         if (username == null || username.trim().isEmpty()) {
@@ -270,6 +271,9 @@ public class RetiredStaffController {
         }
         if (realName == null || realName.trim().isEmpty()) {
             return Result.error("姓名不能为空");
+        }
+        if (phone == null || phone.trim().isEmpty()) {
+            return Result.error("手机号码不能为空");
         }
 
         // 检查用户名是否已存在
@@ -316,6 +320,7 @@ public class RetiredStaffController {
         staff.setFormerDept((String) params.get("formerDept"));
         staff.setJobTitle((String) params.get("jobTitle"));
         staff.setPhoto((String) params.get("photo"));
+        staff.setPhone((String) params.get("phone"));
 
         int result = retiredStaffService.save(staff);
         if (result > 0) {

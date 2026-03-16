@@ -11,7 +11,7 @@
  Target Server Version : 80027 (8.0.27)
  File Encoding         : 65001
 
- Date: 16/03/2026 12:18:57
+ Date: 16/03/2026 16:25:08
 */
 
 SET NAMES utf8mb4;
@@ -32,21 +32,17 @@ CREATE TABLE `activity`  (
   `vote_limit` int NULL DEFAULT 10 COMMENT '投票上限',
   `image_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '活动图片路径',
   PRIMARY KEY (`activity_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of activity
 -- ----------------------------
-INSERT INTO `activity` VALUES (1, '春节联欢活动', '一年一度的春节联欢活动，欢迎各位退休教职工踊跃报名参加。', 2, '2026-03-11 16:29:08', '2026-04-10 16:29:08', 21, 1, NULL);
-INSERT INTO `activity` VALUES (2, '健康讲座', '邀请专家进行健康知识讲座，地点：老年活动中心。', 1, '2026-03-11 16:29:08', '2026-03-18 16:29:08', 29, 1, NULL);
 INSERT INTO `activity` VALUES (3, '春节联欢活动', '一年一度的春节联欢活动，欢迎各位退休教职工踊跃报名参加。', 2, '2026-03-11 17:46:53', '2026-04-10 17:46:53', 36, 1, NULL);
 INSERT INTO `activity` VALUES (4, '健康讲座', '邀请专家进行健康知识讲座，地点：老年活动中心。', 1, '2026-03-11 17:46:53', '2026-03-18 17:46:53', 11, 1, NULL);
-INSERT INTO `activity` VALUES (5, '111', '111111111111', 2, '2026-03-27 18:00:00', '2026-03-30 18:00:00', 70, 1, NULL);
-INSERT INTO `activity` VALUES (6, '222', '333', 1, '2026-03-06 15:38:00', '2026-03-23 15:38:00', 30, 1, NULL);
-INSERT INTO `activity` VALUES (7, '444', '4444', 1, '2026-03-13 19:49:00', '2026-03-27 15:49:00', 13, 1, NULL);
-INSERT INTO `activity` VALUES (8, '555', '5555', 1, '2026-03-20 15:49:00', '2026-03-29 15:49:00', 1, 1, NULL);
-INSERT INTO `activity` VALUES (9, '多人活动6', '123', 2, '2026-03-20 16:59:00', '2026-03-25 16:59:00', 1, 1, NULL);
-INSERT INTO `activity` VALUES (10, '多人活动7', '444', 2, '2026-04-04 17:06:00', '2026-03-29 21:06:00', 3, 1, 'upload/activities/666011d7-7488-4ef7-9cd5-457fa5ea3bc8.jpg');
+INSERT INTO `activity` VALUES (12, '多人活动2创建队伍', '创建队伍', 2, '2026-03-01 15:01:00', '2026-03-08 15:01:00', 1, 10, NULL);
+INSERT INTO `activity` VALUES (13, '多人活动3', '参加队伍', 2, '2026-03-06 15:01:00', '2026-03-29 15:01:00', 0, 10, NULL);
+INSERT INTO `activity` VALUES (14, '普通活动1 报名', '报名', 1, '2026-03-01 15:02:00', '2026-04-05 15:02:00', 1, 10, NULL);
+INSERT INTO `activity` VALUES (15, '春季运动会', '春季运动会', 2, '2026-01-01 15:36:00', '2026-02-13 15:37:00', 0, 10, NULL);
 
 -- ----------------------------
 -- Table structure for activity_registration
@@ -59,27 +55,18 @@ CREATE TABLE `activity_registration`  (
   `reg_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '报名时间',
   `group_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '组名(多人活动时使用)',
   PRIMARY KEY (`reg_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of activity_registration
 -- ----------------------------
 INSERT INTO `activity_registration` VALUES (1, 3, 2, '2026-03-11 17:51:51', '');
-INSERT INTO `activity_registration` VALUES (2, 2, 2, '2026-03-11 18:01:09', '');
 INSERT INTO `activity_registration` VALUES (3, 4, 2, '2026-03-11 18:01:22', '');
-INSERT INTO `activity_registration` VALUES (4, 5, 2, '2026-03-11 18:01:25', '');
-INSERT INTO `activity_registration` VALUES (5, 1, 2, '2026-03-11 18:01:29', '');
-INSERT INTO `activity_registration` VALUES (6, 5, 4, '2026-03-13 00:27:04', '123');
 INSERT INTO `activity_registration` VALUES (7, 3, 4, '2026-03-13 00:41:09', '12345组');
-INSERT INTO `activity_registration` VALUES (8, 7, 2, '2026-03-13 15:51:18', '123');
-INSERT INTO `activity_registration` VALUES (9, 6, 4, '2026-03-13 16:46:25', '');
-INSERT INTO `activity_registration` VALUES (10, 9, 2, '2026-03-13 17:03:32', '新组名');
-INSERT INTO `activity_registration` VALUES (11, 10, 4, '2026-03-13 17:06:36', '组名1');
-INSERT INTO `activity_registration` VALUES (12, 10, 2, '2026-03-13 17:06:51', '组名1');
-INSERT INTO `activity_registration` VALUES (13, 10, 5, '2026-03-13 21:48:41', '组名1');
-INSERT INTO `activity_registration` VALUES (14, 8, 5, '2026-03-13 21:48:50', '');
 INSERT INTO `activity_registration` VALUES (15, 4, 5, '2026-03-13 23:01:13', '');
-INSERT INTO `activity_registration` VALUES (16, 5, 5, '2026-03-13 23:01:23', '123');
+INSERT INTO `activity_registration` VALUES (19, 14, 2, '2026-03-16 15:31:58', '');
+INSERT INTO `activity_registration` VALUES (20, 12, 2, '2026-03-16 15:32:15', '新组123');
+INSERT INTO `activity_registration` VALUES (21, 12, 4, '2026-03-16 15:32:39', '新组123');
 
 -- ----------------------------
 -- Table structure for campus_notice
@@ -92,7 +79,7 @@ CREATE TABLE `campus_notice`  (
   `publish_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '发布时间',
   `admin_id` int NULL DEFAULT NULL COMMENT '发布管理员ID',
   PRIMARY KEY (`notice_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of campus_notice
@@ -113,7 +100,7 @@ CREATE TABLE `comment_message`  (
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '评论/留言内容',
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`cm_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of comment_message
@@ -125,10 +112,11 @@ INSERT INTO `comment_message` VALUES (5, 2, 2, 1, '444', '2026-03-11 17:57:09');
 INSERT INTO `comment_message` VALUES (6, 2, 5, 2, '111', '2026-03-11 18:01:39');
 INSERT INTO `comment_message` VALUES (7, 4, 3, 2, '456', '2026-03-13 00:27:17');
 INSERT INTO `comment_message` VALUES (9, 2, 10, 2, '123', '2026-03-13 21:43:59');
-INSERT INTO `comment_message` VALUES (10, 2, 0, 3, '123', '2026-03-13 21:44:20');
 INSERT INTO `comment_message` VALUES (11, 5, 0, 3, '123', '2026-03-13 21:48:16');
-INSERT INTO `comment_message` VALUES (12, 2, 3, 1, '1', '2026-03-13 23:00:08');
 INSERT INTO `comment_message` VALUES (13, 5, 4, 2, '666', '2026-03-13 23:01:32');
+INSERT INTO `comment_message` VALUES (15, 2, 0, 3, '444', '2026-03-16 14:59:37');
+INSERT INTO `comment_message` VALUES (16, 2, 3, 1, '111', '2026-03-16 15:31:37');
+INSERT INTO `comment_message` VALUES (17, 2, 0, 3, '666666666666', '2026-03-16 15:35:40');
 
 -- ----------------------------
 -- Table structure for retired_staff
@@ -155,9 +143,16 @@ CREATE TABLE `retired_staff`  (
 -- ----------------------------
 -- Records of retired_staff
 -- ----------------------------
-INSERT INTO `retired_staff` VALUES (2, '张三', '/uploads/74fdf66a-495a-4655-a4ff-5e4502b01a33.png', '男', '012345678910234523', 65, '汉族', '本科', '北京', '2026-02-26', '2026-04-04', '教务处', '副教授', '13298324256');
+INSERT INTO `retired_staff` VALUES (2, '张三', 'http://localhost:8080/uploads/98090fc6-33d1-4fb2-964a-6b073b1dec89.jpg', '男', '012345678910234523', 65, '汉族', '本科', '北京', '2026-04-01', '2026-04-04', '教务处', '副教授', '13298324256');
 INSERT INTO `retired_staff` VALUES (4, '李四', '/upload/3a3a2e4b-1a2f-4695-a268-d6ee4221d3ed.png', '女', '432123202123299983', 55, '汉', '博士', '日本', '2004-07-13', '2026-03-03', '教务处', '教授', '13321231231');
 INSERT INTO `retired_staff` VALUES (5, '王五', '/uploads/5d44a7a3-93c2-454d-b0e5-bfd7d4d98dab.png', '女', '413232197012308876', 89, '汉', '硕士', '123', '2026-02-27', '2026-03-06', '123', '123', '13212312345');
+INSERT INTO `retired_staff` VALUES (6, '张四', NULL, '男', '422321232123232321', 123, '回族', '大专', '伊拉克', '2026-02-27', '2026-03-13', '麦地', '老农民', NULL);
+INSERT INTO `retired_staff` VALUES (7, '李五', NULL, '女', '421424242424242424', 66, '满', '本科', '吉林', '2026-04-03', '2026-04-02', '123', '123', NULL);
+INSERT INTO `retired_staff` VALUES (8, '李六', NULL, '女', '421212222232323213', 7, '汉', '博士', '新疆', '2026-03-12', '2026-04-02', '单位', '职务', NULL);
+INSERT INTO `retired_staff` VALUES (9, '张七', NULL, '男', '212323212321232123', 100, '汉', '硕士', '河南', '2026-02-23', '2026-03-04', '1', '1', NULL);
+INSERT INTO `retired_staff` VALUES (10, '张八', 'http://localhost:8080/uploads/6654f3ba-be2f-4e82-aacc-719207440b5c.jpg', '男', '422222333323232323', 111, '汉', '博士', '日本', '2026-03-01', '2026-04-01', '123', '123', '13232323123');
+INSERT INTO `retired_staff` VALUES (11, '李久', NULL, '男', '421231231231231231', 133, '藏族', '硕士', '西藏', '2026-02-26', '2026-03-20', '123', '123', '13231231232');
+INSERT INTO `retired_staff` VALUES (12, '赵时', NULL, '女', '421231231231231231', 123, '汉', '本科', '河南', '2026-02-28', '2026-03-13', '123', '123', '13231231232');
 
 -- ----------------------------
 -- Table structure for salary_appeal
@@ -171,13 +166,14 @@ CREATE TABLE `salary_appeal`  (
   `reply` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '管理员回复',
   `status` tinyint NULL DEFAULT 0 COMMENT '处理状态(0:待处理 1:已处理)',
   PRIMARY KEY (`appeal_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of salary_appeal
 -- ----------------------------
 INSERT INTO `salary_appeal` VALUES (5, 1, 4, '原因123', '不告诉你', 1);
 INSERT INTO `salary_appeal` VALUES (7, 2, 2, '1', '无需修改，是正常的', 1);
+INSERT INTO `salary_appeal` VALUES (8, 3, 2, '123', '已处理好了', 1);
 
 -- ----------------------------
 -- Table structure for salary_record
@@ -193,13 +189,14 @@ CREATE TABLE `salary_record`  (
   `change_reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '变动原因说明',
   `status` tinyint NULL DEFAULT 0 COMMENT '状态(0:正常 1:有申诉)',
   PRIMARY KEY (`salary_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of salary_record
 -- ----------------------------
 INSERT INTO `salary_record` VALUES (1, 4, '2026-07', 1.00, 0.00, 0.00, '1', 0);
 INSERT INTO `salary_record` VALUES (2, 2, '2026-01', 1.00, 0.00, 0.00, '', 0);
+INSERT INTO `salary_record` VALUES (3, 2, '2026-12', 1.00, 1111.00, 1.00, '123111', 0);
 
 -- ----------------------------
 -- Table structure for staff_relative
@@ -217,13 +214,15 @@ CREATE TABLE `staff_relative`  (
   `workplace` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '工作单位',
   `qq_wechat` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'QQ号/微信号',
   PRIMARY KEY (`relative_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of staff_relative
 -- ----------------------------
 INSERT INTO `staff_relative` VALUES (2, 2, '子女', 'un jtg', '123123', 135.00, '13321234123', '1234@qq.com', '华北水利水电大学', '123456');
 INSERT INTO `staff_relative` VALUES (3, 5, '配偶', '14', '123', 123.00, '13231231231', '123123', '123123', '123123');
+INSERT INTO `staff_relative` VALUES (4, 2, '配偶', '刘邦', '住址123', 111.00, '13323212321', '', '', '');
+INSERT INTO `staff_relative` VALUES (5, 2, '子女', '吕雉', '汉朝', 111.00, '13212312311', '', '', '');
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -237,7 +236,7 @@ CREATE TABLE `sys_user`  (
   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`user_id`) USING BTREE,
   UNIQUE INDEX `uk_user`(`username` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
@@ -246,6 +245,13 @@ INSERT INTO `sys_user` VALUES (1, 'admin', '21232f297a57a5a743894a0e4a801fc3', 2
 INSERT INTO `sys_user` VALUES (2, 'user1', 'e10adc3949ba59abbe56e057f20f883e', 1, '2026-03-11 16:29:08');
 INSERT INTO `sys_user` VALUES (4, 'user2', 'e10adc3949ba59abbe56e057f20f883e', 1, '2026-03-13 00:10:52');
 INSERT INTO `sys_user` VALUES (5, 'user3', 'e10adc3949ba59abbe56e057f20f883e', 1, '2026-03-13 21:45:57');
+INSERT INTO `sys_user` VALUES (6, 'user4', '123456', 1, '2026-03-16 13:34:12');
+INSERT INTO `sys_user` VALUES (7, 'user5', '123456', 1, '2026-03-16 14:34:15');
+INSERT INTO `sys_user` VALUES (8, 'user6', '123456', 1, '2026-03-16 14:37:05');
+INSERT INTO `sys_user` VALUES (9, 'user7', 'e10adc3949ba59abbe56e057f20f883e', 1, '2026-03-16 14:39:11');
+INSERT INTO `sys_user` VALUES (10, 'user8', '96e79218965eb72c92a549dd5a330112', 1, '2026-03-16 15:40:27');
+INSERT INTO `sys_user` VALUES (11, 'user9', 'e10adc3949ba59abbe56e057f20f883e', 1, '2026-03-16 16:18:02');
+INSERT INTO `sys_user` VALUES (12, 'user10', 'e10adc3949ba59abbe56e057f20f883e', 1, '2026-03-16 16:20:29');
 
 -- ----------------------------
 -- Table structure for vote_record
@@ -258,7 +264,7 @@ CREATE TABLE `vote_record`  (
   `vote_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT '投票时间',
   PRIMARY KEY (`vote_id`) USING BTREE,
   INDEX `idx_staff_activity`(`staff_id` ASC, `activity_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of vote_record
@@ -273,5 +279,8 @@ INSERT INTO `vote_record` VALUES (7, 10, 2, '2026-03-13 17:06:46');
 INSERT INTO `vote_record` VALUES (8, 10, 5, '2026-03-13 21:48:36');
 INSERT INTO `vote_record` VALUES (9, 8, 5, '2026-03-13 21:48:50');
 INSERT INTO `vote_record` VALUES (10, 4, 5, '2026-03-13 23:01:28');
+INSERT INTO `vote_record` VALUES (11, 8, 2, '2026-03-16 12:55:54');
+INSERT INTO `vote_record` VALUES (12, 14, 2, '2026-03-16 15:31:56');
+INSERT INTO `vote_record` VALUES (13, 12, 4, '2026-03-16 15:32:40');
 
 SET FOREIGN_KEY_CHECKS = 1;
