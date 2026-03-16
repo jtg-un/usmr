@@ -21,6 +21,8 @@ public class SalaryRecord implements Serializable {
 
     // 员工姓名（非数据库字段）
     private String staffName;
+    // 员工工号（非数据库字段）
+    private String staffUsername;
 
     public SalaryRecord() {}
 
@@ -94,5 +96,13 @@ public class SalaryRecord implements Serializable {
 
     public void setStaffName(String staffName) {
         this.staffName = staffName;
+    }
+
+    public String getStaffUsername() {
+        return staffUsername;
+    }
+
+    public void setStaffUsername(String staffUsername) {
+        this.staffUsername = staffUsername;
     }
 }

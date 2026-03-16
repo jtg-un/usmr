@@ -32,8 +32,11 @@
         .page-card .card-body { padding: 25px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 17px; color: #333; margin-bottom: 10px; font-weight: 500; }
-        .form-group textarea { width: 100%; height: 150px; resize: vertical; padding: 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; }
+        .form-group textarea { width: 100%; height: 150px; resize: vertical; padding: 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; transition: all 0.3s; }
         .form-group textarea:focus { outline: none; border-color: #2c5aa0; }
+        .form-group textarea.error { border-color: #f5222d; background: #fff2f0; }
+        .form-error { color: #f5222d; font-size: 20px; font-weight: 700; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+        .form-error::before { content: '⚠'; font-size: 22px; }
         .btn { padding: 14px 35px; border-radius: 6px; cursor: pointer; font-size: 18px; border: none; font-weight: 500; }
         .btn-primary { background: #2c5aa0; color: white; }
         .btn-danger { background: #ff4d4f; color: white; }
@@ -80,7 +83,11 @@
                             <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                             <span>提示：在此向管理员提交您的意见或建议。</span>
                         </div>
-                        <div class="form-group"><label>留言内容 <span style="color:#f5222d;">*</span></label><textarea v-model="messageContent" placeholder="请输入您的意见或建议..."></textarea></div>
+                        <div class="form-group">
+                            <label>留言内容 <span style="color:#f5222d;">*</span></label>
+                            <textarea v-model="messageContent" :class="{ error: formError }" placeholder="请输入您的意见或建议..." @input="formError = ''"></textarea>
+                            <div v-if="formError" class="form-error">{{ formError }}</div>
+                        </div>
                         <button class="btn btn-primary" @click="submitMessage">提交留言</button>
                     </div>
                 </div>
@@ -111,12 +118,26 @@
     <script>
         new Vue({
             el: '#app',
-            data: { userInfo: {}, messages: [], messageContent: '' },
+            data: { userInfo: {}, messages: [], messageContent: '', formError: '' },
             created() { if (!checkLogin()) window.location.href = '../../login.html'; this.userInfo = getUserInfo() || {}; this.loadMessages(); },
             methods: {
                 async loadMessages() { try { const result = await get('/api/message/my-messages'); if (result.data) { this.messages = result.data; } } catch (e) {} },
-                async submitMessage() { if (!this.messageContent.trim()) { showMessage('请输入留言内容', 'error'); return; } try { await post('/api/message/submit', { content: this.messageContent.trim() }); showMessage('留言提交成功，请等待管理员回复'); this.messageContent = ''; this.loadMessages(); } catch (e) {} },
-                async deleteMessage(cmId) { if (!confirm('确定要删除此留言吗？')) return; try { await del('/api/message/' + cmId); showMessage('删除成功'); this.loadMessages(); } catch (e) {} }
+                async submitMessage() {
+                    // 清除之前的错误
+                    this.formError = '';
+                    // 表单验证
+                    if (!this.messageContent.trim()) {
+                        this.formError = '请输入留言内容';
+                        return;
+                    }
+                    try {
+                        await post('/api/message/submit', { content: this.messageContent.trim() });
+                        showMessage('留言提交成功，请等待管理员回复', 'success');
+                        this.messageContent = '';
+                        this.loadMessages();
+                    } catch (e) {}
+                },
+                async deleteMessage(cmId) { if (!confirm('确定要删除此留言吗？')) return; try { await del('/api/message/' + cmId); showMessage('删除成功', 'success'); this.loadMessages(); } catch (e) {} }
             }
         });
     </script>

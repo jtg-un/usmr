@@ -143,6 +143,7 @@ public class RetiredStaffController {
      */
     @GetMapping("/staff/search")
     public Result searchStaff(HttpServletRequest request,
+                              @RequestParam(required = false) String username,
                               @RequestParam(required = false) String realName,
                               @RequestParam(required = false) String formerDept,
                               @RequestParam(required = false) String jobTitle,
@@ -159,6 +160,9 @@ public class RetiredStaffController {
         }
 
         Map<String, Object> params = new HashMap<>();
+        if (username != null && !username.isEmpty()) {
+            params.put("username", username);
+        }
         if (realName != null && !realName.isEmpty()) {
             params.put("realName", realName);
         }
@@ -213,6 +217,25 @@ public class RetiredStaffController {
         }
 
         List<RetiredStaff> list = retiredStaffService.quickSearch(params);
+        return Result.success(list);
+    }
+
+    /**
+     * 按工号搜索退休人员（用于工资记录选择员工）
+     */
+    @GetMapping("/staff/searchByUsername")
+    public Result searchByUsername(HttpServletRequest request, @RequestParam(required = false) String username) {
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 2) {
+            return Result.error("无权限");
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        if (username != null && !username.trim().isEmpty()) {
+            params.put("username", username.trim());
+        }
+
+        List<RetiredStaff> list = retiredStaffService.search(params);
         return Result.success(list);
     }
 

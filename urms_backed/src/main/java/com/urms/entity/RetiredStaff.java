@@ -31,6 +31,7 @@ public class RetiredStaff implements Serializable {
     private String formerDept;
     private String jobTitle;
     private String phone;  // 手机号
+    private String username;  // 工号（关联 sys_user 表）
 
     public RetiredStaff() {}
 
@@ -164,5 +165,13 @@ public class RetiredStaff implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

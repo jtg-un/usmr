@@ -26,15 +26,39 @@
         .breadcrumb a { color: #2c5aa0; text-decoration: none; }
         .guide-tip { background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 6px; padding: 15px 20px; margin-bottom: 25px; font-size: 17px; color: #0050b3; display: flex; align-items: center; gap: 10px; }
         .guide-tip svg { width: 22px; height: 22px; fill: #1890ff; flex-shrink: 0; }
-        .page-card { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .page-card .card-header { padding: 18px 25px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-        .page-card .card-header h3 { font-size: 20px; color: #333; font-weight: 600; }
-        .btn { padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 17px; border: none; }
-        .btn-primary { background: #2c5aa0; color: white; }
+        .page-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .page-card .card-header { padding: 20px 30px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .page-card .card-header h3 { font-size: 24px; color: #1a3a6e; font-weight: 600; }
+        .btn { padding: 14px 28px; border-radius: 8px; cursor: pointer; font-size: 18px; border: none; font-weight: 500; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, #2c5aa0 0%, #3d7bd9 100%); color: white; box-shadow: 0 4px 12px rgba(44, 90, 160, 0.3); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(44, 90, 160, 0.4); }
         .btn-default { background: #f5f5f5; color: #333; border: 2px solid #d9d9d9; }
-        .btn-small { padding: 10px 18px; font-size: 16px; }
+        .btn-default:hover { background: #e8e8e8; }
+        .btn-small { padding: 10px 20px; font-size: 16px; }
         .btn-warning { background: #faad14; color: white; }
         .btn-danger { background: #ff4d4f; color: white; }
+        .btn-add { display: flex; align-items: center; gap: 8px; }
+        .btn-add::before { content: '+'; font-size: 24px; font-weight: 700; }
+
+        /* 亲属关系标签 */
+        .relation-tag { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 20px; font-size: 17px; font-weight: 600; }
+        .relation-tag.spouse { background: linear-gradient(135deg, #fff0f6 0%, #ffd6e7 100%); color: #eb2f96; border: 2px solid #ffadd2; }
+        .relation-tag.spouse::before { content: '💑'; }
+        .relation-tag.child { background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%); color: #1890ff; border: 2px solid #91d5ff; }
+        .relation-tag.child::before { content: '👨‍👩‍👧'; }
+
+        /* 亲属卡片布局 */
+        .relative-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; padding: 25px; }
+        .relative-card { background: linear-gradient(135deg, #fff 0%, #f8fafc 100%); border-radius: 16px; border: 2px solid #e8e8e8; overflow: hidden; transition: all 0.3s; }
+        .relative-card:hover { border-color: #2c5aa0; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transform: translateY(-3px); }
+        .relative-card-header { padding: 20px 25px; background: linear-gradient(135deg, #f8fafc 0%, #f0f5fb 100%); border-bottom: 2px solid #e8e8e8; display: flex; justify-content: space-between; align-items: center; }
+        .relative-card-header .name { font-size: 26px; font-weight: 600; color: #1a3a6e; }
+        .relative-card-body { padding: 20px 25px; }
+        .relative-card-body .info-row { display: flex; margin-bottom: 12px; font-size: 18px; }
+        .relative-card-body .info-row .label { color: #666; min-width: 90px; }
+        .relative-card-body .info-row .value { color: #333; font-weight: 500; }
+        .relative-card-footer { padding: 15px 25px; background: #f8fafc; border-top: 2px solid #e8e8e8; display: flex; justify-content: flex-end; gap: 12px; }
+
         .data-table { width: 100%; border-collapse: collapse; }
         .data-table th, .data-table td { padding: 16px 18px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 16px; }
         .data-table th { background: #fafafa; color: #333; font-weight: 600; }
@@ -49,9 +73,13 @@
         .modal-body { padding: 25px; }
         .modal-footer { padding: 20px 25px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 15px; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 17px; color: #333; margin-bottom: 10px; font-weight: 500; }
-        .form-group input, .form-group select { width: 100%; height: 48px; padding: 0 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; }
+        .form-group label { display: block; font-size: 18px; color: #333; margin-bottom: 10px; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; height: 52px; padding: 0 18px; border: 2px solid #d9d9d9; border-radius: 8px; font-size: 18px; transition: all 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #2c5aa0; box-shadow: 0 0 0 4px rgba(44, 90, 160, 0.1); }
+        .form-group input.error, .form-group select.error { border-color: #f5222d; background: #fff2f0; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-error { color: #f5222d; font-size: 18px; font-weight: 700; margin-top: 8px; display: flex; align-items: center; gap: 6px; }
+        .form-error::before { content: '⚠'; }
         .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 15px 35px; border-radius: 6px; z-index: 9999; font-size: 17px; }
         .message.success { background: #f0f9eb; color: #67c23a; border: 1px solid #e1f3d8; }
         .message.error { background: #fef0f0; color: #f56c6c; border: 1px solid #fde2e2; }
@@ -85,45 +113,70 @@
                 </div>
 
                 <div class="page-card">
-                    <div class="card-header"><h3>亲属信息</h3><button class="btn btn-primary" @click="showAddModal">添加亲属</button></div>
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead><tr><th>关系</th><th>姓名</th><th>住址</th><th>电话</th><th>工作单位</th><th>操作</th></tr></thead>
-                            <tbody>
-                                <tr v-for="item in relatives" :key="item.relativeId">
-                                    <td>{{ item.relationType || '-' }}</td>
-                                    <td>{{ item.name || '-' }}</td>
-                                    <td>{{ item.address || '-' }}</td>
-                                    <td>{{ item.phone || '-' }}</td>
-                                    <td>{{ item.workplace || '-' }}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button>
-                                        <button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button>
-                                    </td>
-                                </tr>
-                                <tr v-if="relatives.length === 0"><td colspan="6" class="empty-tip">暂无亲属信息，点击上方"添加亲属"按钮添加</td></tr>
-                            </tbody>
-                        </table>
+                    <div class="card-header">
+                        <h3>👨‍👩‍👧 亲属信息</h3>
+                        <button class="btn btn-primary btn-add" @click="showAddModal">添加亲属</button>
+                    </div>
+                    <div class="relative-cards">
+                        <div v-for="item in relatives" :key="item.relativeId" class="relative-card">
+                            <div class="relative-card-header">
+                                <span class="name">{{ item.name || '-' }}</span>
+                                <span :class="'relation-tag ' + (item.relationType === '配偶' ? 'spouse' : 'child')">{{ item.relationType || '-' }}</span>
+                            </div>
+                            <div class="relative-card-body">
+                                <div class="info-row"><span class="label">🏠 住址：</span><span class="value">{{ item.address || '-' }}</span></div>
+                                <div class="info-row"><span class="label">📞 电话：</span><span class="value">{{ item.phone || '-' }}</span></div>
+                                <div v-if="item.livingArea" class="info-row"><span class="label">📐 面积：</span><span class="value">{{ item.livingArea }} m²</span></div>
+                                <div v-if="item.email" class="info-row"><span class="label">📧 邮箱：</span><span class="value">{{ item.email }}</span></div>
+                                <div v-if="item.workplace" class="info-row"><span class="label">🏢 单位：</span><span class="value">{{ item.workplace }}</span></div>
+                                <div v-if="item.qqWechat" class="info-row"><span class="label">💬 Q/W：</span><span class="value">{{ item.qqWechat }}</span></div>
+                            </div>
+                            <div class="relative-card-footer">
+                                <button class="btn btn-primary btn-small" @click="editRelative(item)">编辑</button>
+                                <button class="btn btn-danger btn-small" @click="deleteRelative(item.relativeId)">删除</button>
+                            </div>
+                        </div>
+                        <div v-if="relatives.length === 0" class="empty-tip" style="padding: 60px; text-align: center; color: #999; font-size: 22px; grid-column: 1 / -1;">暂无亲属信息，点击上方"添加亲属"按钮添加</div>
                     </div>
                 </div>
             </main>
         </div>
         <div class="modal" :class="{ show: showModal }">
-            <div class="modal-content">
-                <div class="modal-header"><h3>{{ isEdit ? '编辑亲属信息' : '添加亲属' }}</h3><span class="modal-close" @click="closeModal">&times;</span></div>
-                <div class="modal-body">
+            <div class="modal-content" style="width: 700px; border-radius: 16px;">
+                <div class="modal-header" style="padding: 25px 30px;"><h3 style="font-size: 24px;">{{ isEdit ? '✏️ 编辑亲属信息' : '➕ 添加亲属' }}</h3><span class="modal-close" @click="closeModal">&times;</span></div>
+                <div class="modal-body" style="padding: 30px;">
                     <div class="guide-tip">
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                         <span>带 <span style="color:#f5222d;">*</span> 的为必填项，请认真填写。</span>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>关系类型 <span style="color:#f5222d;">*</span></label><select v-model="form.relationType" required><option value="">请选择</option><option value="配偶">配偶</option><option value="子女">子女</option></select></div>
-                        <div class="form-group"><label>姓名 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.name" required placeholder="请输入姓名"></div>
+                        <div class="form-group">
+                            <label>关系类型 <span style="color:#f5222d;">*</span></label>
+                            <select v-model="form.relationType" :class="{ error: formErrors.relationType }" required @change="formErrors.relationType = ''">
+                                <option value="">请选择</option>
+                                <option value="配偶">配偶</option>
+                                <option value="子女">子女</option>
+                            </select>
+                            <div v-if="formErrors.relationType" class="form-error">{{ formErrors.relationType }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label>姓名 <span style="color:#f5222d;">*</span></label>
+                            <input type="text" v-model="form.name" :class="{ error: formErrors.name }" required placeholder="请输入姓名" @input="formErrors.name = ''">
+                            <div v-if="formErrors.name" class="form-error">{{ formErrors.name }}</div>
+                        </div>
                     </div>
-                    <div class="form-group"><label>住址 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.address" required placeholder="请输入详细住址"></div>
+                    <div class="form-group">
+                        <label>住址 <span style="color:#f5222d;">*</span></label>
+                        <input type="text" v-model="form.address" :class="{ error: formErrors.address }" required placeholder="请输入详细住址" @input="formErrors.address = ''">
+                        <div v-if="formErrors.address" class="form-error">{{ formErrors.address }}</div>
+                    </div>
                     <div class="form-row">
                         <div class="form-group"><label>居住面积（平方米）</label><input type="number" v-model="form.livingArea" step="0.01" placeholder="选填"></div>
-                        <div class="form-group"><label>电话 <span style="color:#f5222d;">*</span></label><input type="text" v-model="form.phone" maxlength="11" placeholder="11位手机号" required></div>
+                        <div class="form-group">
+                            <label>电话 <span style="color:#f5222d;">*</span></label>
+                            <input type="text" v-model="form.phone" :class="{ error: formErrors.phone }" maxlength="11" placeholder="11位手机号" required @input="formErrors.phone = ''">
+                            <div v-if="formErrors.phone" class="form-error">{{ formErrors.phone }}</div>
+                        </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group"><label>邮箱</label><input type="email" v-model="form.email" placeholder="选填"></div>
@@ -131,7 +184,10 @@
                     </div>
                     <div class="form-group"><label>QQ/微信</label><input type="text" v-model="form.qqWechat" placeholder="选填"></div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-default" @click="closeModal">取消</button><button class="btn btn-primary" @click="submitRelative">保存</button></div>
+                <div class="modal-footer" style="padding: 25px 30px;">
+                    <button class="btn btn-default" @click="closeModal">取消</button>
+                    <button class="btn btn-primary" @click="submitRelative">保存</button>
+                </div>
             </div>
         </div>
     </div>
@@ -141,15 +197,33 @@
     <script>
         new Vue({
             el: '#app',
-            data: { userInfo: {}, relatives: [], showModal: false, isEdit: false, form: { relativeId: null, relationType: '', name: '', address: '', livingArea: null, phone: '', email: '', workplace: '', qqWechat: '' } },
+            data: { userInfo: {}, relatives: [], showModal: false, isEdit: false, form: { relativeId: null, relationType: '', name: '', address: '', livingArea: null, phone: '', email: '', workplace: '', qqWechat: '' }, formErrors: {} },
             created() { if (!checkLogin()) window.location.href = '../../login.html'; this.userInfo = getUserInfo() || {}; this.loadRelatives(); },
             methods: {
                 async loadRelatives() { try { const result = await get('/api/relative/my-relatives'); if (result.data) { this.relatives = result.data; } } catch (e) {} },
-                showAddModal() { this.isEdit = false; this.form = { relativeId: null, relationType: '', name: '', address: '', livingArea: null, phone: '', email: '', workplace: '', qqWechat: '' }; this.showModal = true; },
-                editRelative(item) { this.isEdit = true; this.form = { ...item }; this.showModal = true; },
+                showAddModal() { this.isEdit = false; this.form = { relativeId: null, relationType: '', name: '', address: '', livingArea: null, phone: '', email: '', workplace: '', qqWechat: '' }; this.formErrors = {}; this.showModal = true; },
+                editRelative(item) { this.isEdit = true; this.form = { ...item }; this.formErrors = {}; this.showModal = true; },
                 closeModal() { this.showModal = false; },
-                async submitRelative() { if (!this.form.relationType || !this.form.name || !this.form.address || !this.form.phone) { showMessage('请填写所有必填项', 'error'); return; } if (!/^1[3-9]\d{9}$/.test(this.form.phone)) { showMessage('请输入正确的11位手机号', 'error'); return; } try { if (this.isEdit) { await post('/api/relative/update', this.form); } else { await post('/api/relative/add', this.form); } showMessage('保存成功'); this.closeModal(); this.loadRelatives(); } catch (e) {} },
-                async deleteRelative(id) { if (!confirm('确定要删除此亲属信息吗？')) return; try { await del('/api/relative/' + id); showMessage('删除成功'); this.loadRelatives(); } catch (e) {} }
+                async submitRelative() {
+                    // 清除错误
+                    this.formErrors = {};
+                    // 验证
+                    let hasError = false;
+                    if (!this.form.relationType) { this.formErrors.relationType = '请选择关系类型'; hasError = true; }
+                    if (!this.form.name) { this.formErrors.name = '请输入姓名'; hasError = true; }
+                    if (!this.form.address) { this.formErrors.address = '请输入住址'; hasError = true; }
+                    if (!this.form.phone) { this.formErrors.phone = '请输入电话'; hasError = true; }
+                    else if (!/^1[3-9]\d{9}$/.test(this.form.phone)) { this.formErrors.phone = '请输入正确的11位手机号'; hasError = true; }
+                    if (hasError) return;
+                    try {
+                        if (this.isEdit) { await post('/api/relative/update', this.form); }
+                        else { await post('/api/relative/add', this.form); }
+                        showMessage('保存成功', 'success');
+                        this.closeModal();
+                        this.loadRelatives();
+                    } catch (e) {}
+                },
+                async deleteRelative(id) { if (!confirm('确定要删除此亲属信息吗？')) return; try { await del('/api/relative/' + id); showMessage('删除成功', 'success'); this.loadRelatives(); } catch (e) {} }
             }
         });
     </script>

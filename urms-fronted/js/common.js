@@ -61,16 +61,181 @@ async function del(url) {
     return api.delete(url);
 }
 
-// 显示消息提示
+// 显示消息提示 - 大图标居中弹窗
 function showMessage(text, type = 'success') {
-    const msg = document.createElement('div');
-    msg.className = 'message ' + type;
-    msg.textContent = text;
-    document.body.appendChild(msg);
+    // 如果已存在弹窗，先移除
+    const existingModal = document.getElementById('messageModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
 
+    // 创建弹窗
+    const modal = document.createElement('div');
+    modal.id = 'messageModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        animation: fadeIn 0.2s ease;
+    `;
+
+    const icon = type === 'success' ? '✓' : '✗';
+    const iconColor = type === 'success' ? '#52c41a' : '#ff4d4f';
+    const bgColor = type === 'success' ? '#f0f9eb' : '#fff2f0';
+    const borderColor = type === 'success' ? '#52c41a' : '#ff4d4f';
+
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 50px 60px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: scaleIn 0.3s ease;
+            max-width: 90%;
+        ">
+            <div style="
+                width: 80px;
+                height: 80px;
+                background: ${bgColor};
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 0 auto 25px;
+                border: 4px solid ${borderColor};
+            ">
+                <span style="
+                    font-size: 50px;
+                    color: ${iconColor};
+                    font-weight: bold;
+                ">${icon}</span>
+            </div>
+            <div style="
+                font-size: 28px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+            ">${type === 'success' ? '操作成功' : '操作失败'}</div>
+            <div style="
+                font-size: 20px;
+                color: #666;
+            ">${text}</div>
+        </div>
+    `;
+
+    // 添加动画样式
+    if (!document.getElementById('messageModalStyle')) {
+        const style = document.createElement('style');
+        style.id = 'messageModalStyle';
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes scaleIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to { transform: scale(1); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    document.body.appendChild(modal);
+
+    // 点击弹窗关闭
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+
+    // 自动关闭
     setTimeout(() => {
-        msg.remove();
-    }, 3000);
+        if (modal.parentNode) {
+            modal.style.animation = 'fadeIn 0.2s ease reverse';
+            setTimeout(() => modal.remove(), 200);
+        }
+    }, 2000);
+}
+
+// 显示确认弹窗
+function showConfirm(title, message, onConfirm) {
+    const existingModal = document.getElementById('confirmModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    const modal = document.createElement('div');
+    modal.id = 'confirmModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.4);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        animation: fadeIn 0.2s ease;
+    `;
+
+    modal.innerHTML = `
+        <div style="
+            background: white;
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: scaleIn 0.3s ease;
+            max-width: 90%;
+            min-width: 400px;
+        ">
+            <div style="font-size: 50px; margin-bottom: 20px;">⚠️</div>
+            <div style="font-size: 26px; font-weight: 600; color: #333; margin-bottom: 15px;">${title}</div>
+            <div style="font-size: 18px; color: #666; margin-bottom: 30px;">${message}</div>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+                <button id="confirmCancel" style="
+                    padding: 15px 40px;
+                    font-size: 18px;
+                    border: 2px solid #d9d9d9;
+                    background: white;
+                    border-radius: 10px;
+                    cursor: pointer;
+                ">取消</button>
+                <button id="confirmOk" style="
+                    padding: 15px 40px;
+                    font-size: 18px;
+                    border: none;
+                    background: #ff4d4f;
+                    color: white;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-weight: 600;
+                ">确定</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    document.getElementById('confirmCancel').onclick = () => modal.remove();
+    document.getElementById('confirmOk').onclick = () => {
+        modal.remove();
+        if (onConfirm) onConfirm();
+    };
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
 }
 
 // 检查登录状态

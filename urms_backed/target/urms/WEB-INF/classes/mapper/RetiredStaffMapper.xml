@@ -17,22 +17,34 @@
         <result column="former_dept" property="formerDept"/>
         <result column="job_title" property="jobTitle"/>
         <result column="phone" property="phone"/>
+        <result column="username" property="username"/>
     </resultMap>
 
     <select id="findById" parameterType="int" resultMap="BaseResultMap">
-        SELECT * FROM retired_staff WHERE staff_id = #{staffId}
+        SELECT rs.*, su.username
+        FROM retired_staff rs
+        LEFT JOIN sys_user su ON rs.staff_id = su.user_id
+        WHERE rs.staff_id = #{staffId}
     </select>
 
     <select id="findAll" resultMap="BaseResultMap">
-        SELECT * FROM retired_staff ORDER BY staff_id DESC
+        SELECT rs.*, su.username
+        FROM retired_staff rs
+        LEFT JOIN sys_user su ON rs.staff_id = su.user_id
+        ORDER BY rs.staff_id DESC
     </select>
 
     <select id="search" parameterType="map" resultMap="BaseResultMap">
-        SELECT DISTINCT rs.* FROM retired_staff rs
+        SELECT DISTINCT rs.*, su.username
+        FROM retired_staff rs
         <if test="childName != null and childName != ''">
             LEFT JOIN staff_relative sr ON rs.staff_id = sr.staff_id
         </if>
+        LEFT JOIN sys_user su ON rs.staff_id = su.user_id
         <where>
+            <if test="username != null and username != ''">
+                AND su.username LIKE CONCAT('%', #{username}, '%')
+            </if>
             <if test="realName != null and realName != ''">
                 AND rs.real_name LIKE CONCAT('%', #{realName}, '%')
             </if>
@@ -69,15 +81,17 @@
     </select>
 
     <select id="quickSearch" parameterType="map" resultMap="BaseResultMap">
-        SELECT * FROM retired_staff
+        SELECT rs.*, su.username
+        FROM retired_staff rs
+        LEFT JOIN sys_user su ON rs.staff_id = su.user_id
         <where>
             <if test="realName != null and realName != ''">
-                real_name LIKE CONCAT('%', #{realName}, '%')
-                OR id_card LIKE CONCAT('%', #{idCard}, '%')
-                OR phone LIKE CONCAT('%', #{phone}, '%')
+                rs.real_name LIKE CONCAT('%', #{realName}, '%')
+                OR rs.id_card LIKE CONCAT('%', #{idCard}, '%')
+                OR rs.phone LIKE CONCAT('%', #{phone}, '%')
             </if>
         </where>
-        ORDER BY staff_id DESC
+        ORDER BY rs.staff_id DESC
         LIMIT 20
     </select>
 

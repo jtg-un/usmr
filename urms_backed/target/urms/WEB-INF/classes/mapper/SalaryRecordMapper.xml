@@ -12,27 +12,31 @@
         <result column="change_reason" property="changeReason"/>
         <result column="status" property="status"/>
         <result column="staff_name" property="staffName"/>
+        <result column="staff_username" property="staffUsername"/>
     </resultMap>
 
     <select id="findByStaffId" parameterType="int" resultMap="BaseResultMap">
-        SELECT s.*, r.real_name as staff_name
+        SELECT s.*, r.real_name as staff_name, u.username as staff_username
         FROM salary_record s
         LEFT JOIN retired_staff r ON s.staff_id = r.staff_id
+        LEFT JOIN sys_user u ON s.staff_id = u.user_id
         WHERE s.staff_id = #{staffId}
         ORDER BY s.year_month DESC
     </select>
 
     <select id="findAll" resultMap="BaseResultMap">
-        SELECT s.*, r.real_name as staff_name
+        SELECT s.*, r.real_name as staff_name, u.username as staff_username
         FROM salary_record s
         LEFT JOIN retired_staff r ON s.staff_id = r.staff_id
+        LEFT JOIN sys_user u ON s.staff_id = u.user_id
         ORDER BY s.year_month DESC
     </select>
 
     <select id="findById" parameterType="int" resultMap="BaseResultMap">
-        SELECT s.*, r.real_name as staff_name
+        SELECT s.*, r.real_name as staff_name, u.username as staff_username
         FROM salary_record s
         LEFT JOIN retired_staff r ON s.staff_id = r.staff_id
+        LEFT JOIN sys_user u ON s.staff_id = u.user_id
         WHERE s.salary_id = #{salaryId}
     </select>
 

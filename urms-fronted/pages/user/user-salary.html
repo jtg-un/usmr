@@ -26,9 +26,45 @@
         .breadcrumb a { color: #2c5aa0; text-decoration: none; }
         .guide-tip { background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 6px; padding: 15px 20px; margin-bottom: 25px; font-size: 17px; color: #0050b3; display: flex; align-items: center; gap: 10px; }
         .guide-tip svg { width: 22px; height: 22px; fill: #1890ff; flex-shrink: 0; }
-        .page-card { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 25px; }
-        .page-card .card-header { padding: 18px 25px; border-bottom: 1px solid #f0f0f0; }
-        .page-card .card-header h3 { font-size: 20px; color: #333; font-weight: 600; }
+        .page-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .page-card .card-header { padding: 20px 30px; border-bottom: 1px solid #f0f0f0; }
+        .page-card .card-header h3 { font-size: 24px; color: #1a3a6e; font-weight: 600; }
+
+        /* 大卡片工资展示 */
+        .salary-cards { display: grid; gap: 25px; padding: 25px; }
+        .salary-card { background: linear-gradient(135deg, #f8fafc 0%, #fff 100%); border-radius: 16px; border: 2px solid #e8e8e8; padding: 30px; transition: all 0.3s; }
+        .salary-card:hover { border-color: #2c5aa0; box-shadow: 0 8px 25px rgba(44, 90, 160, 0.15); transform: translateY(-3px); }
+        .salary-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 2px dashed #e8e8e8; }
+        .salary-month { font-size: 32px; font-weight: 700; color: #1a3a6e; display: flex; align-items: center; gap: 12px; }
+        .salary-month::before { content: '📅'; font-size: 36px; }
+        .salary-total { font-size: 28px; font-weight: 600; color: #52c41a; }
+        .salary-total::before { content: '合计：'; font-size: 20px; color: #666; }
+        .salary-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+        .salary-item { background: white; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #f0f0f0; }
+        .salary-item .label { font-size: 18px; color: #666; margin-bottom: 10px; }
+        .salary-item .value { font-size: 28px; font-weight: 700; color: #333; }
+        .salary-item.base .value { color: #2c5aa0; }
+        .salary-item.subsidy .value { color: #fa8c16; }
+        .salary-item.condolence .value { color: #52c41a; }
+        .salary-reason { font-size: 18px; color: #666; padding: 15px 20px; background: #f5f7fa; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #2c5aa0; }
+        .salary-reason strong { color: #333; }
+        .salary-actions { display: flex; justify-content: flex-end; align-items: center; gap: 15px; }
+        .btn-appeal { padding: 16px 40px; border-radius: 10px; cursor: pointer; font-size: 20px; border: none; font-weight: 600; background: linear-gradient(135deg, #fa8c14 0%, #faad14 100%); color: white; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(250, 173, 20, 0.4); transition: all 0.3s; }
+        .btn-appeal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(250, 173, 20, 0.5); }
+        .btn-appeal::before { content: '📝'; }
+        .status-badge { padding: 10px 24px; border-radius: 20px; font-size: 18px; font-weight: 600; }
+        .status-badge.pending { background: #fff7e6; color: #fa8c16; border: 2px solid #ffd591; }
+        .status-badge.success { background: #f6ffed; color: #52c41a; border: 2px solid #b7eb8f; }
+
+        /* 申诉记录卡片 */
+        .appeal-cards { display: grid; gap: 20px; padding: 25px; }
+        .appeal-card { background: #fff; border-radius: 12px; border: 2px solid #e8e8e8; padding: 25px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; }
+        .appeal-card:hover { border-color: #fa8c16; }
+        .appeal-info { display: flex; flex-direction: column; gap: 12px; }
+        .appeal-month { font-size: 24px; font-weight: 600; color: #1a3a6e; }
+        .appeal-reason { font-size: 18px; color: #666; line-height: 1.6; }
+        .appeal-reply { font-size: 18px; color: #52c41a; background: #f6ffed; padding: 15px 20px; border-radius: 8px; border-left: 4px solid #52c41a; }
+
         .data-table { width: 100%; border-collapse: collapse; }
         .data-table th, .data-table td { padding: 16px 20px; text-align: left; border-bottom: 1px solid #f0f0f0; font-size: 17px; }
         .data-table th { background: #fafafa; color: #333; font-weight: 600; }
@@ -51,7 +87,11 @@
         .modal-footer { padding: 20px 25px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 15px; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-size: 17px; color: #333; margin-bottom: 10px; font-weight: 500; }
-        .form-group textarea { width: 100%; height: 120px; resize: vertical; padding: 12px 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; }
+        .form-group textarea { width: 100%; height: 120px; resize: vertical; padding: 12px 15px; border: 2px solid #d9d9d9; border-radius: 6px; font-size: 17px; transition: all 0.3s; }
+        .form-group textarea:focus { outline: none; border-color: #2c5aa0; }
+        .form-group textarea.error { border-color: #f5222d; background: #fff2f0; }
+        .form-error { color: #f5222d; font-size: 20px; font-weight: 700; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
+        .form-error::before { content: '⚠'; font-size: 22px; }
         .btn-primary { background: #2c5aa0; color: white; }
         .btn-default { background: #f5f5f5; color: #333; border: 2px solid #d9d9d9; }
         .message { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); padding: 15px 35px; border-radius: 6px; z-index: 9999; font-size: 17px; }
@@ -87,56 +127,77 @@
                 </div>
 
                 <div class="page-card">
-                    <div class="card-header"><h3>工资记录</h3></div>
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead><tr><th>月份</th><th>基本工资</th><th>补贴</th><th>慰问金</th><th>变动说明</th><th>申诉状态</th><th>操作</th></tr></thead>
-                            <tbody>
-                                <tr v-for="item in salaries" :key="item.salaryId">
-                                    <td>{{ item.yearMonth }}</td>
-                                    <td>{{ formatMoney(item.baseSalary) }}</td>
-                                    <td>{{ formatMoney(item.subsidy) }}</td>
-                                    <td>{{ formatMoney(item.condolenceFee) }}</td>
-                                    <td>{{ item.changeReason || '-' }}</td>
-                                    <td><span v-if="item.appeal" :class="'status-tag ' + (item.appeal.status === 0 ? 'pending' : 'success')">{{ item.appeal.status === 0 ? '申诉中' : '已回复' }}</span><span v-else>-</span></td>
-                                    <td><button v-if="!item.appeal" class="btn btn-warning btn-small" @click="showAppealModal(item.salaryId)">申诉</button><span v-else style="color:#999;font-size:15px;">已申诉</span></td>
-                                </tr>
-                                <tr v-if="salaries.length === 0"><td colspan="7" class="empty-tip">暂无工资记录</td></tr>
-                            </tbody>
-                        </table>
+                    <div class="card-header"><h3>💰 工资记录</h3></div>
+                    <div class="salary-cards">
+                        <div v-for="item in salaries" :key="item.salaryId" class="salary-card">
+                            <div class="salary-card-header">
+                                <div class="salary-month">{{ item.yearMonth }}</div>
+                                <div class="salary-total">{{ formatMoney(parseFloat(item.baseSalary || 0) + parseFloat(item.subsidy || 0) + parseFloat(item.condolenceFee || 0)) }} 元</div>
+                            </div>
+                            <div class="salary-details">
+                                <div class="salary-item base">
+                                    <div class="label">基本工资</div>
+                                    <div class="value">{{ formatMoney(item.baseSalary) }}</div>
+                                </div>
+                                <div class="salary-item subsidy">
+                                    <div class="label">补贴</div>
+                                    <div class="value">{{ formatMoney(item.subsidy) }}</div>
+                                </div>
+                                <div class="salary-item condolence">
+                                    <div class="label">慰问金</div>
+                                    <div class="value">{{ formatMoney(item.condolenceFee) }}</div>
+                                </div>
+                            </div>
+                            <div v-if="item.changeReason" class="salary-reason">
+                                <strong>变动说明：</strong>{{ item.changeReason }}
+                            </div>
+                            <div class="salary-actions">
+                                <span v-if="item.appeal" :class="'status-badge ' + (item.appeal.status === 0 ? 'pending' : 'success')">{{ item.appeal.status === 0 ? '申诉处理中...' : '申诉已回复' }}</span>
+                                <button v-if="!item.appeal" class="btn-appeal" @click="showAppealModal(item.salaryId)">申请申诉</button>
+                            </div>
+                        </div>
+                        <div v-if="salaries.length === 0" class="empty-tip" style="padding: 60px; text-align: center; color: #999; font-size: 22px;">暂无工资记录</div>
                     </div>
                 </div>
                 <div class="page-card">
-                    <div class="card-header"><h3>我的申诉记录</h3></div>
-                    <div class="table-wrapper">
-                        <table class="data-table">
-                            <thead><tr><th>月份</th><th>申诉原因</th><th>回复</th><th>状态</th><th>操作</th></tr></thead>
-                            <tbody>
-                                <tr v-for="item in appeals" :key="item.appealId">
-                                    <td>{{ item.yearMonth }}</td>
-                                    <td>{{ item.reason }}</td>
-                                    <td>{{ item.reply || '-' }}</td>
-                                    <td><span :class="'status-tag ' + (item.status === 0 ? 'pending' : 'success')">{{ item.status === 0 ? '待处理' : '已回复' }}</span></td>
-                                    <td><button v-if="item.status === 0" class="btn btn-danger btn-small" @click="cancelAppeal(item.appealId)">取消申诉</button><span v-else>-</span></td>
-                                </tr>
-                                <tr v-if="appeals.length === 0"><td colspan="5" class="empty-tip">暂无申诉记录</td></tr>
-                            </tbody>
-                        </table>
+                    <div class="card-header"><h3>📋 我的申诉记录</h3></div>
+                    <div class="appeal-cards">
+                        <div v-for="item in appeals" :key="item.appealId" class="appeal-card">
+                            <div class="appeal-info">
+                                <div class="appeal-month">📅 {{ item.yearMonth }}</div>
+                                <div class="appeal-reason"><strong>申诉原因：</strong>{{ item.reason }}</div>
+                                <div v-if="item.reply" class="appeal-reply"><strong>管理员回复：</strong>{{ item.reply }}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span :class="'status-badge ' + (item.status === 0 ? 'pending' : 'success')">{{ item.status === 0 ? '待处理' : '已回复' }}</span>
+                                <div v-if="item.status === 0" style="margin-top: 15px;">
+                                    <button class="btn btn-danger btn-small" style="padding: 12px 24px; font-size: 18px;" @click="cancelAppeal(item.appealId)">取消申诉</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="appeals.length === 0" class="empty-tip" style="padding: 60px; text-align: center; color: #999; font-size: 22px;">暂无申诉记录</div>
                     </div>
                 </div>
             </main>
         </div>
         <div class="modal" :class="{ show: showAppealModalFlag }">
-            <div class="modal-content">
-                <div class="modal-header"><h3>工资申诉</h3><span class="modal-close" @click="showAppealModalFlag = false">&times;</span></div>
-                <div class="modal-body">
-                    <div class="guide-tip" style="margin-bottom: 15px;">
+            <div class="modal-content" style="width: 600px; border-radius: 16px;">
+                <div class="modal-header" style="padding: 25px 30px;"><h3 style="font-size: 24px;">📝 工资申诉</h3><span class="modal-close" @click="showAppealModalFlag = false">&times;</span></div>
+                <div class="modal-body" style="padding: 30px;">
+                    <div class="guide-tip" style="margin-bottom: 20px;">
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                         <span>请在下方输入您对工资的疑问，管理员会尽快回复。</span>
                     </div>
-                    <div class="form-group"><label>申诉原因 <span style="color:#f5222d;">*</span></label><textarea v-model="appealReason" required placeholder="请详细描述您的疑问..."></textarea></div>
+                    <div class="form-group">
+                        <label style="font-size: 20px;">申诉原因 <span style="color:#f5222d;">*</span></label>
+                        <textarea v-model="appealReason" :class="{ error: appealError }" style="height: 150px; font-size: 18px;" required placeholder="请详细描述您的疑问..." @input="appealError = ''"></textarea>
+                        <div v-if="appealError" class="form-error">{{ appealError }}</div>
+                    </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-default" @click="showAppealModalFlag = false">取消</button><button class="btn btn-primary" @click="submitAppeal">提交申诉</button></div>
+                <div class="modal-footer" style="padding: 25px 30px;">
+                    <button class="btn btn-default" style="padding: 14px 30px; font-size: 18px;" @click="showAppealModalFlag = false">取消</button>
+                    <button class="btn btn-primary" style="padding: 14px 30px; font-size: 18px;" @click="submitAppeal">提交申诉</button>
+                </div>
             </div>
         </div>
     </div>
@@ -146,14 +207,18 @@
     <script>
         new Vue({
             el: '#app',
-            data: { userInfo: {}, salaries: [], appeals: [], showAppealModalFlag: false, appealSalaryId: null, appealReason: '' },
+            data: { userInfo: {}, salaries: [], appeals: [], showAppealModalFlag: false, appealSalaryId: null, appealReason: '', appealError: '' },
             created() { if (!checkLogin()) window.location.href = '../../login.html'; this.userInfo = getUserInfo() || {}; this.loadSalaries(); this.loadAppeals(); },
             methods: {
                 async loadSalaries() { try { const result = await get('/api/salary/my-records'); if (result.data) { this.salaries = result.data; for (let item of this.salaries) { try { const appealResult = await get('/api/salary/appeal/check/' + item.salaryId); if (appealResult.data) { this.$set(item, 'appeal', appealResult.data); } } catch (e) {} } } } catch (e) {} },
                 async loadAppeals() { try { const result = await get('/api/salary/my-appeals'); if (result.data) { this.appeals = result.data; } } catch (e) {} },
-                showAppealModal(salaryId) { this.appealSalaryId = salaryId; this.appealReason = ''; this.showAppealModalFlag = true; },
-                async submitAppeal() { if (!this.appealReason.trim()) { showMessage('请填写申诉原因', 'error'); return; } try { await post('/api/salary/appeal', { salaryId: this.appealSalaryId, reason: this.appealReason.trim() }); showMessage('申诉已提交，请等待管理员回复'); this.showAppealModalFlag = false; this.loadSalaries(); this.loadAppeals(); } catch (e) {} },
-                async cancelAppeal(appealId) { if (!confirm('确定要取消此申诉吗？')) return; try { await del('/api/salary/appeal/' + appealId); showMessage('申诉已取消'); this.loadSalaries(); this.loadAppeals(); } catch (e) {} }
+                showAppealModal(salaryId) { this.appealSalaryId = salaryId; this.appealReason = ''; this.appealError = ''; this.showAppealModalFlag = true; },
+                async submitAppeal() {
+                    this.appealError = '';
+                    if (!this.appealReason.trim()) { this.appealError = '请填写申诉原因'; return; }
+                    try { await post('/api/salary/appeal', { salaryId: this.appealSalaryId, reason: this.appealReason.trim() }); showMessage('申诉已提交，请等待管理员回复', 'success'); this.showAppealModalFlag = false; this.loadSalaries(); this.loadAppeals(); } catch (e) {}
+                },
+                async cancelAppeal(appealId) { if (!confirm('确定要取消此申诉吗？')) return; try { await del('/api/salary/appeal/' + appealId); showMessage('申诉已取消', 'success'); this.loadSalaries(); this.loadAppeals(); } catch (e) {} }
             }
         });
     </script>

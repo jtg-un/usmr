@@ -3,10 +3,626 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高校退休教职工管理服务平台</title>
-    <meta http-equiv="refresh" content="0;url=login.html">
+    <title>高校退休教职工服务门户</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        /* 顶部导航 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(135deg, #1a3a6e 0%, #2c5aa0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .logo h1 {
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .header-actions {
+            display: flex;
+            gap: 20px;
+        }
+        .btn-header {
+            padding: 14px 36px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+        }
+        .btn-primary {
+            background: #52c41a;
+            color: white;
+            box-shadow: 0 4px 15px rgba(82,196,26,0.4);
+        }
+        .btn-primary:hover {
+            background: #3fad0d;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(82,196,26,0.5);
+        }
+
+        /* 主横幅 */
+        .hero {
+            margin-top: 80px;
+            height: 600px;
+            background: linear-gradient(rgba(26,58,110,0.5), rgba(44,90,160,0.6)), url('../images/university/campus.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+        .hero-content {
+            max-width: 800px;
+            padding: 40px;
+        }
+        .hero h2 {
+            font-size: 52px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.3);
+        }
+        .hero p {
+            font-size: 24px;
+            opacity: 0.95;
+            line-height: 1.6;
+            text-shadow: 1px 2px 5px rgba(0,0,0,0.3);
+        }
+
+        /* 核心功能入口 */
+        .entry-section {
+            padding: 60px;
+            background: white;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 600;
+            color: #1a3a6e;
+            margin-bottom: 50px;
+        }
+        .entry-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .entry-card {
+            padding: 50px 40px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid transparent;
+        }
+        .entry-card.login {
+            background: linear-gradient(rgba(26,58,110,0.85), rgba(44,90,160,0.85)), url('../images/university/campus.jpg') center/cover no-repeat;
+            border-color: #2c5aa0;
+        }
+        .entry-card.guide {
+            background: linear-gradient(135deg, #f0f9eb 0%, #d9f0c5 100%);
+            border-color: #52c41a;
+        }
+        .entry-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .entry-card .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .entry-card h3 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .entry-card.login h3,
+        .entry-card.login p {
+            color: white;
+        }
+        .entry-card p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 公共信息板块 */
+        .info-section {
+            padding: 60px;
+            background: #f5f7fa;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .info-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        .info-box-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .info-box-header h3 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #1a3a6e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-box-header h3 span {
+            font-size: 28px;
+        }
+        .notice-list {
+            list-style: none;
+        }
+        .notice-item {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #2c5aa0;
+        }
+        .notice-item:hover {
+            background: #e6f0fa;
+            transform: translateX(5px);
+        }
+        .notice-item h4 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .notice-item p {
+            font-size: 16px;
+            color: #999;
+        }
+        .notice-item .lock-hint {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff7e6;
+            color: #fa8c16;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        /* 活动卡片 */
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f0f9eb;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid #52c41a;
+        }
+        .activity-item:hover {
+            background: #d9f0c5;
+        }
+        .activity-date {
+            text-align: center;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            min-width: 80px;
+        }
+        .activity-date .month {
+            font-size: 16px;
+            color: #52c41a;
+            font-weight: 600;
+        }
+        .activity-date .day {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+        }
+        .activity-info h4 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .activity-info p {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: #1a3a6e;
+            color: white;
+            padding: 40px 60px;
+            text-align: center;
+        }
+        .footer p {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        .footer .contact {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        /* 提示弹窗 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            max-width: 500px;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .modal-content .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        .modal-content h3 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .modal-content p {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .modal-content .btn {
+            padding: 15px 50px;
+            font-size: 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .modal-content .btn-primary {
+            background: #2c5aa0;
+            color: white;
+        }
+
+        /* 响应式 */
+        @media (max-width: 992px) {
+            .header { padding: 0 30px; }
+            .hero { height: 450px; }
+            .hero h2 { font-size: 36px; }
+            .hero p { font-size: 20px; }
+            .entry-cards { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .header { height: 70px; padding: 0 20px; }
+            .logo h1 { font-size: 20px; }
+            .btn-header { padding: 10px 20px; font-size: 16px; }
+            .hero { margin-top: 70px; height: 400px; }
+            .hero h2 { font-size: 28px; }
+            .hero p { font-size: 18px; }
+            .entry-section, .info-section { padding: 40px 20px; }
+            .entry-card { padding: 30px 20px; }
+            .entry-card .icon { font-size: 60px; }
+            .entry-card h3 { font-size: 24px; }
+        }
+    </style>
 </head>
 <body>
-    <p>正在跳转到登录页面...</p>
+    <!-- 顶部导航 -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+            <div>
+                <h1>高校退休教职工服务门户</h1>
+                <p>University Retired Staff Service Portal</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-header btn-outline" onclick="showGuide()">📖 新用户指南</button>
+            <button class="btn-header btn-primary" onclick="goLogin()">🔐 教职工登录</button>
+        </div>
+    </header>
+
+    <!-- 主横幅 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>欢迎回家，尊敬的退休教职工</h2>
+            <p>这里有您关心的校园动态、活动通知、工资信息<br>我们用心服务，让您的退休生活更加便捷温馨</p>
+        </div>
+    </section>
+
+    <!-- 核心功能入口 -->
+    <section class="entry-section">
+        <h2 class="section-title">快速入口</h2>
+        <div class="entry-cards">
+            <div class="entry-card login" onclick="goLogin()">
+                <div class="icon">🔐</div>
+                <h3>教职工登录</h3>
+                <p>点击进入系统，查看个人信息、工资明细、活动报名等功能</p>
+            </div>
+            <div class="entry-card guide" onclick="showGuide()">
+                <div class="icon">📖</div>
+                <h3>新用户指南</h3>
+                <p>第一次使用？查看详细的操作指南，轻松学会使用系统</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 公共信息板块 -->
+    <section class="info-section">
+        <h2 class="section-title">校园动态</h2>
+        <div class="info-grid">
+            <!-- 公告列表 -->
+            <div class="info-box">
+                <div class="info-box-header">
+                    <h3><span>📢</span> 校园公告</h3>
+                </div>
+                <ul class="notice-list" id="noticeList">
+                    <li class="notice-item" onclick="showLoginHint()">
+                        <h4>系统上线公告</h4>
+                        <p>2026-03-11</p>
+                        <span class="lock-hint">🔒 登录后查看详情</span>
+                    </li>
+                    <li class="notice-item" onclick="showLoginHint()">
+                        <h4>春节慰问活动通知</h4>
+                        <p>2026-03-10</p>
+                        <span class="lock-hint">🔒 登录后查看详情</span>
+                    </li>
+                    <li class="notice-item" onclick="showLoginHint()">
+                        <h4>退休教职工体检安排</h4>
+                        <p>2026-03-08</p>
+                        <span class="lock-hint">🔒 登录后查看详情</span>
+                    </li>
+                </ul>
+            </div>
+            <!-- 活动预告 -->
+            <div class="info-box">
+                <div class="info-box-header">
+                    <h3><span>🎉</span> 活动预告</h3>
+                </div>
+                <div id="activityList">
+                    <div class="activity-item" onclick="showLoginHint()">
+                        <div class="activity-date">
+                            <div class="month">3月</div>
+                            <div class="day">20</div>
+                        </div>
+                        <div class="activity-info">
+                            <h4>春节联欢活动</h4>
+                            <p>欢迎各位退休教职工踊跃报名参加</p>
+                        </div>
+                    </div>
+                    <div class="activity-item" onclick="showLoginHint()">
+                        <div class="activity-date">
+                            <div class="month">3月</div>
+                            <div class="day">18</div>
+                        </div>
+                        <div class="activity-info">
+                            <h4>健康讲座</h4>
+                            <p>邀请专家进行健康知识讲座</p>
+                        </div>
+                    </div>
+                    <div class="activity-item" onclick="showLoginHint()">
+                        <div class="activity-date">
+                            <div class="month">4月</div>
+                            <div class="day">05</div>
+                        </div>
+                        <div class="activity-info">
+                            <h4>春游踏青活动</h4>
+                            <p>组织退休教职工春游踏青</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>© 2026 高校退休教职工管理服务平台</p>
+        <p>如有问题请联系管理员</p>
+        <p class="contact">📞 联系电话：010-12345678</p>
+    </footer>
+
+    <!-- 登录提示弹窗 -->
+    <div class="modal-overlay" id="loginHintModal">
+        <div class="modal-content">
+            <div class="icon">🔐</div>
+            <h3>请先登录</h3>
+            <p>您需要登录后才能查看详细内容</p>
+            <button class="btn btn-primary" onclick="goLogin()">立即登录</button>
+        </div>
+    </div>
+
+    <!-- 新用户指南弹窗 -->
+    <div class="modal-overlay" id="guideModal">
+        <div class="modal-content" style="max-width: 600px; text-align: left;">
+            <div class="icon" style="text-align: center;">📖</div>
+            <h3 style="text-align: center;">新用户指南</h3>
+            <div style="font-size: 18px; line-height: 2; color: #333;">
+                <p><strong>1. 如何获取账号？</strong><br>
+                   请联系管理员获取登录账号和初始密码。</p>
+                <p style="margin-top: 15px;"><strong>2. 第一次登录怎么办？</strong><br>
+                   使用管理员提供的账号密码登录后，请及时修改密码。</p>
+                <p style="margin-top: 15px;"><strong>3. 忘记密码怎么办？</strong><br>
+                   请联系管理员重置密码，联系电话：010-12345678</p>
+                <p style="margin-top: 15px;"><strong>4. 系统有哪些功能？</strong><br>
+                   个人信息管理、校园公告、活动报名、工资查询、亲属管理、站内留言。</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn btn-primary" onclick="closeGuide()">我知道了</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+
+        // 跳转到登录页
+        function goLogin() {
+            window.location.href = 'login.html';
+        }
+
+        // 显示登录提示
+        function showLoginHint() {
+            document.getElementById('loginHintModal').classList.add('show');
+        }
+
+        // 显示新用户指南
+        function showGuide() {
+            document.getElementById('guideModal').classList.add('show');
+        }
+
+        // 关闭指南
+        function closeGuide() {
+            document.getElementById('guideModal').classList.remove('show');
+        }
+
+        // 点击弹窗外部关闭
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+
+        // 加载公告数据
+        async function loadNotices() {
+            try {
+                const response = await fetch(`${API_BASE}/api/notice/list`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.data && result.data.length > 0) {
+                        const list = document.getElementById('noticeList');
+                        list.innerHTML = result.data.slice(0, 3).map(item => `
+                            <li class="notice-item" onclick="showLoginHint()">
+                                <h4>${item.title}</h4>
+                                <p>${item.publishTime ? item.publishTime.substring(0, 10) : ''}</p>
+                                <span class="lock-hint">🔒 登录后查看详情</span>
+                            </li>
+                        `).join('');
+                    }
+                }
+            } catch (e) {
+                console.log('加载公告失败');
+            }
+        }
+
+        // 加载活动数据
+        async function loadActivities() {
+            try {
+                const response = await fetch(`${API_BASE}/api/activity/list`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.data && result.data.length > 0) {
+                        const list = document.getElementById('activityList');
+                        list.innerHTML = result.data.slice(0, 3).map(item => {
+                            const date = new Date(item.startTime);
+                            const month = date.getMonth() + 1;
+                            const day = date.getDate();
+                            return `
+                                <div class="activity-item" onclick="showLoginHint()">
+                                    <div class="activity-date">
+                                        <div class="month">${month}月</div>
+                                        <div class="day">${day}</div>
+                                    </div>
+                                    <div class="activity-info">
+                                        <h4>${item.title}</h4>
+                                        <p>${item.description ? item.description.substring(0, 30) + '...' : ''}</p>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (e) {
+                console.log('加载活动失败');
+            }
+        }
+
+        // 页面加载时获取数据
+        loadNotices();
+        loadActivities();
+    </script>
 </body>
 </html>

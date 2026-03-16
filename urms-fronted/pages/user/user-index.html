@@ -182,24 +182,34 @@
             flex-shrink: 0;
         }
 
-        /* 欢迎卡片 - 放大字体 */
+        /* 欢迎卡片 - 使用校园背景图 */
         .welcome-card {
-            background: linear-gradient(135deg, #1a3a6e 0%, #2c5aa0 100%);
+            background: linear-gradient(rgba(26, 58, 110, 0.7), rgba(44, 90, 160, 0.8)), url('../../images/campus.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             color: white;
-            padding: 35px;
-            border-radius: 6px;
+            padding: 45px 35px;
+            border-radius: 12px;
             margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(26, 58, 110, 0.3);
+            box-shadow: 0 4px 15px rgba(26, 58, 110, 0.4);
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .welcome-card h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 32px;
+            margin-bottom: 12px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
         }
 
         .welcome-card p {
-            opacity: 0.9;
-            font-size: 18px;
+            opacity: 0.95;
+            font-size: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
         /* 快捷入口 - 放大卡片 */

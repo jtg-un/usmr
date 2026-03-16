@@ -15,54 +15,68 @@
             min-height: 100vh;
             background: #f0f2f5;
             font-family: 'Microsoft YaHei', 'SimHei', Arial, sans-serif;
+            font-size: 18px;
         }
 
         /* 顶部条 */
         .top-bar {
-            height: 80px;
-            background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%);
+            height: 90px;
+            background: linear-gradient(135deg, #1a3a6e 0%, #2c5aa0 100%);
             display: flex;
             align-items: center;
-            padding: 0 50px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            justify-content: space-between;
+            padding: 0 60px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
 
         .top-bar .logo-area {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
 
         .top-bar .logo-icon {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: white;
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .top-bar .logo-icon svg {
-            width: 35px;
-            height: 35px;
-        }
-
-        .top-bar .system-title {
-            color: white;
+            font-size: 30px;
         }
 
         .top-bar .system-title h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
             letter-spacing: 4px;
+            color: white;
         }
 
         .top-bar .system-title p {
-            font-size: 12px;
+            font-size: 14px;
             opacity: 0.8;
             letter-spacing: 2px;
-            margin-top: 2px;
+            color: white;
+        }
+
+        .btn-back {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 8px;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-back:hover {
+            background: rgba(255,255,255,0.25);
         }
 
         /* 主内容区 */
@@ -70,7 +84,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: calc(100vh - 80px);
+            min-height: calc(100vh - 90px);
             padding: 40px;
         }
 
@@ -78,22 +92,22 @@
         .login-wrapper {
             display: flex;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             overflow: hidden;
-            width: 900px;
-            min-height: 450px;
+            width: 1000px;
+            min-height: 550px;
         }
 
         /* 左侧图片区 */
         .login-banner {
-            width: 450px;
-            background: linear-gradient(135deg, #1a3a6e 0%, #2c5aa0 50%, #3d7bd9 100%);
+            width: 500px;
+            background: linear-gradient(rgba(26,58,110,0.7), rgba(44,90,160,0.7)), url('../images/university/campus.jpg') center/cover no-repeat;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px;
+            padding: 50px;
             color: white;
             position: relative;
         }
@@ -117,67 +131,62 @@
         }
 
         .login-banner .banner-icon {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             background: rgba(255,255,255,0.15);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 30px;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .login-banner .banner-icon svg {
-            width: 60px;
-            height: 60px;
-            fill: white;
+            margin: 0 auto 40px;
+            border: 3px solid rgba(255,255,255,0.3);
+            font-size: 70px;
         }
 
         .login-banner h2 {
-            font-size: 28px;
+            font-size: 36px;
             font-weight: 600;
-            margin-bottom: 15px;
-            letter-spacing: 2px;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
         }
 
         .login-banner p {
-            font-size: 14px;
+            font-size: 18px;
             opacity: 0.9;
-            line-height: 1.8;
+            line-height: 2;
         }
 
         /* 右侧登录表单 */
         .login-form-area {
             flex: 1;
-            padding: 50px 60px;
+            padding: 60px 70px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .login-form-area h3 {
-            font-size: 22px;
+            font-size: 30px;
             color: #333;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-weight: 600;
         }
 
         .login-form-area .subtitle {
             color: #999;
-            font-size: 14px;
-            margin-bottom: 40px;
+            font-size: 18px;
+            margin-bottom: 50px;
         }
 
         .form-item {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .form-item label {
             display: block;
             color: #333;
-            font-size: 14px;
-            margin-bottom: 8px;
+            font-size: 20px;
+            margin-bottom: 12px;
             font-weight: 500;
         }
 
@@ -185,112 +194,122 @@
             position: relative;
         }
 
-        .form-item .input-wrapper svg {
+        .form-item .input-wrapper .icon {
             position: absolute;
-            left: 15px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            fill: #999;
+            font-size: 24px;
+            color: #999;
         }
 
         .form-item input {
             width: 100%;
-            height: 48px;
-            border: 1px solid #dcdfe6;
-            border-radius: 4px;
-            padding: 0 15px 0 45px;
-            font-size: 15px;
+            height: 60px;
+            border: 2px solid #dcdfe6;
+            border-radius: 10px;
+            padding: 0 60px;
+            font-size: 20px;
             transition: all 0.3s;
         }
 
         .form-item input:focus {
             outline: none;
             border-color: #2c5aa0;
-            box-shadow: 0 0 0 2px rgba(44, 90, 160, 0.1);
+            box-shadow: 0 0 0 4px rgba(44, 90, 160, 0.1);
         }
 
         .form-item input::placeholder {
             color: #c0c4cc;
         }
 
+        .form-item .toggle-password {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+
+        .form-item .toggle-password:hover {
+            color: #2c5aa0;
+        }
+
         .btn-login {
             width: 100%;
-            height: 48px;
-            background: linear-gradient(90deg, #1a3a6e 0%, #2c5aa0 100%);
+            height: 60px;
+            background: linear-gradient(135deg, #1a3a6e 0%, #2c5aa0 100%);
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 24px;
             font-weight: 600;
             cursor: pointer;
-            letter-spacing: 4px;
+            letter-spacing: 8px;
             transition: all 0.3s;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .btn-login:hover {
-            background: linear-gradient(90deg, #16315c 0%, #254a8a 100%);
+            background: linear-gradient(135deg, #16315c 0%, #254a8a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(44, 90, 160, 0.4);
         }
 
         .btn-login:disabled {
             background: #a0c4e8;
             cursor: not-allowed;
+            transform: none;
         }
 
         /* 测试账号 */
         .test-account {
-            margin-top: 30px;
-            padding: 15px;
+            margin-top: 40px;
+            padding: 20px;
             background: #f5f7fa;
-            border-radius: 4px;
-            border-left: 3px solid #2c5aa0;
+            border-radius: 10px;
+            border-left: 4px solid #2c5aa0;
         }
 
         .test-account h4 {
-            font-size: 13px;
+            font-size: 18px;
             color: #333;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .test-account p {
-            font-size: 12px;
+            font-size: 18px;
             color: #666;
-            line-height: 1.8;
+            line-height: 2;
         }
 
         /* 底部版权 */
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             color: #999;
-            font-size: 12px;
+            font-size: 16px;
         }
 
-        /* 消息提示 */
-        .message {
-            position: fixed;
-            top: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 12px 30px;
-            border-radius: 4px;
-            z-index: 9999;
-            font-size: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .message.success {
-            background: #f0f9eb;
-            color: #67c23a;
-            border: 1px solid #e1f3d8;
-        }
-
-        .message.error {
-            background: #fef0f0;
-            color: #f56c6c;
-            border: 1px solid #fde2e2;
+        /* 响应式 */
+        @media (max-width: 992px) {
+            .login-wrapper {
+                flex-direction: column;
+                width: 100%;
+                max-width: 500px;
+            }
+            .login-banner {
+                width: 100%;
+                padding: 40px;
+            }
+            .login-banner h2 { font-size: 28px; }
+            .login-banner .banner-icon { width: 100px; height: 100px; font-size: 50px; }
+            .login-form-area { padding: 40px; }
         }
     </style>
 </head>
@@ -298,16 +317,13 @@
     <!-- 顶部条 -->
     <div class="top-bar">
         <div class="logo-area">
-            <div class="logo-icon">
-                <svg viewBox="0 0 24 24" fill="#1a3a6e">
-                    <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/>
-                </svg>
-            </div>
+            <div class="logo-icon">🎓</div>
             <div class="system-title">
                 <h1>高校退休教职工管理服务平台</h1>
                 <p>University Retired Staff Management System</p>
             </div>
         </div>
+        <a href="index.html" class="btn-back">🏠 返回首页</a>
     </div>
 
     <!-- 主内容 -->
@@ -316,9 +332,7 @@
             <!-- 左侧横幅 -->
             <div class="login-banner">
                 <div class="banner-content">
-                    <div class="banner-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>
-                    </div>
+                    <div class="banner-icon">🔐</div>
                     <h2>欢迎登录</h2>
                     <p>本系统为大学退休教职工提供<br>信息管理、活动报名、工资查询等服务</p>
                 </div>
@@ -331,18 +345,21 @@
 
                 <form @submit.prevent="handleLogin">
                     <div class="form-item">
-                        <label>用户名</label>
+                        <label>工号</label>
                         <div class="input-wrapper">
-                            <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                            <input type="text" v-model="form.username" placeholder="请输入用户名" required>
+                            <span class="icon">👤</span>
+                            <input type="text" v-model="form.username" placeholder="请输入工号" required>
                         </div>
                     </div>
 
                     <div class="form-item">
                         <label>密码</label>
                         <div class="input-wrapper">
-                            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                            <input type="password" v-model="form.password" placeholder="请输入密码" required>
+                            <span class="icon">🔒</span>
+                            <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="请输入密码" required>
+                            <button type="button" class="toggle-password" @click="showPassword = !showPassword">
+                                {{ showPassword ? '👁️' : '🙈' }}
+                            </button>
                         </div>
                     </div>
 
@@ -352,7 +369,7 @@
                 </form>
 
                 <div class="test-account">
-                    <h4>测试账号</h4>
+                    <h4>📌 测试账号</h4>
                     <p>
                         管理员账号：admin / admin<br>
                         退休人员账号：user1 / 123456
@@ -363,7 +380,7 @@
     </div>
 
     <div class="footer">
-        © 2024 高校退休教职工管理服务平台 版权所有
+        © 2026 高校退休教职工管理服务平台 版权所有
     </div>
 
     <script src="js/vue.min.js"></script>
@@ -377,12 +394,13 @@
                     username: '',
                     password: ''
                 },
-                loading: false
+                loading: false,
+                showPassword: false
             },
             methods: {
                 async handleLogin() {
                     if (!this.form.username.trim() || !this.form.password) {
-                        showMessage('请输入用户名和密码', 'error');
+                        showMessage('请输入工号和密码', 'error');
                         return;
                     }
 
@@ -407,7 +425,7 @@
                             } else {
                                 window.location.href = 'pages/user/user-index.html';
                             }
-                        }, 1000);
+                        }, 1500);
                     } catch (error) {
                         console.error('登录错误:', error);
                     } finally {
