@@ -159,6 +159,12 @@
                 return;
             }
 
+            // 验证开始时间必须早于结束时间
+            if (new Date(startTime) >= new Date(endTime)) {
+                showMessage('开始时间必须早于结束时间', 'error');
+                return;
+            }
+
             const result = await post('/api/activity/create', {
                 title,
                 description,

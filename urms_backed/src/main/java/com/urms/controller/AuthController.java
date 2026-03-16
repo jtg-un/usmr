@@ -36,6 +36,17 @@ public class AuthController {
         Integer userId = (Integer) request.getAttribute("userId");
         String oldPassword = params.get("oldPassword");
         String newPassword = params.get("newPassword");
+
+        if (userId == null) {
+            return Result.error("未登录或登录已过期");
+        }
+        if (oldPassword == null || oldPassword.trim().isEmpty()) {
+            return Result.error("请输入原密码");
+        }
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return Result.error("请输入新密码");
+        }
+
         return sysUserService.updatePassword(userId, oldPassword, newPassword);
     }
 

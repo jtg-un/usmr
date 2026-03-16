@@ -55,7 +55,8 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <mvc:exclude-mapping path="/auth/**"/>
+            <mvc:exclude-mapping path="/auth/login"/>
+            <mvc:exclude-mapping path="/auth/info"/>
             <mvc:exclude-mapping path="/static/**"/>
             <mvc:exclude-mapping path="/pages/**"/>
             <mvc:exclude-mapping path="/css/**"/>

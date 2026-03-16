@@ -122,6 +122,7 @@
             </div>
             <div style="padding: 20px; max-height: 500px; overflow-y: auto;">
                 <input type="hidden" id="editStaffId">
+                <input type="hidden" id="editUserId">
                 <div id="accountFields">
                     <div class="form-group">
                         <label>用户名 <span style="color: red;">*</span></label>
@@ -131,6 +132,10 @@
                         <label>密码 <span style="color: red;">*</span></label>
                         <input type="password" id="editPassword" placeholder="登录密码">
                     </div>
+                </div>
+                <div class="form-group" id="passwordChangeField" style="display: none;">
+                    <label>新密码</label>
+                    <input type="password" id="editNewPassword" placeholder="输入新密码（不修改则留空）">
                 </div>
                 <div class="form-group">
                     <label>姓名 <span style="color: red;">*</span></label>
@@ -339,6 +344,7 @@
                 const d = result.data;
                 document.getElementById('modalTitle').textContent = '编辑退休人员';
                 document.getElementById('editStaffId').value = d.staffId;
+                document.getElementById('editUserId').value = d.staffId;
                 document.getElementById('editRealName').value = d.realName || '';
                 document.getElementById('editGender').value = d.gender || '';
                 document.getElementById('editAge').value = d.age || '';
@@ -351,6 +357,8 @@
                 document.getElementById('editFormerDept').value = d.formerDept || '';
                 document.getElementById('editJobTitle').value = d.jobTitle || '';
                 document.getElementById('accountFields').style.display = 'none';
+                document.getElementById('passwordChangeField').style.display = 'block';
+                document.getElementById('editNewPassword').value = '';
                 document.getElementById('editModal').classList.add('show');
             }
         }
@@ -383,6 +391,15 @@
                     return;
                 }
 
+                const workStartDate = document.getElementById('editWorkStartDate').value;
+                const retireDate = document.getElementById('editRetireDate').value;
+
+                // 验证参加工作时间必须早于退休时间
+                if (workStartDate && retireDate && workStartDate >= retireDate) {
+                    showMessage('参加工作时间必须早于退休时间', 'error');
+                    return;
+                }
+
                 const params = {
                     username: username,
                     password: password,
@@ -393,8 +410,8 @@
                     nation: document.getElementById('editNation').value.trim(),
                     education: document.getElementById('editEducation').value.trim(),
                     nativePlace: document.getElementById('editNativePlace').value.trim(),
-                    workStartDate: document.getElementById('editWorkStartDate').value,
-                    retireDate: document.getElementById('editRetireDate').value,
+                    workStartDate: workStartDate,
+                    retireDate: retireDate,
                     formerDept: document.getElementById('editFormerDept').value.trim(),
                     jobTitle: document.getElementById('editJobTitle').value.trim()
                 };
@@ -409,6 +426,15 @@
                 }
             } else {
                 // 编辑模式
+                const workStartDate = document.getElementById('editWorkStartDate').value;
+                const retireDate = document.getElementById('editRetireDate').value;
+
+                // 验证参加工作时间必须早于退休时间
+                if (workStartDate && retireDate && workStartDate >= retireDate) {
+                    showMessage('参加工作时间必须早于退休时间', 'error');
+                    return;
+                }
+
                 const params = {
                     staffId: parseInt(staffId),
                     realName: realName,
@@ -418,8 +444,8 @@
                     nation: document.getElementById('editNation').value.trim(),
                     education: document.getElementById('editEducation').value.trim(),
                     nativePlace: document.getElementById('editNativePlace').value.trim(),
-                    workStartDate: document.getElementById('editWorkStartDate').value,
-                    retireDate: document.getElementById('editRetireDate').value,
+                    workStartDate: workStartDate,
+                    retireDate: retireDate,
                     formerDept: document.getElementById('editFormerDept').value.trim(),
                     jobTitle: document.getElementById('editJobTitle').value.trim()
                 };
@@ -431,6 +457,21 @@
                     loadStaff();
                 } else {
                     showMessage(result.message || '更新失败', 'error');
+                }
+
+                // 如果填写了新密码，则更新密码
+                const newPwd = document.getElementById('editNewPassword').value.trim();
+                if (newPwd) {
+                    const userId = document.getElementById('editUserId').value;
+                    const pwdResult = await post('/api/staff/updatePassword', {
+                        userId: parseInt(userId),
+                        newPassword: md5(newPwd)
+                    });
+                    if (pwdResult.code === 200) {
+                        showMessage('密码修改成功');
+                    } else {
+                        showMessage(pwdResult.message || '密码修改失败', 'error');
+                    }
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.urms.dao;
 
 import com.urms.entity.SysUser;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 系统用户DAO接口
@@ -27,7 +28,7 @@ public interface SysUserDao {
     /**
      * 更新密码
      */
-    int updatePassword(Integer userId, String password);
+    int updatePassword(@Param("userId") Integer userId, @Param("password") String password);
 
     /**
      * 删除用户

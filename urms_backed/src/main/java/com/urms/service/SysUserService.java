@@ -19,9 +19,14 @@ public interface SysUserService {
     SysUser findById(Integer userId);
 
     /**
-     * 修改密码
+     * 修改密码（需要验证原密码）
      */
     Result updatePassword(Integer userId, String oldPassword, String newPassword);
+
+    /**
+     * 重置密码（管理员使用，无需原密码）
+     */
+    Result resetPassword(Integer userId, String newPassword);
 
     /**
      * 检查用户名是否存在

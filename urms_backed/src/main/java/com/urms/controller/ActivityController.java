@@ -232,11 +232,21 @@ public class ActivityController {
         activity.setType(params.get("type") != null ? (Integer) params.get("type") : 1);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+
         if (params.get("startTime") != null && !params.get("startTime").toString().isEmpty()) {
-            activity.setStartTime(LocalDateTime.parse(params.get("startTime").toString(), formatter));
+            startTime = LocalDateTime.parse(params.get("startTime").toString(), formatter);
+            activity.setStartTime(startTime);
         }
         if (params.get("endTime") != null && !params.get("endTime").toString().isEmpty()) {
-            activity.setEndTime(LocalDateTime.parse(params.get("endTime").toString(), formatter));
+            endTime = LocalDateTime.parse(params.get("endTime").toString(), formatter);
+            activity.setEndTime(endTime);
+        }
+
+        // 验证开始时间必须早于结束时间
+        if (startTime != null && endTime != null && !startTime.isBefore(endTime)) {
+            return Result.error("开始时间必须早于结束时间");
         }
 
         int result = activityService.add(activity);

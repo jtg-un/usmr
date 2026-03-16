@@ -125,6 +125,10 @@ public class RetiredStaff implements Serializable {
         }
     }
 
+    public String getWorkStartDateStr() {
+        return workStartDate != null ? workStartDate.toString() : null;
+    }
+
     public LocalDate getRetireDate() {
         return retireDate;
     }
@@ -141,6 +145,10 @@ public class RetiredStaff implements Serializable {
                 // ignore parse error
             }
         }
+    }
+
+    public String getRetireDateStr() {
+        return retireDate != null ? retireDate.toString() : null;
     }
 
     public String getFormerDept() {

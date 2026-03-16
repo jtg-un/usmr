@@ -61,6 +61,14 @@ public class RetiredStaffController {
             return Result.error("只有退休人员可以修改个人信息");
         }
 
+        // 验证参加工作时间必须早于退休时间
+        if (staff.getWorkStartDateStr() != null && staff.getRetireDateStr() != null
+                && !staff.getWorkStartDateStr().isEmpty() && !staff.getRetireDateStr().isEmpty()) {
+            if (staff.getWorkStartDateStr().compareTo(staff.getRetireDateStr()) >= 0) {
+                return Result.error("参加工作时间必须早于退休时间");
+            }
+        }
+
         staff.setStaffId(userId);
         int result = retiredStaffService.save(staff);
         if (result > 0) {
@@ -269,6 +277,16 @@ public class RetiredStaffController {
             return Result.error("用户名已存在");
         }
 
+        // 验证参加工作时间必须早于退休时间
+        String workStartDateStr = (String) params.get("workStartDate");
+        String retireDateStr = (String) params.get("retireDate");
+        if (workStartDateStr != null && retireDateStr != null
+                && !workStartDateStr.isEmpty() && !retireDateStr.isEmpty()) {
+            if (workStartDateStr.compareTo(retireDateStr) >= 0) {
+                return Result.error("参加工作时间必须早于退休时间");
+            }
+        }
+
         // 创建用户账号
         SysUser user = new SysUser();
         user.setUsername(username.trim());
@@ -289,11 +307,9 @@ public class RetiredStaffController {
         staff.setEducation((String) params.get("education"));
         staff.setNativePlace((String) params.get("nativePlace"));
         // 处理日期
-        String workStartDateStr = (String) params.get("workStartDate");
         if (workStartDateStr != null && !workStartDateStr.isEmpty()) {
             staff.setWorkStartDateStr(workStartDateStr);
         }
-        String retireDateStr = (String) params.get("retireDate");
         if (retireDateStr != null && !retireDateStr.isEmpty()) {
             staff.setRetireDateStr(retireDateStr);
         }
@@ -322,11 +338,52 @@ public class RetiredStaffController {
             return Result.error("人员ID不能为空");
         }
 
+        // 验证参加工作时间必须早于退休时间
+        if (staff.getWorkStartDateStr() != null && staff.getRetireDateStr() != null
+                && !staff.getWorkStartDateStr().isEmpty() && !staff.getRetireDateStr().isEmpty()) {
+            if (staff.getWorkStartDateStr().compareTo(staff.getRetireDateStr()) >= 0) {
+                return Result.error("参加工作时间必须早于退休时间");
+            }
+        }
+
         int result = retiredStaffService.save(staff);
         if (result > 0) {
             return Result.success("更新成功");
         }
         return Result.error("更新失败");
+    }
+
+    /**
+     * 更新密码（管理员）
+     */
+    @PostMapping("/staff/updatePassword")
+    public Result updatePassword(HttpServletRequest request, @RequestBody Map<String, Object> params) {
+        System.out.println("updatePassword called with params: " + params);
+
+        Integer role = (Integer) request.getAttribute("role");
+        if (role != 2) {
+            return Result.error("无权限");
+        }
+
+        // 兼容 Integer 和 Long 类型
+        Object userIdObj = params.get("userId");
+        Integer userId = null;
+        if (userIdObj instanceof Number) {
+            userId = ((Number) userIdObj).intValue();
+        }
+
+        String newPassword = (String) params.get("newPassword");
+
+        System.out.println("userId: " + userId + ", newPassword: " + (newPassword != null ? "provided" : "null"));
+
+        if (userId == null) {
+            return Result.error("用户ID不能为空");
+        }
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return Result.error("新密码不能为空");
+        }
+
+        return sysUserService.resetPassword(userId, newPassword);
     }
 
     /**

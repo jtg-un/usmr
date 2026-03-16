@@ -81,6 +81,26 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    public Result resetPassword(Integer userId, String newPassword) {
+        SysUser user = sysUserDao.findById(userId);
+        if (user == null) {
+            return Result.error("用户不存在");
+        }
+
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return Result.error("新密码不能为空");
+        }
+
+        // 前端传来的新密码已经是 MD5 加密后的，直接存储
+        int rows = sysUserDao.updatePassword(userId, newPassword.trim());
+        System.out.println("resetPassword - userId: " + userId + ", rows affected: " + rows);
+        if (rows > 0) {
+            return Result.success("密码重置成功");
+        }
+        return Result.error("密码重置失败");
+    }
+
+    @Override
     public boolean checkUsernameExists(String username) {
         return sysUserDao.checkUsernameExists(username) > 0;
     }
