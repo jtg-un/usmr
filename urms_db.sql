@@ -1,7 +1,7 @@
 /*
  Navicat Premium Dump SQL
 
- Source Server         : spbt
+ Source Server         : bysx
  Source Server Type    : MySQL
  Source Server Version : 80027 (8.0.27)
  Source Host           : localhost:3306
@@ -11,7 +11,7 @@
  Target Server Version : 80027 (8.0.27)
  File Encoding         : 65001
 
- Date: 14/03/2026 13:23:32
+ Date: 16/03/2026 12:18:57
 */
 
 SET NAMES utf8mb4;
@@ -30,22 +30,23 @@ CREATE TABLE `activity`  (
   `end_time` datetime NULL DEFAULT NULL COMMENT '结束时间',
   `vote_count` int NULL DEFAULT 0 COMMENT '投票数',
   `vote_limit` int NULL DEFAULT 10 COMMENT '投票上限',
+  `image_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '活动图片路径',
   PRIMARY KEY (`activity_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of activity
 -- ----------------------------
-INSERT INTO `activity` VALUES (1, '春节联欢活动', '一年一度的春节联欢活动，欢迎各位退休教职工踊跃报名参加。', 2, '2026-03-11 16:29:08', '2026-04-10 16:29:08', 21, 1);
-INSERT INTO `activity` VALUES (2, '健康讲座', '邀请专家进行健康知识讲座，地点：老年活动中心。', 1, '2026-03-11 16:29:08', '2026-03-18 16:29:08', 29, 1);
-INSERT INTO `activity` VALUES (3, '春节联欢活动', '一年一度的春节联欢活动，欢迎各位退休教职工踊跃报名参加。', 2, '2026-03-11 17:46:53', '2026-04-10 17:46:53', 36, 1);
-INSERT INTO `activity` VALUES (4, '健康讲座', '邀请专家进行健康知识讲座，地点：老年活动中心。', 1, '2026-03-11 17:46:53', '2026-03-18 17:46:53', 11, 1);
-INSERT INTO `activity` VALUES (5, '111', '111111111111', 2, '2026-03-27 18:00:00', '2026-03-30 18:00:00', 70, 1);
-INSERT INTO `activity` VALUES (6, '222', '333', 1, '2026-03-06 15:38:00', '2026-03-23 15:38:00', 30, 1);
-INSERT INTO `activity` VALUES (7, '444', '4444', 1, '2026-03-13 19:49:00', '2026-03-27 15:49:00', 13, 1);
-INSERT INTO `activity` VALUES (8, '555', '5555', 1, '2026-03-20 15:49:00', '2026-03-29 15:49:00', 1, 1);
-INSERT INTO `activity` VALUES (9, '多人活动6', '123', 2, '2026-03-20 16:59:00', '2026-03-25 16:59:00', 1, 1);
-INSERT INTO `activity` VALUES (10, '多人活动7', '444', 2, '2026-04-04 17:06:00', '2026-03-29 21:06:00', 3, 10);
+INSERT INTO `activity` VALUES (1, '春节联欢活动', '一年一度的春节联欢活动，欢迎各位退休教职工踊跃报名参加。', 2, '2026-03-11 16:29:08', '2026-04-10 16:29:08', 21, 1, NULL);
+INSERT INTO `activity` VALUES (2, '健康讲座', '邀请专家进行健康知识讲座，地点：老年活动中心。', 1, '2026-03-11 16:29:08', '2026-03-18 16:29:08', 29, 1, NULL);
+INSERT INTO `activity` VALUES (3, '春节联欢活动', '一年一度的春节联欢活动，欢迎各位退休教职工踊跃报名参加。', 2, '2026-03-11 17:46:53', '2026-04-10 17:46:53', 36, 1, NULL);
+INSERT INTO `activity` VALUES (4, '健康讲座', '邀请专家进行健康知识讲座，地点：老年活动中心。', 1, '2026-03-11 17:46:53', '2026-03-18 17:46:53', 11, 1, NULL);
+INSERT INTO `activity` VALUES (5, '111', '111111111111', 2, '2026-03-27 18:00:00', '2026-03-30 18:00:00', 70, 1, NULL);
+INSERT INTO `activity` VALUES (6, '222', '333', 1, '2026-03-06 15:38:00', '2026-03-23 15:38:00', 30, 1, NULL);
+INSERT INTO `activity` VALUES (7, '444', '4444', 1, '2026-03-13 19:49:00', '2026-03-27 15:49:00', 13, 1, NULL);
+INSERT INTO `activity` VALUES (8, '555', '5555', 1, '2026-03-20 15:49:00', '2026-03-29 15:49:00', 1, 1, NULL);
+INSERT INTO `activity` VALUES (9, '多人活动6', '123', 2, '2026-03-20 16:59:00', '2026-03-25 16:59:00', 1, 1, NULL);
+INSERT INTO `activity` VALUES (10, '多人活动7', '444', 2, '2026-04-04 17:06:00', '2026-03-29 21:06:00', 3, 1, 'upload/activities/666011d7-7488-4ef7-9cd5-457fa5ea3bc8.jpg');
 
 -- ----------------------------
 -- Table structure for activity_registration
@@ -119,12 +120,10 @@ CREATE TABLE `comment_message`  (
 -- ----------------------------
 INSERT INTO `comment_message` VALUES (1, 2, 3, 2, '123', '2026-03-11 17:51:58');
 INSERT INTO `comment_message` VALUES (2, 2, 4, 2, '123', '2026-03-11 17:52:19');
-INSERT INTO `comment_message` VALUES (3, 2, 0, 3, '1', '2026-03-11 17:55:10');
 INSERT INTO `comment_message` VALUES (4, 2, 2, 1, '123', '2026-03-11 17:57:07');
 INSERT INTO `comment_message` VALUES (5, 2, 2, 1, '444', '2026-03-11 17:57:09');
 INSERT INTO `comment_message` VALUES (6, 2, 5, 2, '111', '2026-03-11 18:01:39');
 INSERT INTO `comment_message` VALUES (7, 4, 3, 2, '456', '2026-03-13 00:27:17');
-INSERT INTO `comment_message` VALUES (8, 2, 0, 3, '留言', '2026-03-13 00:38:28');
 INSERT INTO `comment_message` VALUES (9, 2, 10, 2, '123', '2026-03-13 21:43:59');
 INSERT INTO `comment_message` VALUES (10, 2, 0, 3, '123', '2026-03-13 21:44:20');
 INSERT INTO `comment_message` VALUES (11, 5, 0, 3, '123', '2026-03-13 21:48:16');
@@ -156,9 +155,9 @@ CREATE TABLE `retired_staff`  (
 -- ----------------------------
 -- Records of retired_staff
 -- ----------------------------
-INSERT INTO `retired_staff` VALUES (2, '张三', 'http://localhost:8080/upload/1377f8e2-0705-421a-8ebf-e8e3678350b9.png', '男', '012345678910234523', 65, '汉族', '本科', '北京', '2026-02-26', '2026-04-04', '教务处', '副教授', '13298324256');
-INSERT INTO `retired_staff` VALUES (4, '李四', '/urms/upload/f09f4cb1-78c2-419a-8826-40ad2fe9958d.png', '女', '1234567890123456', 55, '汉', '博士', '日本', '2004-07-13', '2026-03-03', '教务处', '教授', NULL);
-INSERT INTO `retired_staff` VALUES (5, '王五', 'http://localhost:8080/upload/ba7d36b1-bb36-4d32-844e-39ca4830ac95.png', '女', '413232197012308876', 89, '汉', '硕士', '123', '2026-02-27', '2026-03-06', '123', '123', '13212312345');
+INSERT INTO `retired_staff` VALUES (2, '张三', '/uploads/74fdf66a-495a-4655-a4ff-5e4502b01a33.png', '男', '012345678910234523', 65, '汉族', '本科', '北京', '2026-02-26', '2026-04-04', '教务处', '副教授', '13298324256');
+INSERT INTO `retired_staff` VALUES (4, '李四', '/upload/3a3a2e4b-1a2f-4695-a268-d6ee4221d3ed.png', '女', '432123202123299983', 55, '汉', '博士', '日本', '2004-07-13', '2026-03-03', '教务处', '教授', '13321231231');
+INSERT INTO `retired_staff` VALUES (5, '王五', '/uploads/5d44a7a3-93c2-454d-b0e5-bfd7d4d98dab.png', '女', '413232197012308876', 89, '汉', '硕士', '123', '2026-02-27', '2026-03-06', '123', '123', '13212312345');
 
 -- ----------------------------
 -- Table structure for salary_appeal
@@ -178,7 +177,7 @@ CREATE TABLE `salary_appeal`  (
 -- Records of salary_appeal
 -- ----------------------------
 INSERT INTO `salary_appeal` VALUES (5, 1, 4, '原因123', '不告诉你', 1);
-INSERT INTO `salary_appeal` VALUES (7, 2, 2, '1', NULL, 0);
+INSERT INTO `salary_appeal` VALUES (7, 2, 2, '1', '无需修改，是正常的', 1);
 
 -- ----------------------------
 -- Table structure for salary_record
