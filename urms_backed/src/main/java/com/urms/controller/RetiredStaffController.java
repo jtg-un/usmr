@@ -6,6 +6,7 @@ import com.urms.service.RetiredStaffService;
 import com.urms.service.SysUserService;
 import com.urms.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,9 @@ public class RetiredStaffController {
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     /**
      * 获取个人信息
@@ -69,7 +73,7 @@ public class RetiredStaffController {
      * 上传照片
      */
     @PostMapping("/upload/photo")
-    public Result uploadPhoto(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    public Result uploadPhoto(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return Result.error("请选择文件");
         }
@@ -80,18 +84,11 @@ public class RetiredStaffController {
             String extension = getFileExtension(originalFilename);
             String fileName = UUID.randomUUID().toString() + extension;
 
-            // 获取webapp下的upload目录路径
-            String uploadPath = request.getServletContext().getRealPath("/upload/");
-            System.out.println("ServletContext realPath: " + uploadPath);
-
-            if (uploadPath == null) {
-                return Result.error("无法获取上传路径，请检查服务器配置");
-            }
-
+            // 使用配置的绝对路径
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 boolean created = uploadDir.mkdirs();
-                System.out.println("Create upload directory: " + created);
+                System.out.println("Create upload directory: " + uploadPath + ", result: " + created);
                 if (!created) {
                     return Result.error("无法创建上传目录");
                 }
@@ -103,10 +100,9 @@ public class RetiredStaffController {
             File destFile = new File(uploadDir, fileName);
             file.transferTo(destFile);
             System.out.println("File saved to: " + destFile.getAbsolutePath());
-            System.out.println("File exists: " + destFile.exists());
 
             // 返回可访问的URL路径
-            String photoUrl = "/upload/" + fileName;
+            String photoUrl = "/uploads/" + fileName;
             System.out.println("Photo URL: " + photoUrl);
 
             return Result.success("上传成功", photoUrl);

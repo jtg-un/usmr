@@ -10,6 +10,9 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <!-- Load properties file -->
+    <context:property-placeholder location="classpath:db.properties" ignore-unresolvable="true"/>
+
     <!-- Component scanning for controllers and config -->
     <context:component-scan base-package="com.urms.controller,com.urms.config"/>
 
@@ -36,6 +39,8 @@
     <mvc:resources mapping="/js/**" location="/js/"/>
     <mvc:resources mapping="/images/**" location="/images/"/>
     <mvc:resources mapping="/upload/**" location="/upload/"/>
+    <!-- 外部上传目录 -->
+    <mvc:resources mapping="/uploads/**" location="file:///D:/Administrator/Desktop/urms/usmr/urms_upload/"/>
     <mvc:resources mapping="/*.html" location="/"/>
     <mvc:resources mapping="/*.css" location="/"/>
     <mvc:resources mapping="/*.js" location="/"/>
@@ -57,6 +62,7 @@
             <mvc:exclude-mapping path="/js/**"/>
             <mvc:exclude-mapping path="/images/**"/>
             <mvc:exclude-mapping path="/upload/**"/>
+            <mvc:exclude-mapping path="/uploads/**"/>
             <mvc:exclude-mapping path="/*.html"/>
             <mvc:exclude-mapping path="/*.css"/>
             <mvc:exclude-mapping path="/*.js"/>
