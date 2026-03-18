@@ -1,6 +1,9 @@
-// API基础路径 - 后端服务地址
-// IDEA启动Tomcat时context path通常是根路径，如果部署war包则可能是/urms
-const API_BASE = 'http://localhost:8080';
+// API基础路径配置
+// Docker部署时使用相对路径，通过Nginx反向代理访问后端
+// 本地开发时使用完整地址: 'http://localhost:8080'
+const API_BASE = window.location.hostname === 'localhost' && window.location.port === ''
+    ? '/api'  // Docker环境，通过Nginx反向代理
+    : 'http://localhost:8080';  // 本地开发环境
 
 // 创建axios实例
 const api = axios.create({

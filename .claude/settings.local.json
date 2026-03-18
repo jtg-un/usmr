@@ -27,7 +27,8 @@
       "Bash(curl -o urms-fronted/js/vue.min.js https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js && curl -o urms-fronted/js/axios.min.js https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/axios.min.js)",
       "Bash(cd:*)",
       "Bash(ls:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(docker exec:*)"
     ]
   }
 }

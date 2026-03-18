@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: urms-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: urms_db
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+      TZ: Asia/Shanghai
+    # 端口映射：本机3307 -> 容器3306
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./urms_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    networks:
+      - urms-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 后端服务 (SSM + Tomcat)
+  backend:
+    build:
+      context: ./urms_backed
+      dockerfile: Dockerfile
+    container_name: urms-backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      TZ: Asia/Shanghai
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/usr/local/tomcat/uploads
+    networks:
+      - urms-network
+
+  # 前端服务 (Nginx)
+  frontend:
+    build:
+      context: ./urms-fronted
+      dockerfile: Dockerfile
+    container_name: urms-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    volumes:
+      - ./urms-fronted/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - urms-network
+
+# 数据卷
+volumes:
+  mysql_data:
+    driver: local
+  uploads_data:
+    driver: local
+
+# 网络
+networks:
+  urms-network:
+    driver: bridge

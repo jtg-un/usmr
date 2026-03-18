@@ -535,7 +535,10 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:8080';
+        // API基础路径配置
+        const API_BASE = window.location.hostname === 'localhost' && window.location.port === ''
+            ? '/api'  // Docker环境，通过Nginx反向代理
+            : 'http://localhost:8080';  // 本地开发环境
 
         // 跳转到登录页
         function goLogin() {
@@ -569,7 +572,7 @@
         // 加载公告数据
         async function loadNotices() {
             try {
-                const response = await fetch(`${API_BASE}/api/notice/list`);
+                const response = await fetch(`${API_BASE}/notice/list`);
                 if (response.ok) {
                     const result = await response.json();
                     if (result.data && result.data.length > 0) {
@@ -591,7 +594,7 @@
         // 加载活动数据
         async function loadActivities() {
             try {
-                const response = await fetch(`${API_BASE}/api/activity/list`);
+                const response = await fetch(`${API_BASE}/activity/list`);
                 if (response.ok) {
                     const result = await response.json();
                     if (result.data && result.data.length > 0) {
